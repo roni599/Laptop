@@ -138,10 +138,26 @@ class BillController extends Controller
         return response()->json($bill->id);
     }
 
-    public function billGenerate($id){
-        // $bill = Bill::with(['cart.cartItems', 'customer'])->find($id);
-        $bill = Bill::with([
-            'cart.cartItems.serial.stock.product', 'customer'])->find($id);
-        return response()->json($bill);
+    // public function billGenerate($id){
+    //     // $bill = Bill::with(['cart.cartItems', 'customer'])->find($id);
+    //     $bill = Bill::with(['cart.cartItems.serial.stock.product', 'customer'])->find($id);
+    //     $payment=Reserve::with(['paymenttype'])->find($id);
+    //     return response()->json($bill);
+    // }
+
+    public function billGenerate($id)
+    {
+        // Fetch the bill along with related cart, serial, stock, product, and customer information
+        $bill = Bill::with(['cart.cartItems.serial.stock.product', 'customer'])->find($id);
+
+        // Fetch the payment details related to the reserve and payment type
+        // $payment = Reserve::with(['paymenttype'])->find($id);
+        $payment = Reserve::with('paymenttype')->where('bill_id', $id)->get();
+
+        // Return both the bill and payment data in the response
+        return response()->json([
+            'bill' => $bill,
+            'payment' => $payment
+        ]);
     }
 }

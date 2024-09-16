@@ -40,7 +40,8 @@
               <td>{{ user.role.role_name }}</td>
               <td>{{ user.status }}</td>
               <td>
-                <img :src="`/backend/images/users/${user.profile_img}`" alt="User Image" width="55" height="55" />
+                <img v-if="user.profile_img" :src="`/backend/images/users/${user.profile_img}`" alt="User Image" width="55" height="55" />
+                <span v-else>User not <br> provide image</span>
               </td>
               <td>
                 <div class="buttonGroup py-2">

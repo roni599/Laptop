@@ -240,7 +240,7 @@
                     <div class="container-fluid"
                         v-show="$route.path === '/' || $route.path === '/register' || $route.path === '/forget' ? false : true">
                         <div class="d-flex align-items-center justify-content-between small">
-                            <div class="text-muted">Copyright &copy; Your Website 2023</div>
+                            <div class="text-muted">Copyright &copy; Mystrix It 2024</div>
                             <div>
                                 <a href="#">Privacy Policy</a>
                                 &middot;

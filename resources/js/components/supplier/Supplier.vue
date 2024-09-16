@@ -42,8 +42,9 @@
                             <!-- <td>{{ supplier.product.product_model }}</td> -->
                             <td>{{ supplier.user.user_name }}</td>
                             <td>
-                                <img :src="`/backend/images/supplier/${supplier.image}`" alt="User Image" width="50"
-                                    height="50" />
+                                <img v-if="supplier.image" :src="`/backend/images/supplier/${supplier.image}`"
+                                    alt="User Image" width="50" height="50" />
+                                <span v-else>User not <br> provide image</span>
                             </td>
                             <td>
                                 <div class="buttonGroup py-2">
@@ -428,7 +429,20 @@ export default {
             }
         },
         async supplier_create() {
-            await axios.post("/api/suppliers/store", this.form)
+            const formData = new FormData();
+            formData.append('name', this.form.name);
+            formData.append('email', this.form.email);
+            formData.append('address', this.form.address);
+            formData.append('phone', this.form.phone);
+            formData.append('shopname', this.form.shopname);
+            formData.append('product_id', this.form.product_id);
+            formData.append('user_id', this.form.user_id);
+
+            if (this.form.image && this.form.image !== '/backend/assets/img/pic.jpeg') {
+                // Append the image if it's not the default
+                formData.append('image', this.form.image);
+            }
+            await axios.post("/api/suppliers/store", formData)
                 .then((res) => {
                     this.form = {
                         name: null,

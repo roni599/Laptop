@@ -26,7 +26,7 @@ class ExpenseController extends Controller
             'expensecategory' => 'required',
             'cost_type' => 'required',
             'user_id' => 'required',
-            'image' => 'required',
+            'image' => 'nullable',
         ]);
 
         $expense = new Expense();
@@ -80,7 +80,7 @@ class ExpenseController extends Controller
             'expensecategory' => 'required',
             'cost_type' => 'required',
             'user_id' => 'required',
-            'image' => 'required',
+            'image' => 'nullable',
             'status' => 'required'
         ]);
 

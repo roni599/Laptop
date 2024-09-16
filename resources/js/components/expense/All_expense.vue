@@ -49,7 +49,8 @@
               <td>{{ expense.date }}</td>
               <td>{{ expense.status }}</td>
               <td>
-                <img :src="`/backend/images/expense/${expense.receipt_img}`" alt="User Image" width="50" height="50" />
+                <img v-if="expense.receipt_img" :src="`/backend/images/expense/${expense.receipt_img}`" alt="User Image" width="50" height="50" />
+                <span v-else>User not <br> provied image</span>
               </td>
               <td>
                 <div class="buttonGroup py-2">

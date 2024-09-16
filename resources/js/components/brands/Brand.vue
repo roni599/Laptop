@@ -33,8 +33,9 @@
                             <td>{{ brand.brand_name }}</td>
                             <td>{{ brand.status }}</td>
                             <td>
-                                <img :src="`/backend/images/brands/${brand.brand_image}`" alt="User Image" width="50"
-                                    height="50" />
+                                <img  :src="`/backend/images/brands/${brand.brand_image}`"
+                                    alt="User Image" width="50" height="50" />
+                                
                             </td>
                             <td>
                                 <div class="buttonGroup py-2">
@@ -252,9 +253,43 @@ export default {
                 reader.readAsDataURL(file);
             }
         },
+        // async brand_create() {
+        //     this.loading = true
+        //     await axios.post('/api/brands/store', this.form)
+        //         .then((res) => {
+        //             this.form = {
+        //                 brand_name: null,
+        //                 image: '/backend/assets/img/pic.jpeg',
+        //             };
+        //             let myModal = bootstrap.Modal.getInstance(
+        //                 document.getElementById("createBrandModal")
+        //             );
+        //             myModal.hide();
+        //             this.fetch_brands();
+        //             Toast.fire({
+        //                 icon: "success",
+        //                 title: res.data.message,
+        //             });
+        //         })
+        //         .catch((error) => {
+        //             this.errors = error.response.data.errors
+        //         })
+        //         .finally(() => {
+        //             this.loading = false
+        //         })
+        // },
+
         async brand_create() {
-            this.loading = true
-            await axios.post('/api/brands/store', this.form)
+            this.loading = true;
+            const formData = new FormData();
+            formData.append('brand_name', this.form.brand_name);
+
+            if (this.form.image && this.form.image !== '/backend/assets/img/pic.jpeg') {
+                // Append the image if it's not the default
+                formData.append('image', this.form.image);
+            }
+
+            await axios.post('/api/brands/store', formData)
                 .then((res) => {
                     this.form = {
                         brand_name: null,
@@ -271,12 +306,13 @@ export default {
                     });
                 })
                 .catch((error) => {
-                    this.errors = error.response.data.errors
+                    this.errors = error.response.data.errors;
                 })
                 .finally(() => {
-                    this.loading = false
-                })
-        },
+                    this.loading = false;
+                });
+        }
+        ,
         async fetch_brands() {
             await axios.get('/api/brands')
                 .then((res) => {

@@ -37,8 +37,9 @@
                 <span v-else>Inactive</span>
               </td>
               <td>
-                <img :src="`/backend/images/expensecategory/${expensecategory.images}`" alt="User Image" width="50"
+                <img v-if="expensecategory.images" :src="`/backend/images/expensecategory/${expensecategory.images}`" alt="User Image" width="50"
                   height="50" />
+                  <span v-else>User not <br> provide image</span>
               </td>
               <td>
                 <div class="buttonGroup py-2">
@@ -273,7 +274,15 @@ export default {
   methods: {
     async category_create() {
       this.loading = true
-      await axios.post("/api/expensecategory/store", this.form)
+      const formData = new FormData();
+      formData.append('ecname', this.form.ecname);
+      formData.append('user_id', this.form.user_id);
+
+      if (this.form.image && this.form.image !== '/backend/assets/img/pic.jpeg') {
+        // Append the image if it's not the default
+        formData.append('image', this.form.image);
+      }
+      await axios.post("/api/expensecategory/store", formData)
         .then((res) => {
           this.form = {
             ecname: null,

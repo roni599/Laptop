@@ -162,7 +162,21 @@ export default {
 
     async user_create() {
       this.loading = true
-      await axios.post("/api/auth/signup", this.form)
+
+      const formData = new FormData();
+      formData.append('name', this.form.name);
+      formData.append('email', this.form.email);
+      formData.append('phone', this.form.phone);
+      formData.append('password', this.form.password);
+      formData.append('role_id', this.form.role_id);
+      formData.append('password_confirmation', this.form.password_confirmation);
+
+      if (this.form.image && this.form.image !== '/backend/assets/img/pic.jpeg') {
+        // Append the image if it's not the default
+        formData.append('image', this.form.image);
+      }
+
+      await axios.post("/api/auth/signup", formData)
         .then((res) => {
           this.form = {
             name: null,

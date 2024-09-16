@@ -87,7 +87,6 @@ class SupplierController extends Controller
             'edit_shopname' => 'required|string|max:255',
             'edit_image' => 'nullable|string',
             'edit_user_id' => 'required',
-            'edit_product_id' => 'required'
         ]);
         $supplier = Supplier::find($request->edit_id);
         if (!$supplier) {

@@ -32,8 +32,9 @@
                             <td>{{ category.cat_name }}</td>
                             <td>{{ category.status }}</td>
                             <td>
-                                <img :src="`/backend/images/categories/${category.cat_img}`" alt="User Image" width="50"
+                                <img v-if="category.cat_img" :src="`/backend/images/categories/${category.cat_img}`" alt="User Image" width="50"
                                     height="50" />
+                                <span v-else>User not <br> provide image</span>
                             </td>
                             <td>
                                 <div class="buttonGroup py-2">
@@ -260,7 +261,15 @@ export default {
         },
         async category_create() {
             this.loading = true
-            await axios.post('/api/categories/store', this.form)
+            const formData = new FormData();
+            formData.append('cat_name', this.form.cat_name);
+
+            if (this.form.image && this.form.image !== '/backend/assets/img/pic.jpeg') {
+                // Append the image if it's not the default
+                formData.append('image', this.form.image);
+            }
+
+            await axios.post('/api/categories/store', formData)
                 .then((res) => {
                     this.form = {
                         cat_name: null,

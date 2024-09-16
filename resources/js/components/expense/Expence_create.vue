@@ -33,7 +33,7 @@
                                         </select>
                                         <small class="text-danger" v-if="errors.expenserName">{{
                                             errors.expenserName[0]
-                                            }}</small>
+                                        }}</small>
                                         <label for="inputSellingPrice">Expenser Name</label>
                                     </div>
                                 </div>
@@ -43,7 +43,7 @@
                                             placeholder="Enter product name" v-model="form.expense_description" />
                                         <small class="text-danger" v-if="errors.expense_description">{{
                                             errors.expense_description[0]
-                                            }}</small>
+                                        }}</small>
                                         <label for="inputProductName">Expense Description</label>
                                     </div>
                                 </div>
@@ -60,7 +60,7 @@
                                         </select>
                                         <small class="text-danger" v-if="errors.paymenttype">{{
                                             errors.paymenttype[0]
-                                            }}</small>
+                                        }}</small>
                                         <label for="inputSellingPrice">Payment Type</label>
                                     </div>
                                 </div>
@@ -70,7 +70,7 @@
                                             placeholder="Product Code" v-model="form.amount"></textarea>
                                         <small class="text-danger" v-if="errors.amount">{{
                                             errors.amount[0]
-                                            }}</small>
+                                        }}</small>
                                         <label for="inputEmail">Amount</label>
                                     </div>
                                 </div>
@@ -122,7 +122,7 @@
                                         </select>
                                         <small class="text-danger" v-if="errors.expensecategory">{{
                                             errors.expensecategory[0]
-                                            }}</small>
+                                        }}</small>
                                         <label for="inputSellingPrice">Expense Category Name</label>
                                     </div>
                                 </div>
@@ -194,7 +194,22 @@ export default {
     methods: {
         async Expense_create() {
             this.loading = true
-            await axios.post("/api/expense/store", this.form)
+            const formData = new FormData();
+            formData.append('expenserName', this.form.expenserName);
+            formData.append('expense_description', this.form.expense_description);
+            formData.append('amount', this.form.amount);
+            formData.append('date', this.form.date);
+            formData.append('user_id', this.form.user_id);
+            formData.append('expensecategory', this.form.expensecategory);
+            formData.append('paymenttype', this.form.paymenttype);
+            formData.append('cost_type', this.form.cost_type);
+
+            if (this.form.image && this.form.image !== '/backend/assets/img/pic.jpeg') {
+                // Append the image if it's not the default
+                formData.append('image', this.form.image);
+            }
+
+            await axios.post("/api/expense/store", formData)
                 .then((res) => {
                     Toast.fire({
                         icon: "success",
