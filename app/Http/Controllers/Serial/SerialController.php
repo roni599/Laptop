@@ -141,7 +141,7 @@ class SerialController extends Controller
     {
         $barcode = $request->input('barcode');
         $cartId = $request->input('cart_id');
-
+        
         // Retrieve serial data based on barcode
         $serial = Serial::with(['stock.product', 'user'])
             ->where('barcode_no', $barcode)
@@ -201,5 +201,8 @@ class SerialController extends Controller
                 $serial
             ]);
         }
+    }
+    public function delete_saledata($id){
+        return response()->json($id);
     }
 }

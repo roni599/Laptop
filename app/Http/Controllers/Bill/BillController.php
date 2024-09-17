@@ -22,6 +22,7 @@ class BillController extends Controller
     }
     public function store(Request $request)
     {
+
         // return response()->json($request->all());
         $validatedData = $request->validate([
             'customerName' => 'required',
@@ -38,9 +39,7 @@ class BillController extends Controller
             'validInputs2' => 'required',
         ]);
 
-
-
-
+        // return response()->json($cartItem);
         $customer = Customer::create([
             'customer_name' => $validatedData['customerName'],
             'phone' => $validatedData['customerPhone'],
@@ -82,19 +81,41 @@ class BillController extends Controller
         //     }
         // }
 
+        // foreach ($validatedData['items'] as $item) {
+        //     $product = Product::find($item['stock']['product_id']);
+        //     if ($product) {
+        //         $product->decrement('quantity', $item['quantity']);
+        //     }
+        //     $cartItem = CartItem::where('cart_id',$validatedData['cartId'])->get();
+        //     if ($cartItem) {
+        //         $cartItem->update([
+        //             'quantity' => $item['quantity'],
+        //             'price' => $item['quantity'] * $item['stock']['selling_price'],
+        //         ]);
+        //     }
+        // }
         foreach ($validatedData['items'] as $item) {
+            // Find the product
             $product = Product::find($item['stock']['product_id']);
             if ($product) {
+                // Decrement product quantity
                 $product->decrement('quantity', $item['quantity']);
             }
-            $cartItem = CartItem::where('item_no', $item['stock']['product_id'])->first();
-            if ($cartItem) {
-                $cartItem->update([
-                    'quantity' => $item['quantity'],
-                    'price' => $item['quantity'] * $item['stock']['selling_price'],
-                ]);
+
+            // Find cart items by cart_id
+            $cartItems = CartItem::where('cart_id', $validatedData['cartId'])->get();
+
+            foreach ($cartItems as $cartItem) {
+                // Assuming you want to update the cart item that matches item_no
+                if ($cartItem->item_no == $item['stock']['product_id']) {
+                    $cartItem->update([
+                        'quantity' => $item['quantity'],
+                        'price' =>$item['stock']['selling_price'],
+                    ]);
+                }
             }
         }
+
 
         foreach ($validatedData['validInputs'] as $key => $paymentTypeId) {
             // Check if a corresponding amount exists in validInputs2

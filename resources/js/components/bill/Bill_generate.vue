@@ -188,7 +188,7 @@
                             </div>
                         </div> -->
                         <div class="col-1 mt-4 align-items-center">
-                            <button type="button" class="btn btn-danger btn-sm" @click="removeInput(index)">
+                            <button type="button" class="btn btn-danger btn-sm" @click="removeInputIndex(index)">
                                 <i class="fa-solid fa-xmark"></i>
                             </button>
                         </div>
@@ -371,8 +371,26 @@ export default {
                 item.totalPrice = item.quantity * item.stock.selling_price;
             });
         },
-        removeInput(index) {
-            this.barcodeData.splice(index, 1);
+        removeInputIndex(index) {
+            console.log(index)
+            Swal.fire({
+                title: "Are you sure?",
+                text: "You won't be able to revert this!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Yes, delete it!",
+            }).then(async (result) => {
+                if (result.isConfirmed) {
+                   this.barcodeData.splice(index, 1);
+                    Swal.fire({
+                        title: "Deleted!",
+                        text: "Category has been deleted.",
+                        icon: "success",
+                    });
+                }
+            });
         },
 
         submitSale() {
@@ -407,13 +425,13 @@ export default {
                     this.customerEmail = '';
                     this.customerNid = '';
                     this.customerBirthday = '',
-                    this.user_id = '',
-                    this.validInputs = [],
-                    this.validInputs2 = [],
-                    this.bankAmount = '',
-                    this.cashAmount = '',
-                    this.othersAmount = '',
-                    AppStorage.clearCard()
+                        this.user_id = '',
+                        this.validInputs = [],
+                        this.validInputs2 = [],
+                        this.bankAmount = '',
+                        this.cashAmount = '',
+                        this.othersAmount = '',
+                        AppStorage.clearCard()
                     AppStorage.storebillId(response.data);
                     this.$router.push({ name: "Bill_print" })
                     Toast.fire({

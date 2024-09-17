@@ -1,43 +1,124 @@
 <template>
-    <!-- <h1>i am form Bill Print</h1> -->
-    <h2>Invoice : {{ bills.bill_id }}</h2>
-    <h1>Total Price : {{ bills.total_price }}</h1>
-    <div v-if="bills.customer">
-        <h1>Customer Name: {{ bills.customer.customer_name }}</h1>
-    </div>
-    <div v-else>
-        <p>Loading customer information...</p>
-    </div>
-    <div v-if="bills && bills.cart && bills.cart.cart_items && bills.cart.cart_items.length > 0">
-        <ul v-for="cartitem in bills.cart.cart_items" :key="cartitem.id">
-            <ol>Model Name : {{ cartitem.serial.stock.product.product_model }}</ol>
-            <ol>{{ cartitem.quantity }} -> {{ cartitem.price }}</ol>
-        </ul>
-    </div>
-    <div v-else>
-        <p>No cart items available.</p>
-    </div>
+    <div class="container">
+        <div class="invoice-card container" ref="invoice">
+            <!-- <div class="invoice-header">
+            <img src="./logos.png" alt="Invoice Logo" class="invoice-logo" />
+          </div> -->
+            <div class="invoice-subHeader d-flex justify-content-between container">
+                <div class="left">
+                    <h6>Invoice : <span class="invoice-number">{{ bills.bill_id }}</span></h6>
+                    <h6 v-if="bills.customer">Client : <span>{{ bills.customer.customer_name }}</span></h6>
+                    <h6 v-if="bills.customer">Mobile : <span>{{ bills.customer.phone }}</span></h6>
+                </div>
+                <div class="right">
+                    <h6>Invoice Date : <span>{{ formattedDate }}</span></h6>
+                </div>
+            </div>
 
+            <div class="invoice-table">
+                <div class="container mt-4">
+                    <table v-if="bills.cart && bills.cart.cart_items.length > 0">
+                        <thead>
+                            <tr>
+                                <th class="col-8">Product</th>
+                                <th class="col-2">Quantity</th>
+                                <th class="col-2">Unit Price</th>
+                                <th class="col-2">Subtotal</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="cartitem in bills.cart.cart_items" :key="cartitem.id">
+                                <td>{{ cartitem.serial.stock.product.product_model }}</td>
+                                <td>{{ cartitem.quantity }} Pc(s)</td>
+                                <td>{{ cartitem.price }}</td>
+                                <td>{{ cartitem.price * cartitem.quantity }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <p v-else>No cart items available.</p>
+                    <hr />
+                    <div class="invoice-main-bill">
+                        <div v-for="payment in payments" :key="payment.id" class="d-flex justify-content-between w-100">
+                            <div class="title">
+                                <p>{{ payment.paymenttype.pt_name }}</p>
+                            </div>
+                            <div class="amount gap-5">
+                                <p>Taka : <span>{{ payment.amount }} BDT</span></p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="summary right col-md-6 d-flex justify-content-between w-100">
+                        <div class="title">
+                            <p>Total Quantity</p>
+                        </div>
+                        <div class="amount">
+                            <p><span>{{ totalQuantity }}</span></p>
+                        </div>
+                    </div>
+                    <div class="summary right col-md-6 d-flex justify-content-between w-100">
+                        <div class="title">
+                            <p>Total Price</p>
+                        </div>
+                        <div class="amount">
+                            <p><span>{{ bills.total_price }}</span></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
+            <div class="invoice-qr d-flex align-items-center justify-content-center gap-4 pt-5">
+                <p class="fw-bold">Thank You For Your Purchases</p>
+                <!-- <img src="./QR.png" alt="QR Code" width="130px" /> -->
+            </div>
 
+            <!-- Print Button -->
+            <div class="print-button d-flex justify-content-center pt-4">
+                <button @click="printInvoice" class="btn btn-primary print-button">Print Invoice</button>
+            </div>
+        </div>
+    </div>
 </template>
 
 <script>
-import axios from 'axios';
+import axios from "axios";
+import AppStorage from "../../Helpers/AppStorage";
 import { inject } from 'vue';
-import AppStorage from '../../Helpers/AppStorage';
+
 export default {
     name: "Bill-vue",
-    data() {
+    setup() {
         const userName = inject('userName');
         const profile_img = inject('profile_img');
+        return { userName, profile_img };
+    },
+    data() {
         return {
-            userName,
-            profile_img,
-            bills: []
-        }
+            bills: {
+                bill_id: "",
+                customer: {
+                    customer_name: "",
+                    phone: "",
+                },
+                cart: {
+                    cart_items: [],
+                },
+                total_price: 0,
+                updated_at: "",
+            },
+            payments: [],
+        };
     },
     methods: {
+        async fetchBill() {
+            const bill_id = AppStorage.getBillId();
+            try {
+                const res = await axios.get(`/api/bills/generate/${bill_id}`);
+                this.payments = res.data.payment;
+                this.bills = res.data.bill;
+            } catch (error) {
+                console.log(error);
+            }
+        },
         async fetchUsers() {
             const token = localStorage.getItem('token');
             await axios.get("/api/auth/me", {
@@ -46,30 +127,132 @@ export default {
                 }
             })
                 .then((res) => {
+                    this.users = res.data;
+                    this.user_id = res.data.id;
                     this.userName = res.data.user_name;
-                    this.profile_img = res.data.profile_img
-                })
-                .catch((error) => {
-
-                });
-        },
-        async fetch_bill() {
-            const bill_id = AppStorage.getBillId();
-            await axios.get(`/api/bills/generate/${bill_id}`)
-                .then((res) => {
-                    console.log(res)
-                    this.bills = res.data
+                    this.profile_img = res.data.profile_img;
                 })
                 .catch((error) => {
                     console.log(error);
                 });
-        }
+        },
+        printInvoice() {
+            window.print();
+        },
     },
-    created() {
+    computed: {
+        formattedDate() {
+            if (this.bills && this.bills.updated_at) {
+                const date = new Date(this.bills.updated_at);
+                return date.toLocaleString("en-BD", {
+                    timeZone: "Asia/Dhaka",
+                    day: "2-digit",
+                    month: "2-digit",
+                    year: "numeric",
+                    hour12: true,
+                });
+            }
+            return "";
+        },
+        totalQuantity() {
+            if (this.bills && this.bills.cart && this.bills.cart.cart_items) {
+                return this.bills.cart.cart_items.reduce(
+                    (sum, item) => sum + item.quantity,
+                    0
+                );
+            }
+            return 0;
+        },
+    },
+    mounted() {
+        this.fetchBill();
         this.fetchUsers();
-        this.fetch_bill();
-    }
-}
+    },
+};
 </script>
 
-<style></style>
+<style scoped>
+/* Styling for the invoice */
+.invoice-card {
+    padding: 10px;
+    border: 1px solid #ddd;
+    margin-top: 60px;
+    font-size: 15px;
+    background-color: white;
+}
+
+.invoice-logo {
+    width: 100px;
+    height: auto;
+}
+
+.invoice-header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.invoice-subHeader {
+    margin-bottom: 10px;
+}
+
+.invoice-table {
+    margin-bottom: 20px;
+}
+
+.invoice-table table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.invoice-table th,
+.invoice-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+
+.invoice-table th {
+    background-color: #f4f4f4;
+}
+
+/* Print styles */
+@media print {
+    .print-button {
+        display: none;
+        /* Hide print button in print view */
+    }
+
+    .container {
+        padding: 0px;
+        /* Remove container padding for printing */
+        margin: 50px 165px;
+        /* Set margins for print view */
+    }
+
+    .invoice-card {
+        margin: 0;
+        /* Remove margin for print view */
+        border: none;
+        /* Remove border for print view */
+    }
+
+    .invoice-qr {
+        margin: 50px 165px;
+        /* Ensure the margin is set for print view */
+        flex-wrap: nowrap;
+        /* Prevent items from wrapping to the next line */
+    }
+
+    .invoice-qr p {
+        font-size: 14px;
+    }
+
+    .invoice-qr img {
+        display: none;
+        /* Hide QR code image in print view */
+    }
+    header, footer {
+        display: none;
+    }
+}
+</style>

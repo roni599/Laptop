@@ -18,7 +18,7 @@
                     </div>
                 </div>
             </form>
-            <ul class="navbar-nav ms-auto ms-md-0 me-3 me-lg-4">
+            <ul class="navbar-nav ms-auto ms-md-0 me-3 me-lg-4" id="navbar-nav">
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle text-white" id="navbarDropdown" href="#" role="button"
                         data-bs-toggle="dropdown" aria-expanded="false">
@@ -413,6 +413,7 @@ export default {
 @media print {
 
     #navbar,
+    #navbar-nav,
     #layoutSidenav_nav,
     #footer {
         display: none;

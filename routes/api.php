@@ -95,6 +95,7 @@ Route::put('/serials/upate', [SerialController::class, 'update']);
 Route::delete('/serials/delete/{id}', [SerialController::class, 'delete']);
 Route::post('/barcode-search', [SerialController::class, 'searchBarcode']);
 Route::post('/submit-sale', [SerialController::class, 'submit_sale']);
+Route::delete('/delete-saledata/{id}', [SerialController::class, 'delete_saledata']);
 
 //for paymentType
 Route::get('/payment-types', [PaymentTypeController::class, 'index']);
