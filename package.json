@@ -12,6 +12,8 @@
         "vite": "^5.0.0"
     },
     "dependencies": {
+        "@chenfengyuan/vue-barcode": "^2.0.2",
+        "jsbarcode": "^3.11.6",
         "mitt": "^3.0.1",
         "print-js": "^1.6.0",
         "sweetalert2": "^11.12.2",

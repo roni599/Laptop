@@ -136,12 +136,12 @@ class SerialController extends Controller
         }
         return response()->json($serialsWithBarcodes);
     }
-    
+
     public function searchBarcode(Request $request)
     {
         $barcode = $request->input('barcode');
         $cartId = $request->input('cart_id');
-        
+
         // Retrieve serial data based on barcode
         $serial = Serial::with(['stock.product', 'user'])
             ->where('barcode_no', $barcode)
@@ -202,7 +202,19 @@ class SerialController extends Controller
             ]);
         }
     }
-    public function delete_saledata($id){
-        return response()->json($id);
+    public function delete_saledata($item_no)
+    {
+        $cartItem = CartItem::where('item_no', $item_no)->first();
+        if ($cartItem) {
+            $cartItem->delete();
+            return response()->json([
+                'message' => 'Item deleted successfully',
+                'item' => $cartItem
+            ]);
+        } else {
+            return response()->json([
+                'message' => 'Item not found'
+            ], 404);
+        }
     }
 }

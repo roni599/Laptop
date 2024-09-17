@@ -12,6 +12,7 @@
                 </div>
                 <div class="right">
                     <h6>Invoice Date : <span>{{ formattedDate }}</span></h6>
+                    <svg id="barcode"></svg>
                 </div>
             </div>
 
@@ -60,15 +61,15 @@
                             <p>Total Price</p>
                         </div>
                         <div class="amount">
-                            <p><span>{{ bills.total_price }}</span></p>
+                            <p><span>Taka : {{ bills.total_price }} BDT</span></p>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div class="invoice-qr d-flex align-items-center justify-content-center gap-4 pt-5">
+            <div class="invoice-qr d-flex align-items-center justify-content-center gap-4 pt-1">
                 <p class="fw-bold">Thank You For Your Purchases</p>
-                <!-- <img src="./QR.png" alt="QR Code" width="130px" /> -->
+                <img src="/public/backend/assets/img/paid3.png" alt="QR Code" width="50px" />
             </div>
 
             <!-- Print Button -->
@@ -83,7 +84,7 @@
 import axios from "axios";
 import AppStorage from "../../Helpers/AppStorage";
 import { inject } from 'vue';
-
+import JsBarcode from 'jsbarcode';
 export default {
     name: "Bill-vue",
     setup() {
@@ -115,6 +116,8 @@ export default {
                 const res = await axios.get(`/api/bills/generate/${bill_id}`);
                 this.payments = res.data.payment;
                 this.bills = res.data.bill;
+                this.generateBarcode();
+                AppStorage.clearBillId();
             } catch (error) {
                 console.log(error);
             }
@@ -138,6 +141,16 @@ export default {
         },
         printInvoice() {
             window.print();
+        },
+        generateBarcode() {
+            const billId = this.bills.bill_id || 'No Bill ID';
+            JsBarcode("#barcode", billId, {
+                format: "CODE128",
+                lineColor: "#000000",
+                width: 1.5,
+                height: 30,
+                displayValue: false,
+            });
         },
     },
     computed: {
@@ -176,7 +189,7 @@ export default {
 .invoice-card {
     padding: 10px;
     border: 1px solid #ddd;
-    margin-top: 60px;
+    margin-top: 20px;
     font-size: 15px;
     background-color: white;
 }
@@ -215,6 +228,11 @@ export default {
     background-color: #f4f4f4;
 }
 
+.invoice-qr img {
+    margin-top: -25px;
+    margin-left: -20px;
+}
+
 /* Print styles */
 @media print {
     .print-button {
@@ -238,21 +256,25 @@ export default {
 
     .invoice-qr {
         margin: 50px 165px;
-        /* Ensure the margin is set for print view */
-        flex-wrap: nowrap;
-        /* Prevent items from wrapping to the next line */
+        display: flex;
+        justify-content: space-between;
     }
 
     .invoice-qr p {
-        font-size: 14px;
+        font-size: 12px;
     }
 
     .invoice-qr img {
-        display: none;
-        /* Hide QR code image in print view */
+        width: 30px;
+        margin-top: -25px;
+        margin-left: -20px;
     }
-    header, footer {
-        display: none;
+
+    header,
+    footer,
+    .navbar,
+    .footer {
+        display: none !important;
     }
 }
 </style>

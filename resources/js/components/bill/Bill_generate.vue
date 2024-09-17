@@ -139,7 +139,7 @@
                     </div>
                 </div>
                 <div class="card-body">
-                    <div v-for="(data, index) in barcodeData" :key="data.barcode" class="row g-3 mb-3">
+                    <div v-for="(data,index) in barcodeData" :key="data.barcode" class="row g-3 mb-3">
                         <div class="col-md-4 mb-2">
                             <div class="form-floating">
                                 <input type="text" :value="data.stock.product.product_model" class="form-control"
@@ -188,7 +188,8 @@
                             </div>
                         </div> -->
                         <div class="col-1 mt-4 align-items-center">
-                            <button type="button" class="btn btn-danger btn-sm" @click="removeInputIndex(index)">
+                            <button type="button" class="btn btn-danger btn-sm"
+                                @click="removeInputIndex(data.stock.product.id,index)">
                                 <i class="fa-solid fa-xmark"></i>
                             </button>
                         </div>
@@ -371,8 +372,7 @@ export default {
                 item.totalPrice = item.quantity * item.stock.selling_price;
             });
         },
-        removeInputIndex(index) {
-            console.log(index)
+        async removeInputIndex(item_no,index) {
             Swal.fire({
                 title: "Are you sure?",
                 text: "You won't be able to revert this!",
@@ -383,12 +383,19 @@ export default {
                 confirmButtonText: "Yes, delete it!",
             }).then(async (result) => {
                 if (result.isConfirmed) {
-                   this.barcodeData.splice(index, 1);
-                    Swal.fire({
-                        title: "Deleted!",
-                        text: "Category has been deleted.",
-                        icon: "success",
-                    });
+                    await axios.delete("/api/delete-saledata/" + item_no)
+                        .then((res) => {
+                            console.log(res)
+                            this.barcodeData.splice(index, 1);
+                            Swal.fire({
+                                title: "Deleted!",
+                                text: "Category has been deleted.",
+                                icon: "success",
+                            });
+                        })
+                        .catch((error) => {
+                            console.log(error)
+                        })
                 }
             });
         },
