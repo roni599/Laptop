@@ -139,7 +139,7 @@
                     </div>
                 </div>
                 <div class="card-body">
-                    <div v-for="(data,index) in barcodeData" :key="data.barcode" class="row g-3 mb-3">
+                    <div v-for="(data, index) in barcodeData" :key="data.barcode" class="row g-3 mb-3">
                         <div class="col-md-4 mb-2">
                             <div class="form-floating">
                                 <input type="text" :value="data.stock.product.product_model" class="form-control"
@@ -189,7 +189,7 @@
                         </div> -->
                         <div class="col-1 mt-4 align-items-center">
                             <button type="button" class="btn btn-danger btn-sm"
-                                @click="removeInputIndex(data.stock.product.id,index)">
+                                @click="removeInputIndex(data.stock.product.id, index)">
                                 <i class="fa-solid fa-xmark"></i>
                             </button>
                         </div>
@@ -266,49 +266,26 @@ export default {
             if (this.isQuantityFocused) return;
 
             clearTimeout(this.timeout);
+
+            // Append character if it's a valid key
             if (/^[a-zA-Z0-9]$/.test(e.key)) {
                 this.barcode += e.key;
+            }
+
+            // Process barcode on Enter key press
+            if (e.key === "Enter") {
+                if (this.barcode) {
+                    this.fetchBarcodeData(this.barcode);
+                    this.barcode = "";
+                }
+            } else {
+                // Set timeout to clear the barcode if no input for a period
                 this.timeout = setTimeout(() => {
                     this.barcode = "";
-                }, 500);
+                }, 200); // Adjust timeout as needed
             }
-            if (e.key === "Enter" && this.barcode) {
-                this.fetchBarcodeData(this.barcode);
-                this.barcode = "";
-            }
-        },
-
-        // fetchBarcodeData(barcode) {
-        //     const card = AppStorage.getCartId();
-        //     console.log(card)
-        //     console.log('Fetching data for barcode:', barcode);
-        //     axios.post("/api/barcode-search", { barcode,card })
-        //         .then((response) => {
-        //             console.log(response)
-        //             const cart_id = response.data[0];
-        //             AppStorage.storeCartId(cart_id);
-        //             const serialData = response.data[1];
-        //             console.log(serialData.stock.selling_price)
-        //             // this.barcodeData.push({
-        //             //     ...response.data,
-        //             //     quantity: 1,
-        //             //     totalPrice: response.data.stock.selling_price
-        //             // });
-        //             this.barcodeData.push({
-        //                 ...serialData,
-        //                 quantity: 1,
-        //                 totalPrice: serialData.stock.selling_price // Assuming selling_price exists
-        //             });
-        //         })
-        //         .catch((error) => {
-        //             this.alert = {
-        //                 message: "Error fetching barcode data",
-        //                 type: "alert-danger",
-        //             };
-        //             console.error("Error fetching barcode data:", error);
-        //         });
-        // },
-
+        }
+        ,
         fetchBarcodeData(barcode) {
             // Retrieve the cart ID from local storage
             const cartId = AppStorage.getCartId();
@@ -353,12 +330,6 @@ export default {
                 });
         }
         ,
-
-        // updateTotalPrice() {
-        //     this.barcodeData.forEach(item => {
-        //         item.totalPrice = (item.quantity * item.stock.selling_price);
-        //     });
-        // },
         updateItemPrice(item) {
             // Find the corresponding item in barcodeData and update the price
             const foundItem = this.barcodeData.find(barcodeItem => barcodeItem === item);
@@ -372,7 +343,7 @@ export default {
                 item.totalPrice = item.quantity * item.stock.selling_price;
             });
         },
-        async removeInputIndex(item_no,index) {
+        async removeInputIndex(item_no, index) {
             Swal.fire({
                 title: "Are you sure?",
                 text: "You won't be able to revert this!",
@@ -505,12 +476,6 @@ export default {
         }
     },
 
-    // computed: {
-    //     totalPrice() {
-    //         return this.barcodeData.reduce((total, item) => total + (parseFloat(item.totalPrice) || 0), 0).toFixed(2);
-    //     }
-    // },
-
     computed: {
         // Compute the total price of all items
         totalPrice() {
@@ -541,211 +506,6 @@ export default {
     }
 };
 </script>
-
-<!-- <script>
-import axios from "axios";
-import { inject } from 'vue';
-export default {
-    data() {
-        const userName = inject('userName');
-        const profile_img = inject('profile_img');
-        return {
-            barcode: "",
-            barcodeData: [],
-            alert: { message: "", type: "" },
-            timeout: null,
-            isQuantityFocused: false, // Track if quantity input is focused
-            customerName: '',
-            customerPhone: '',
-            customerAddress: '',
-            customerEmail: '',
-            customerNid: '',
-            customerBirthday: '',
-            user_id: '',
-            paymenttype: '',
-            userName,
-            profile_img,
-            users: [],
-            paymenttypes: [],
-
-            input1: '',
-            input2: '',
-            input3: '',
-            showBankInputs: false,
-            showCashInputs: false,
-            showOthersInputs: false,
-            bankAmount: '',
-            cashAmount: '',
-            othersAmount: '',
-            validInputs: [],
-            validInputs2:[]
-        };
-    },
-    methods: {
-        showInput(inputType) {
-            this.currentInput = inputType;
-        },
-        handleBarcodeInput(e) {
-            // Check if any quantity input is focused
-            if (this.isQuantityFocused) return;
-
-            clearTimeout(this.timeout);
-
-            if (e.key === "Enter") {
-                if (this.barcode) {
-                    this.fetchBarcodeData(this.barcode);
-                    this.barcode = ""; // Reset barcode after processing
-                }
-            } else {
-                this.barcode += e.key; // Capture barcode characters
-                this.timeout = setTimeout(() => (this.barcode = ""), 500); // Reset barcode if no input in 500ms
-            }
-        },
-        fetchBarcodeData(barcode) {
-        console.log(barcode)
-            axios
-                .post("/api/barcode-search", { barcode })
-                .then((response) => {
-                    this.barcodeData.push({
-                        ...response.data,
-                        quantity: 1,
-                        totalPrice: response.data.stock.selling_price
-                    });
-                })
-                .catch((error) => {
-                    this.alert = {
-                        message: "Error fetching barcode data",
-                        type: "alert-danger",
-                    };
-                    console.error("Error fetching barcode data:", error);
-                });
-        },
-        updateTotalPrice() {
-            this.barcodeData.forEach(item => {
-                item.totalPrice = (item.quantity * item.stock.selling_price);
-            });
-        },
-        removeInput(index) {
-            this.barcodeData.splice(index, 1);
-        },
-        submitSale() {
-            const inputs = [this.input1, this.input2, this.input3];
-            const inputs2 = [this.bankAmount, this.cashAmount, this.othersAmount];
-            this.validInputs = inputs.filter(input => input !== '' && input !== null);
-            this.validInputs2 = inputs2.filter(input => input !== '' && input !== null);
-            const saleData = {
-                customerName: this.customerName,
-                customerPhone: this.customerPhone,
-                customerAddress: this.customerAddress,
-                customerEmail: this.customerEmail,
-                customerBirthday: this.customerBirthday,
-                customerNid: this.customerNid,
-                user_id: this.user_id,
-                // paymenttype: this.paymenttype,
-                items: this.barcodeData,
-                validInputs: this.validInputs,
-                validInputs2: this.validInputs2,
-            };
-
-            axios.post('/api/bills/store', saleData)
-                .then(response => {
-                    console.log(response)
-                    // this.alert = { message: 'Sale submitted successfully', type: 'alert-success' };
-                    this.barcodeData = [];
-                    this.customerName = '';
-                    this.customerPhone = '';
-                    this.customerAddress = '';
-                    this.customerEmail = '';
-                })
-                .catch(error => {
-                    this.alert = { message: 'Error submitting sale', type: 'alert-danger' };
-                    console.error('Error submitting sale:', error);
-                });
-        },
-        // async fetch_paymenttype() {
-        //     await axios.get('/api/payment-types')
-        //         .then((res) => {
-        //             this.paymenttypes = res.data;
-        //             this.paymenttype = res.data.id
-        //         })
-        //         .catch((res) => {
-        //             console.log(res)
-        //         })
-        // },
-        onQuantityFocus() {
-            this.isQuantityFocused = true; // Set focus flag
-        },
-        onQuantityBlur() {
-            this.isQuantityFocused = false; // Clear focus flag
-        },
-        async fetchUsers() {
-            const token = localStorage.getItem('token');
-            await axios.get("/api/auth/me", {
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
-            })
-                .then((res) => {
-                    this.users = res.data;
-                    this.user_id = res.data.id;
-                    this.userName = res.data.user_name;
-                    this.userName = res.data.user_name;
-                    this.profile_img = res.data.profile_img
-                })
-                .catch((error) => {
-                    console.log(error);
-                });
-        },
-        toggleInputs(inputType) {
-            if (inputType === 'bank') {
-                this.input1 = 2
-                this.showBankInputs = true;
-            } else if (inputType === 'cash') {
-                this.input2 = 3
-                this.showCashInputs = true;
-            } else if (inputType === 'others') {
-                this.input3 = 1
-                this.showOthersInputs = true;
-            }
-        },
-        removeInput(inputType) {
-            if (inputType === 'bank') {
-                this.showBankInputs = false;
-                this.bankInputs[0] = '';  // Clear the input field
-            } else if (inputType === 'cash') {
-                this.showCashInputs = false;
-                this.cashInputs[0] = '';  // Clear the input field
-            } else if (inputType === 'others') {
-                this.showOthersInputs = false;
-                this.othersInputs[0] = '';  // Clear the input field
-            }
-        }
-    },
-    computed: {
-        totalPrice() {
-            return this.barcodeData.reduce((total, item) => total + (parseFloat(item.totalPrice) || 0), 0).toFixed(2);
-        }
-    },
-    watch: {
-        barcodeData: {
-            handler() {
-                this.updateTotalPrice();
-            },
-            deep: true
-        }
-    },
-    mounted() {
-        document.addEventListener("keydown", this.handleBarcodeInput);
-    },
-    beforeDestroy() {
-        document.removeEventListener("keydown", this.handleBarcodeInput);
-    },
-    created() {
-        this.fetchUsers();
-        // this.fetch_paymenttype()
-    }
-};
-</script> -->
 
 <style scoped>
 h2 {

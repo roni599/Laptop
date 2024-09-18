@@ -118,6 +118,7 @@ export default {
                 this.bills = res.data.bill;
                 this.generateBarcode();
                 AppStorage.clearBillId();
+                AppStorage.clearCard();
             } catch (error) {
                 console.log(error);
             }
@@ -141,6 +142,9 @@ export default {
         },
         printInvoice() {
             window.print();
+            AppStorage.clearBillId();
+            AppStorage.clearCard();
+            this.$router.push({ name: "Home" })
         },
         generateBarcode() {
             const billId = this.bills.bill_id || 'No Bill ID';

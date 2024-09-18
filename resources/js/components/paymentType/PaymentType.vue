@@ -22,7 +22,7 @@
                         <tr>
                             <th scope="col">#</th>
                             <th scope="col">Payment Type</th>
-                            <th scope="col">Assign By</th>
+                            <th scope="col">Assign By / Modified By</th>
                             <th scope="col">Status</th>
                             <th scope="col">Actions</th>
                         </tr>
@@ -80,14 +80,14 @@
                                                             placeholder="Enter your name" v-model="form.payment_type" />
                                                         <small class="text-danger" v-if="errors.payment_type">{{
                                                             errors.payment_type[0]
-                                                        }}</small>
+                                                            }}</small>
                                                         <label for="inputName">Payment Name</label>
                                                     </div>
                                                 </div>
                                             </div>
                                             <div class="row mb-1">
                                                 <div class="col-md-12 mb-3">
-                                                    <div class="form-floating mb-3 mb-md-0">
+                                                    <div class="form-floating mb-3 mb-md-0" hidden>
                                                         <select class="form-select" readonly
                                                             aria-label="Default select example" v-model="form.user_id">
                                                             <option :value="users.id">
@@ -152,21 +152,17 @@
                                                             v-model="editForm.edit_payment_type" />
                                                         <small class="text-danger" v-if="errors.edit_payment_type">{{
                                                             errors.edit_payment_type[0]
-                                                        }}</small>
+                                                            }}</small>
                                                         <label for="inputName">Payment Name</label>
                                                     </div>
                                                 </div>
                                             </div>
                                             <div class="row mb-1">
-                                                <div class="col-md-12 mb-3">
+                                                <div class="col-md-12 mb-3" hidden>
                                                     <div class="form-floating mb-3 mb-md-0">
-                                                        <select class="form-select" readonly
-                                                            aria-label="Default select example"
-                                                            v-model="editForm.edit_user_id">
-                                                            <option :value="users.id">
-                                                                {{ users.user_name }}
-                                                            </option>
-                                                        </select>
+                                                        <input class="form-control" id="inputCategoryName" type="text"
+                                                            placeholder="Enter your name"
+                                                            v-model="editForm.edit_user_id" />
                                                         <small class="text-danger" v-if="errors.edit_user_id">{{
                                                             errors.edit_user_id[0] }}</small>
                                                         <label class="h6 text-black mb-0" for="inputSupplier">User
@@ -276,9 +272,11 @@ export default {
             myModal.show();
         },
         async paymenttype_update() {
+            console.log(this.editForm)
             this.updating = true;
             axios.put('/api/payment-types/upate', this.editForm)
                 .then((res) => {
+                    console.log(res)
                     this.editForm = {
                         id: null,
                         edit_payment_type: null,
@@ -331,7 +329,7 @@ export default {
         openEditModal(paymenttype) {
             this.editForm.id = paymenttype.id;
             this.editForm.edit_payment_type = paymenttype.pt_name;
-            this.editForm.edit_user_id = paymenttype.user_id;
+            this.editForm.edit_user_id = this.users.id;
             this.editForm.edit_status = paymenttype.status;
             let myModal = new bootstrap.Modal(
                 document.getElementById("editPaymentTypeModal"),
@@ -359,6 +357,7 @@ export default {
                     this.users = res.data;
                     this.userName = res.data.user_name;
                     this.profile_img = res.data.profile_img
+                    this.form.user_id = res.data.id
                 })
                 .catch((error) => {
                     console.log(error.response ? error.response.data : error.message);

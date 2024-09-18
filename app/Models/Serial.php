@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Serial extends Model
 {
     use HasFactory;
-    protected $fillable = ['serial_no', 'color', 'image', 'status', 'return_status', 'stock_id', 'barcode_image'];
+    protected $fillable = ['serial_no','user_id', 'color', 'image', 'status', 'return_status', 'stock_id', 'barcode_image'];
 
     public function stock()
     {

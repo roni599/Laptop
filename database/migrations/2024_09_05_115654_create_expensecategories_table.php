@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('expensecategories', function (Blueprint $table) {
             $table->id(); 
             $table->string('category_name');
+            $table->string('cost_type');
             $table->string('images')->nullable();
             $table->string('status')->default('0');
             $table->foreignId('user_id')->constrained()->onDelete('cascade');

@@ -37,7 +37,7 @@
                                 <span v-else>User not <br> provide image</span>
                             </td>
                             <td>
-                                <div class="buttonGroup py-2">
+                                <div class="buttonGroup py-2 d-flex justify-between">
                                     <button type="button" class="btn btn-sm btn-success"
                                         @click="openEditModal(category)">
                                         <i class="fa-solid fa-pen-to-square"></i>

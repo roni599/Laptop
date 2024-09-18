@@ -50,7 +50,7 @@ class StockController extends Controller
     }
     public function update(Request $request)
     {
-
+        
         $request->validate([
             'product_model' => 'required|string|max:255',
             'user_id' => 'required',
@@ -85,6 +85,7 @@ class StockController extends Controller
         $stock->buying_price = $request->buying_price;
         $stock->supplier_id = $request->supplier_id;
         $stock->selling_price = $request->selling_price;
+        $stock->user_id = $request->user_id;
         $stock->status = $request->status;
         $stock->stock_date = $request->stock_date;
         $product->save();

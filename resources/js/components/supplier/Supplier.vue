@@ -26,7 +26,7 @@
                             <th scope="col">Address</th>
                             <th scope="col">Shop Name</th>
                             <!-- <th scope="col">Product Name</th> -->
-                            <th scope="col">Assign By</th>
+                            <th scope="col">Assign By / Modified By</th>
                             <th scope="col">Image</th>
                             <th scope="col">Actions</th>
                         </tr>
@@ -92,7 +92,7 @@
                                                             placeholder="Enter your name" v-model="form.name" />
                                                         <small class="text-danger" v-if="errors.name">{{
                                                             errors.name[0]
-                                                        }}</small>
+                                                            }}</small>
                                                         <label for="inputName">Full Name</label>
                                                     </div>
                                                 </div>
@@ -102,7 +102,7 @@
                                                             placeholder="name@example.com" v-model="form.email" />
                                                         <small class="text-danger" v-if="errors.email">{{
                                                             errors.email[0]
-                                                        }}</small>
+                                                            }}</small>
                                                         <label for="inputEmail">Email address</label>
                                                     </div>
                                                 </div>
@@ -114,7 +114,7 @@
                                                             placeholder="Address" v-model="form.address" />
                                                         <small class="text-danger" v-if="errors.address">{{
                                                             errors.address[0]
-                                                        }}</small>
+                                                            }}</small>
                                                         <label for="inputAddress">Address</label>
                                                     </div>
                                                 </div>
@@ -124,68 +124,43 @@
                                                             placeholder="Phone" v-model="form.phone" />
                                                         <small class="text-danger" v-if="errors.phone">{{
                                                             errors.phone[0]
-                                                        }}</small>
+                                                            }}</small>
                                                         <label for="inputPhone">Phone</label>
                                                     </div>
                                                 </div>
                                             </div>
                                             <div class="row mb-3">
-                                                <div class="col-md-6">
+                                                <div class="col-md-6" hidden>
                                                     <div class="form-floating mb-3 mb-md-0">
-                                                        <select class="form-select" readonly
-                                                            aria-label="Default select example" v-model="form.user_id">
-                                                            <option :value="users.id">
+                                                        <select class="form-select" aria-label="Default select example"
+                                                            v-model="form.user_id">
+                                                            <option :value="users.id" selected>
                                                                 {{ users.user_name }}
                                                             </option>
                                                         </select>
                                                         <small class="text-danger" v-if="errors.user_id">{{
-                                                            errors.user_id[0]
-                                                        }}</small>
-                                                        <label for="inputAddress">Users Name</label>
+                                                            errors.user_id[0] }}</small>
+                                                        <label for="inputAddress">User's Name</label>
                                                     </div>
+
                                                 </div>
-                                                <!-- <div class="col-md-6">
-                                                    <div class="form-floating mb-3 mb-md-0">
-                                                        <select class="form-select" aria-label="Default select example"
-                                                            v-model="form.product_id">
-                                                            <option v-for="product in products" :key="product.id"
-                                                                :value="product.id">{{ product.product_model }}</option>
-                                                        </select>
-                                                        <small class="text-danger" v-if="errors.product_id">{{
-                                                            errors.product_id[0]
-                                                            }}</small>
-                                                        <label for="inputPhone">Product Model</label>
-                                                    </div>
-                                                </div> -->
                                                 <div class="col-md-6">
                                                     <div class="form-floating mb-3 mb-md-0">
                                                         <input class="form-control" id="inputShopName" type="text"
                                                             placeholder="Shop Name" v-model="form.shopname" />
                                                         <small class="text-danger" v-if="errors.shopname">{{
                                                             errors.shopname[0]
-                                                        }}</small>
-                                                        <label for="inputNid">Shop Name</label>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="row mb-3">
-                                                <!-- <div class="col-md-6">
-                                                    <div class="form-floating mb-3 mb-md-0">
-                                                        <input class="form-control" id="inputShopName" type="text"
-                                                            placeholder="Shop Name" v-model="form.shopname" />
-                                                        <small class="text-danger" v-if="errors.shopname">{{
-                                                            errors.shopname[0]
                                                             }}</small>
                                                         <label for="inputNid">Shop Name</label>
                                                     </div>
-                                                </div> -->
-                                                <div class="col-md-11">
+                                                </div>
+                                                <div class="col-md-5">
                                                     <div class="form-floating mb-3 mb-md-0">
                                                         <input class="form-control p-3 px-4" id="inputFile" type="file"
                                                             @change="onFileSelect" />
                                                         <small class="text-danger" v-if="errors.image">{{
                                                             errors.image[0]
-                                                        }}</small>
+                                                            }}</small>
                                                     </div>
                                                 </div>
                                                 <div class="col-md-1">
@@ -194,6 +169,9 @@
                                                     </div>
                                                 </div>
                                             </div>
+                                            <!-- <div class="row mb-3">
+
+                                            </div> -->
                                             <div class="mt-4 mb-0">
                                                 <div class="d-grid">
                                                     <button class="btn btn-primary btn-block">Submit</button>
@@ -240,7 +218,7 @@
                                                             v-model="editForm.edit_name" />
                                                         <small class="text-danger" v-if="errors.edit_name">{{
                                                             errors.edit_name[0]
-                                                        }}</small>
+                                                            }}</small>
                                                         <label for="inputName">Full Name</label>
                                                     </div>
                                                 </div>
@@ -251,7 +229,7 @@
                                                             v-model="editForm.edit_email" />
                                                         <small class="text-danger" v-if="errors.edit_email">{{
                                                             errors.edit_email[0]
-                                                        }}</small>
+                                                            }}</small>
                                                         <label for="inputEmail">Email address</label>
                                                     </div>
                                                 </div>
@@ -263,7 +241,7 @@
                                                             placeholder="Address" v-model="editForm.edit_address" />
                                                         <small class="text-danger" v-if="errors.edit_address">{{
                                                             errors.edit_address[0]
-                                                        }}</small>
+                                                            }}</small>
                                                         <label for="inputAddress">Address</label>
                                                     </div>
                                                 </div>
@@ -273,40 +251,22 @@
                                                             placeholder="Phone" v-model="editForm.edit_phone" />
                                                         <small class="text-danger" v-if="errors.edit_phone">{{
                                                             errors.edit_phone[0]
-                                                        }}</small>
+                                                            }}</small>
                                                         <label for="inputPhone">Phone</label>
                                                     </div>
                                                 </div>
                                             </div>
                                             <div class="row mb-3">
-                                                <div class="col-md-6">
+                                                <div class="col-md-12" hidden>
                                                     <div class="form-floating mb-3 mb-md-0">
-                                                        <select class="form-select" readonly
-                                                            aria-label="Default select example"
-                                                            v-model="editForm.edit_user_id">
-                                                            <option :value="users.id">
-                                                                {{ users.user_name }}
-                                                            </option>
-                                                        </select>
+                                                        <input class="form-control" id="inputPhone" type="text"
+                                                            placeholder="Phone" v-model="editForm.edit_user_id" />
                                                         <small class="text-danger" v-if="errors.edit_user_id">{{
                                                             errors.edit_user_id[0]
-                                                        }}</small>
+                                                            }}</small>
                                                         <label for="inputAddress">Users Name</label>
                                                     </div>
                                                 </div>
-                                                <!-- <div class="col-md-6">
-                                                    <div class="form-floating mb-3 mb-md-0">
-                                                        <select class="form-select" aria-label="Default select example"
-                                                            v-model="editForm.edit_product_id">
-                                                            <option v-for="product in products" :key="product.id"
-                                                                :value="product.id">{{ product.product_model }}</option>
-                                                        </select>
-                                                        <small class="text-danger" v-if="errors.product_id">{{
-                                                            errors.product_id[0]
-                                                            }}</small>
-                                                        <label for="inputPhone">Product Model</label>
-                                                    </div>
-                                                </div> -->
                                             </div>
                                             <div class="row mb-3">
                                                 <div class="col-md-6">
@@ -315,7 +275,7 @@
                                                             placeholder="Shop Name" v-model="editForm.edit_shopname" />
                                                         <small class="text-danger" v-if="errors.edit_shopname">{{
                                                             errors.edit_shopname[0]
-                                                        }}</small>
+                                                            }}</small>
                                                         <label for="inputNid">Shop Name</label>
                                                     </div>
                                                 </div>
@@ -325,7 +285,7 @@
                                                             @change="onUpdateFileSelect" />
                                                         <small class="text-danger" v-if="errors.edit_image">{{
                                                             errors.edit_image[0]
-                                                        }}</small>
+                                                            }}</small>
                                                     </div>
                                                 </div>
                                                 <div class="col-md-1">
@@ -476,9 +436,11 @@ export default {
                 }
             })
                 .then((res) => {
+                    console.log(res)
                     this.userName = res.data.user_name;
                     this.profile_img = res.data.profile_img
                     this.users = res.data;
+                    this.form.user_id = res.data.id
                 })
                 .catch((error) => {
                     console.log(error);
@@ -494,6 +456,7 @@ export default {
                 })
         },
         async supplier_edit() {
+            console.log(this.editForm)
             axios.put('/api/suppliers/update', this.editForm)
                 .then((res) => {
                     this.editForm = {
@@ -528,7 +491,7 @@ export default {
             this.editForm.edit_address = supplier.address;
             this.editForm.edit_phone = supplier.phone;
             this.editForm.edit_product_id = supplier.product_id;
-            this.editForm.edit_user_id = supplier.user_id;
+            this.editForm.edit_user_id = this.users.id;
             this.editForm.edit_shopname = supplier.shopname;
             this.editForm.edit_image = supplier.image;
             let myModal = new bootstrap.Modal(

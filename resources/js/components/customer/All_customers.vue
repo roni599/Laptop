@@ -41,11 +41,12 @@
                             <td>{{ customer.address }}</td>
                             <td>{{ customer.nid }}</td>
                             <td>
-                                <img :src="`/backend/images/customer/${customer.image}`" alt="Employee Image" width="50"
+                                <img v-if="customer.image" :src="`/backend/images/customer/${customer.image}`" alt="Employee Image" width="50"
                                     height="50" />
+                                    <span v-else>User not <br> provide image</span>
                             </td>
                             <td>
-                                <div class="buttonGroup py-2">
+                                <div class="buttonGroup py-2 d-flex justify-between">
                                     <button type="button" class="btn btn-sm btn-success"
                                         @click="openEditModal(customer)">
                                         <i class="fa-solid fa-pen-to-square"></i>

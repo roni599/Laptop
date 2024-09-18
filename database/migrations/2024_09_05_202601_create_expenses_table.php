@@ -16,7 +16,6 @@ return new class extends Migration
             $table->foreignId('expenser_id')->constrained('users')->onDelete('cascade');
             $table->text('expense_desc')->nullable();
             $table->integer('amount');
-            $table->string('cost_type');
             $table->string('date');
             $table->string('status')->nullable()->default(0);
             $table->string('receipt_img')->nullable()->default(null);

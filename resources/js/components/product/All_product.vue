@@ -48,7 +48,7 @@
                             <td>{{ product.category.cat_name }}</td>
                             <td>{{ product.brand.brand_name }}</td>
                             <td>
-                                <div class="buttonGroup py-2">
+                                <div class="buttonGroup py-2 d-flex justify-between">
                                     <button type="button" class="btn btn-sm btn-success"
                                         @click="openEditModal(product)">
                                         <i class="fa-solid fa-pen-to-square"></i>
@@ -166,7 +166,7 @@
                                                 </div>
                                             </div>
                                             <div class="row mb-2">
-                                                <div class="col-md-6 mb-3">
+                                                <div class="col-md-12 mb-3">
                                                     <div class="form-floating mb-3 mb-md-0">
                                                         <input class="form-control" id="inputBuyingDate" type="text"
                                                             placeholder="Buying Date" v-model="form.discount" />
@@ -176,7 +176,7 @@
                                                         <label class="h6 mb-0" for="inputCategory">Discount</label>
                                                     </div>
                                                 </div>
-                                                <div class="col-md-6 mb-3">
+                                                <div class="col-md-6 mb-3" hidden>
                                                     <div class="form-floating mb-3 mb-md-0">
                                                         <select class="form-select" readonly
                                                             aria-label="Default select example" v-model="form.user_id">
@@ -288,6 +288,7 @@ export default {
         },
         openEditModal(product) {
             this.form = { ...product };
+            this.form.user_id=this.users.id
             let myModal = new bootstrap.Modal(
                 document.getElementById("editProductModal"),
                 {}

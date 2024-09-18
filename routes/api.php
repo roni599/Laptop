@@ -126,6 +126,7 @@ Route::get('/expense', [ExpenseController::class, 'index']);
 Route::post('/expense/store', [ExpenseController::class, 'store']);
 Route::put('/expense/upate', [ExpenseController::class, 'update']);
 Route::delete('/expense/delete/{id}', [ExpenseController::class, 'delete']);
+Route::get('/expense/find/{id}', [ExpenseController::class, 'expensefind']);
 
 
 Route::get('/customers', [CustomerController::class, 'index']);

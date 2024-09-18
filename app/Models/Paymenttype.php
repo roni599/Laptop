@@ -9,8 +9,7 @@ class Paymenttype extends Model
 {
     use HasFactory;
     protected $fillable = [
-        'pt_name',
-        'status',
+       'pt_name', 'user_id', 'status'
     ];
     public function user()
     {

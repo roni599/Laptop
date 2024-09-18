@@ -41,19 +41,22 @@
               <td>{{ expense.expenser.user_name }}</td>
               <td>{{ expense.expense_desc }}</td>
               <td>{{ expense.amount }}</td>
-              <td v-if="expense.cost_type == 1">Fixed</td>
-              <td v-else>Running</td>
+              <td v-if="expense.expensecategory.cost_type == 1">Running</td>
+              <td v-else>Fixed</td>
               <td>{{ expense.expensecategory.category_name }}</td>
-              <td>{{ expense.paymenttype.pt_name }}</td>
+
+              <!-- <td>{{ expense.paymenttype.pt_name }}</td> -->
+              <td>{{ getPaymentTypeNames(expense.reserves) }}</td>
               <td>{{ expense.user.user_name }}</td>
               <td>{{ expense.date }}</td>
               <td>{{ expense.status }}</td>
               <td>
-                <img v-if="expense.receipt_img" :src="`/backend/images/expense/${expense.receipt_img}`" alt="User Image" width="50" height="50" />
+                <img v-if="expense.receipt_img" :src="`/backend/images/expense/${expense.receipt_img}`" alt="User Image"
+                  width="50" height="50" />
                 <span v-else>User not <br> provied image</span>
               </td>
               <td>
-                <div class="buttonGroup py-2">
+                <div class="buttonGroup py-2 d-flex justify-between">
                   <button type="button" class="btn btn-sm btn-success ms-2 mb-1" @click="openEditModal(expense)">
                     <i class="fa-solid fa-pen-to-square"></i>
                   </button>
@@ -118,15 +121,15 @@
                       <div class="row mb-3">
                         <div class="col-md-6">
                           <div class="form-floating mb-3 mb-md-0">
-                            <select class="form-select" aria-label="Default select example" v-model="form.paymenttype">
-                              <option v-for="paymenttype in paymenttypes" :key="paymenttype.id" :value="paymenttype.id">
-                                {{ paymenttype.pt_name }}
-                              </option>
-                            </select>
-                            <small class="text-danger" v-if="errors.paymenttype">{{
-                              errors.paymenttype[0]
-                            }}</small>
-                            <label for="inputSellingPrice">Payment Type</label>
+                            <div v-if="showInputs">
+                              <div class="d-flex justify-between gap-2">
+                                <div v-for="(reserve, index) in reserves" :key="reserve.id">
+                                  <label :for="'inputReserve' + index">{{ reserve.paymenttype.pt_name }}</label>
+                                  <input class="form-control" :id="'inputReserve' + index" type="text"
+                                    :placeholder="'Reserve ' + (index + 1)" v-model="reserve.amount" />
+                                </div>
+                              </div>
+                            </div>
                           </div>
                         </div>
                         <div class="col-md-6">
@@ -141,39 +144,13 @@
                         </div>
                       </div>
 
-                      <div class="row mb-1">
+                      <div class="row mb-3">
                         <div class="col-md-6">
                           <div class="form-floating mb-3 mb-md-0">
                             <input class="form-control" id="inputDate" type="date" v-model="form.date" />
                             <small class="text-danger" v-if="errors.date">{{ errors.date[0]
                               }}</small>
                             <label for="inputDate">Expense Date</label>
-                          </div>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                          <div class="form-floating mb-3 mb-md-0">
-                            <select class="form-select" readonly aria-label="Default select example"
-                              v-model="form.cost_type">
-                              <option value="1">Fixed Cost</option>
-                              <option value="2">Running Cost</option>
-                            </select>
-                            <small class="text-danger" v-if="errors.cost_type">{{ errors.cost_type[0]
-                              }}</small>
-                            <label class="h6 text-black mb-0" for="inputSupplier">Cost Type</label>
-                          </div>
-                        </div>
-                      </div>
-                      <div class="row">
-                        <div class="col-md-6 mb-3">
-                          <div class="form-floating mb-3 mb-md-0">
-                            <select class="form-select" readonly aria-label="Default select example"
-                              v-model="form.user_id">
-                              <option :value="users.id">
-                                {{ users.user_name }}
-                              </option>
-                            </select>
-                            <small class="text-danger" v-if="errors.user_id">{{ errors.user_id[0] }}</small>
-                            <label class="h6 text-black mb-0" for="inputSupplier">Login User</label>
                           </div>
                         </div>
                         <div class="col-md-6">
@@ -191,6 +168,47 @@
                             <label for="inputSellingPrice">Expense Category Name</label>
                           </div>
                         </div>
+                        <!-- <div class="col-md-6 mb-3">
+                          <div class="form-floating mb-3 mb-md-0">
+                            <select class="form-select" readonly aria-label="Default select example"
+                              v-model="form.cost_type">
+                              <option value="1">Fixed Cost</option>
+                              <option value="2">Running Cost</option>
+                            </select>
+                            <small class="text-danger" v-if="errors.cost_type">{{ errors.cost_type[0]
+                              }}</small>
+                            <label class="h6 text-black mb-0" for="inputSupplier">Cost Type</label>
+                          </div>
+                        </div> -->
+                      </div>
+                      <div class="row">
+                        <div class="col-md-6 mb-3" hidden>
+                          <div class="form-floating mb-3 mb-md-0">
+                            <select class="form-select" readonly aria-label="Default select example"
+                              v-model="form.user_id">
+                              <option :value="users.id">
+                                {{ users.user_name }}
+                              </option>
+                            </select>
+                            <small class="text-danger" v-if="errors.user_id">{{ errors.user_id[0] }}</small>
+                            <label class="h6 text-black mb-0" for="inputSupplier">Login User</label>
+                          </div>
+                        </div>
+                        <!-- <div class="col-md-6">
+                          <div class="form-floating mb-3 mb-md-0">
+                            <select class="form-select" aria-label="Default select example"
+                              v-model="form.expensecategory">
+                              <option v-for="expensecategory in expensecategories" :key="expensecategory.id"
+                                :value="expensecategory.id">
+                                {{ expensecategory.category_name }}
+                              </option>
+                            </select>
+                            <small class="text-danger" v-if="errors.expensecategory">{{
+                              errors.expensecategory[0]
+                            }}</small>
+                            <label for="inputSellingPrice">Expense Category Name</label>
+                          </div>
+                        </div> -->
                       </div>
                       <div class="row mb-2">
                         <div class="col-md-6 mb-2">
@@ -219,6 +237,17 @@
                           </div>
                         </div>
                       </div>
+
+                      <!-- <div v-if="showInputs" class="row mt-3">
+                        <div v-for="(reserve, index) in reserves" :key="index" class="col-md-4">
+                          <div class="form-floating mb-3 mb-md-0">
+                            <input class="form-control" :id="'inputReserve' + index" type="text"
+                              :placeholder="'Reserve ' + (index + 1)" v-model="reserves[index]" />
+                            <label :for="'inputReserve' + index">Reserve {{ index + 1 }}</label>
+                          </div>
+                        </div>
+                      </div> -->
+
                       <div class="mt-3 mb-0">
                         <div class="d-grid">
                           <button class="btn btn-primary w-100 mb-2" :disabled="loading">
@@ -260,7 +289,7 @@ export default {
         user_id: null,
         expensecategory: null,
         paymenttype: null,
-        cost_type: null,
+        // cost_type: null,
         status: null,
         image: '/backend/assets/img/pic.jpeg',
       },
@@ -271,13 +300,19 @@ export default {
       expensecategories: [],
       users: [],
       errors: {},
-      loading: false
+      loading: false,
+      showInputs: false,
+      reserves: []
     }
   },
   methods: {
+    getPaymentTypeNames(reserves) {
+      return reserves.map(reserve => reserve.paymenttype.pt_name).join(', ');
+    },
     async fetch_expense() {
       await axios.get("/api/expense")
         .then((res) => {
+          // console.log(res)
           this.expenses = res.data;
         })
         .catch((error) => {
@@ -285,13 +320,18 @@ export default {
         })
     },
     openEditModal(expense) {
-      console.log(expense)
+      console.log(expense.reserves)
+      this.reserves = []; // Reset reserves
+      this.reserves = [...expense.reserves]; // Set new reserves
+      console.log("Updated reserves:", this.reserves);
+      this.showInputs = true;
       this.form = { ...expense }
       this.form.expenserName = expense.expenser.id;
       this.form.paymenttype = expense.paymenttype.id
       this.form.expensecategory = expense.expensecategory.id
       this.form.expense_description = expense.expense_desc
       this.form.image = expense.receipt_img
+      this.form.user_id = this.users.id
       let myModal = new bootstrap.Modal(
         document.getElementById("editExpenseModal"),
         {}
@@ -325,9 +365,10 @@ export default {
       return "";
     },
     async Expense_update() {
-      this.loading=true
+      this.loading = true
       await axios.put("/api/expense/upate", this.form)
         .then((res) => {
+          console.log(res)
           this.form = {
             id: null,
             expenserName: null,
@@ -355,8 +396,8 @@ export default {
         .catch((error) => {
           console.log(error)
         })
-        .finally(()=>{
-          this.loading=false;
+        .finally(() => {
+          this.loading = false;
         })
     },
     async deleteExpense(id) {
@@ -441,6 +482,16 @@ export default {
     this.fetch_paymenttype();
     this.fetch_user();
     this.fetch_expensecategories();
+  },
+  computed: {
+    totalAmount() {
+      return this.reserves.reduce((total, reserve) => total + parseFloat(reserve.amount || 0), 0);
+    }
+  },
+  watch: {
+    totalAmount(newAmount) {
+      this.form.amount = newAmount; // Update form amount when totalAmount changes
+    }
   }
 }
 </script>

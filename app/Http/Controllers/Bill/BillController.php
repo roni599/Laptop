@@ -23,7 +23,7 @@ class BillController extends Controller
     public function store(Request $request)
     {
 
-        // return response()->json($request->all());
+    //   return response()->json($request->all());
         $validatedData = $request->validate([
             'customerName' => 'required',
             'customerPhone' => 'required',
@@ -39,7 +39,6 @@ class BillController extends Controller
             'validInputs2' => 'required',
         ]);
 
-        // return response()->json($cartItem);
         $customer = Customer::create([
             'customer_name' => $validatedData['customerName'],
             'phone' => $validatedData['customerPhone'],
@@ -94,27 +93,25 @@ class BillController extends Controller
         //         ]);
         //     }
         // }
+        //$cartItem = CartItem::where('cart_id', $validatedData['cartId'])->get();
         foreach ($validatedData['items'] as $item) {
-            // Find the product
+            // Find the product using the product_id in the stock field
             $product = Product::find($item['stock']['product_id']);
+            
             if ($product) {
-                // Decrement product quantity
+                // Decrement the product quantity
                 $product->decrement('quantity', $item['quantity']);
             }
-
-            // Find cart items by cart_id
-            $cartItems = CartItem::where('cart_id', $validatedData['cartId'])->get();
-
-            foreach ($cartItems as $cartItem) {
-                // Assuming you want to update the cart item that matches item_no
-                if ($cartItem->item_no == $item['stock']['product_id']) {
-                    $cartItem->update([
-                        'quantity' => $item['quantity'],
-                        'price' =>$item['stock']['selling_price'],
-                    ]);
-                }
-            }
+        
+            // Find the CartItem using serial_id
+            CartItem::where('serial_id', $item['id'])
+            ->where('cart_id', $validatedData['cartId'])
+            ->update([
+                'quantity' => $item['quantity'],
+                'price' => $item['stock']['selling_price'],
+            ]);
         }
+        
 
 
         foreach ($validatedData['validInputs'] as $key => $paymentTypeId) {
@@ -127,6 +124,7 @@ class BillController extends Controller
                     'amount' => $validatedData['validInputs2'][$key], // Value from validInputs2 (amount as a string)
                     'transaction_type' => 'in', // Default value for transaction type
                     'status' => '0', // Default value for status
+                    'user_id' => $request->user_id
                 ]);
             }
         }

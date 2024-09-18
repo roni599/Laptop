@@ -64,6 +64,7 @@ class SerialController extends Controller
         }
         return response()->json($request->rows);
     }
+    
     public function update(Request $request)
     {
         $request->validate([
@@ -73,6 +74,7 @@ class SerialController extends Controller
             'status' => 'required',
             'return_status' => 'required',
             'image' => 'nullable|string',
+            'user_id'=>'required'
         ]);
 
         $serial = Serial::findOrFail($request->id);
@@ -105,6 +107,7 @@ class SerialController extends Controller
         $serial->serial_no = $request->serial_no;
         $serial->barcode_no = $request->barcode_no;
         $serial->color = $request->color;
+        $serial->user_id = $request->user_id;
         $serial->status = $request->status;
         $serial->return_status = $request->return_status;
 
@@ -141,48 +144,24 @@ class SerialController extends Controller
     {
         $barcode = $request->input('barcode');
         $cartId = $request->input('cart_id');
-
-        // Retrieve serial data based on barcode
         $serial = Serial::with(['stock.product', 'user'])
             ->where('barcode_no', $barcode)
             ->first();
 
         // Check if cart_id is provided
-        if ($cartId) {
-            // Check if the cart_id exists in the Cart table
-            $cart = Cart::find($cartId);
-
-            if ($cart) {
-                // Cart ID exists, return the existing ID
-                $cartItem = new CartItem();
-                $cartItem->cart_id = $cart->id;
-                $cartItem->serial_id = $serial->id;
-                $cartItem->quantity = 1;
-                $cartItem->item_no = $serial->stock->product->id;
-                $cartItem->price = $serial->stock->product->selling_price;
-                $cartItem->save();
-                return response()->json([
-                    $cart->id,
-                    $serial
-                ]);
-            } else {
-                // Cart ID does not exist, create a new cart
-                $cart = new Cart();
-                $cart->cart_id = $cart; // Optionally set cart_id if needed
-                $cart->save();
-
-                $cartItem = new CartItem();
-                $cartItem->cart_id = $cart->id;
-                $cartItem->serial_id = $serial->id;
-                $cartItem->quantity = 1;
-                $cartItem->item_no = $serial->stock->product->id;
-                $cartItem->price = $serial->stock->product->selling_price;
-                $cartItem->save();
-                return response()->json([
-                    $cart->id,
-                    $serial
-                ]);
-            }
+        if ($request->input('cart_id')) {
+            $cart = $request->input('cart_id');
+            $cartItem = new CartItem();
+            $cartItem->cart_id = $request->input('cart_id');
+            $cartItem->serial_id = $serial->id;
+            $cartItem->quantity = 1;
+            $cartItem->item_no = $serial->stock->product->id;
+            $cartItem->price = $serial->stock->selling_price;
+            $cartItem->save();
+            return response()->json([
+                $cart->id,
+                $serial
+            ]);
         } else {
             // No cart_id provided, create a new cart
             $cart = new Cart();

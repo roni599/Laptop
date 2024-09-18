@@ -57,6 +57,7 @@
 
 <script>
 import { inject } from 'vue';
+import AppStorage from '../Helpers/AppStorage';
 export default {
   name: "Home-vue",
   data() {
@@ -85,8 +86,14 @@ export default {
         });
     },
   },
+  mounted(){
+    AppStorage.clearBillId();
+    AppStorage.clearCard();
+  },
   created(){
     this.fetchData()
+    AppStorage.clearBillId();
+    AppStorage.clearCard();
   }
 };
 </script>

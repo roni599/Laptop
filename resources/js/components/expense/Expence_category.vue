@@ -21,6 +21,7 @@
             <tr>
               <th scope="col">#</th>
               <th scope="col">Expense Category Name</th>
+              <th scope="col">Cost Type</th>
               <th scope="col">Assign By</th>
               <th scope="col">Status</th>
               <th scope="col">Image</th>
@@ -31,18 +32,20 @@
             <tr v-for="expensecategory in expensecategories" :key="expensecategory.id">
               <th scope="row">{{ expensecategory.id }}</th>
               <td>{{ expensecategory.category_name }}</td>
+              <td v-if="expensecategory.cost_type == 1">Running Cost</td>
+              <td v-else>Fixed Cost</td>
               <td>{{ expensecategory.user.user_name }}</td>
               <td>
                 <span v-if="expensecategory.status == 0">Active</span>
                 <span v-else>Inactive</span>
               </td>
               <td>
-                <img v-if="expensecategory.images" :src="`/backend/images/expensecategory/${expensecategory.images}`" alt="User Image" width="50"
-                  height="50" />
-                  <span v-else>User not <br> provide image</span>
+                <img v-if="expensecategory.images" :src="`/backend/images/expensecategory/${expensecategory.images}`"
+                  alt="User Image" width="50" height="50" />
+                <span v-else>User not <br> provide image</span>
               </td>
               <td>
-                <div class="buttonGroup py-2">
+                <div class="buttonGroup py-2 d-flex justify-between">
                   <button type="button" class="btn btn-sm btn-success" @click="openEditModal(expensecategory)">
                     <i class="fa-solid fa-pen-to-square"></i>
                   </button>
@@ -91,7 +94,19 @@
                         </div>
                       </div>
                       <div class="row mb-1">
-                        <div class="col-md-12">
+                        <div class="col-md-12 mb-2">
+                          <div class="form-floating mb-3 mb-md-0">
+                            <select class="form-select" readonly aria-label="Default select example"
+                              v-model="form.cost_type">
+                              <option value="1">Running Cost</option>
+                              <option value="2">Fixed Cost</option>
+                            </select>
+                            <label for="inputCostType">Cost Type</label>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="row mb-1">
+                        <div class="col-md-12" hidden>
                           <div class="form-floating mb-2">
                             <select class="form-select" readonly aria-label="Default select example"
                               v-model="form.user_id">
@@ -125,7 +140,7 @@
                           <button class="btn btn-primary w-100 mb-2" :disabled="loading">
                             <span v-if="loading" class="spinner-border spinner-border-sm me-2" role="status"
                               aria-hidden="true"></span>
-                            <span v-if="!loading">Submiy</span>
+                            <span v-if="!loading">Submit</span>
                             <span v-if="loading">Submitting...</span>
                           </button>
                         </div>
@@ -174,7 +189,19 @@
                         </div>
                       </div>
                       <div class="row mb-1">
-                        <div class="col-md-12">
+                        <div class="col-md-12 mb-2">
+                          <div class="form-floating mb-3 mb-md-0">
+                            <select class="form-select" readonly aria-label="Default select example"
+                              v-model="editForm.cost_type">
+                              <option value="1">Running Cost</option>
+                              <option value="2">Fixed Cost</option>
+                            </select>
+                            <label for="inputCostType">Cost Type</label>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="row mb-1">
+                        <div class="col-md-12" hidden>
                           <div class="form-floating mb-2">
                             <select class="form-select" readonly aria-label="Default select example"
                               v-model="editForm.user_id">
@@ -224,8 +251,8 @@
                           <button class="btn btn-primary w-100 mb-2" :disabled="loading">
                             <span v-if="updating" class="spinner-border spinner-border-sm me-2" role="status"
                               aria-hidden="true"></span>
-                            <span v-if="!updating">Login</span>
-                            <span v-if="updating">Logging in...</span>
+                            <span v-if="!updating">Update</span>
+                            <span v-if="updating">Updating...</span>
                           </button>
                         </div>
                       </div>
@@ -253,12 +280,14 @@ export default {
       form: {
         ecname: null,
         user_id: null,
+        cost_type: null,
         image: '/backend/assets/img/pic.jpeg',
       },
       editForm: {
         id: null,
         user_id: null,
         ecname: null,
+        cost_type:null,
         image: null,
         status: null
       },
@@ -276,6 +305,7 @@ export default {
       this.loading = true
       const formData = new FormData();
       formData.append('ecname', this.form.ecname);
+      formData.append('cost_type', this.form.cost_type)
       formData.append('user_id', this.form.user_id);
 
       if (this.form.image && this.form.image !== '/backend/assets/img/pic.jpeg') {
@@ -284,9 +314,11 @@ export default {
       }
       await axios.post("/api/expensecategory/store", formData)
         .then((res) => {
+          console.log(res)
           this.form = {
             ecname: null,
             user_id: null,
+            cost_type: null,
             image: '/backend/assets/img/pic.jpeg',
           };
           let myModal = bootstrap.Modal.getInstance(
@@ -317,6 +349,7 @@ export default {
       this.editForm = { ...expensecategory }
       this.editForm.image = expensecategory.images
       this.editForm.ecname = expensecategory.category_name
+      this.editForm.user_id=this.users.id
       let myModal = new bootstrap.Modal(
         document.getElementById("editExpenseCategoryModal"),
         {}
@@ -358,6 +391,7 @@ export default {
             user_id: null,
             ecname: null,
             image: null,
+            cost_type:null,
             status: null
           }
           this.fetch_expensecategories();
@@ -430,6 +464,7 @@ export default {
           this.userName = res.data.user_name;
           this.profile_img = res.data.profile_img
           this.users = res.data;
+          this.form.user_id = res.data.id
         })
         .catch((error) => {
           console.log(error);
@@ -471,7 +506,7 @@ export default {
 
 .full-width-modal .modal-content {
   width: 60%;
-  height: 74vh;
+  height: 85vh;
   margin: auto;
 }
 </style>

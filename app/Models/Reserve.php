@@ -51,13 +51,17 @@ class Reserve extends Model
         return $this->belongsTo(Investment::class, 'investment_id');
     }
 
-    public function expense()
-    {
-        return $this->belongsTo(Expense::class, 'expense_id');
-    }
+    // public function expense()
+    // {
+    //     return $this->belongsTo(Expense::class, 'expense_id');
+    // }
 
     public function expenser()
     {
         return $this->hasOneThrough(User::class, Expense::class, 'id', 'id', 'expense_id', 'expenser_id');
+    }
+    public function expense()
+    {
+        return $this->belongsTo(Expense::class, 'expense_id');
     }
 }

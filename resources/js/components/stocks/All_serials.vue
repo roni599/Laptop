@@ -52,7 +52,9 @@
                 <span v-else>Return</span>
               </td>
               <td>
-                <img :src="`/backend/images/serial/${serial.image}`" alt="User Image" width="55" height="55" />
+                <img v-if="serial.image" :src="`/backend/images/serial/${serial.image}`" alt="User Image" width="55"
+                  height="55" />
+                <span v-else>User not <br> provide image</span>
               </td>
               <!-- <td class="text-center">
                 <img v-if="Serial.barcode" :src="`data:image/png;base64,${Serial.barcode}`" alt="Barcode" width="100"
@@ -62,7 +64,7 @@
                 </div>
               </td> -->
               <td>
-                <div class="buttonGroup py-2">
+                <div class="buttonGroup py-2 d-flex justify-between">
                   <button type="button" class="btn btn-sm btn-success" @click="openEditModal(serial)">
                     <i class="fa-solid fa-pen-to-square"></i>
                   </button>
@@ -98,6 +100,18 @@
                   </div>
                   <div class="card-body">
                     <form @submit.prevent="serial_edit" enctype="multipart/form-data">
+                      <div class="row mb-3">
+                        <div class="col-md-6" hidden>
+                          <div class="form-floating mb-3 mb-md-0">
+                            <input class="form-control" id="inputAddress" type="text" placeholder="Address"
+                              v-model="form.user_id" />
+                            <small class="text-danger" v-if="errors.user_id">{{
+                              errors.user_id[0]
+                            }}</small>
+                            <label for="inputAddress">Users Name</label>
+                          </div>
+                        </div>
+                      </div>
                       <div class="row mb-3">
                         <div class="col-md-6">
                           <div class="form-floating mb-3 mb-md-0">
@@ -211,7 +225,8 @@ export default {
         color: null,
         status: null,
         return_status: null,
-        image: null
+        image: null,
+        user_id:null
       },
       barcodeImage: '',
       errors: {}
@@ -273,6 +288,7 @@ export default {
     },
     openEditModal(serial) {
       this.form = { ...serial }
+      this.form.user_id=this.users.id
       let myModal = new bootstrap.Modal(
         document.getElementById("editSupplierModal"),
         {}

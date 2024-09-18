@@ -22,7 +22,7 @@
             <div class="card-body">
               <form @submit.prevent="handleSubmit" v-show="visible">
                 <div class="row mb-3">
-                  <div class="col-md-6">
+                  <div class="col-md-12">
                     <div class="form-floating mb-3 mb-md-0">
                       <select class="form-select" aria-label="Default select example" v-model="form.product_id">
                         <option v-for="product in products" :key="product.id" :value="product.id">{{
@@ -34,13 +34,9 @@
                       <label for="inputPhone">Product Model</label>
                     </div>
                   </div>
-                  <div class="col-md-6">
+                  <div class="col-md-6" hidden>
                     <div class="form-floating mb-3 mb-md-0">
-                      <select class="form-select" readonly aria-label="Default select example" v-model="form.user_id">
-                        <option :value="users.id">
-                          {{ users.user_name }}
-                        </option>
-                      </select>
+                      <input class="form-control" id="inputDate" type="text" v-model="form.user_id" />
                       <small class="text-danger" v-if="errors.user_id">{{
                         errors.user_id[0]
                       }}</small>
@@ -276,7 +272,7 @@ export default {
         this.rows.push({
           stocksId: this.stocksId,
           serial_no: null,
-          barcode_no:null,
+          barcode_no: null,
           color: null,
           userid: this.form.user_id,
           image: "/backend/assets/img/pic.jpeg",
@@ -319,14 +315,64 @@ export default {
       }
     },
     async handleDynamicSubmit() {
-      await axios.post("/api/serials/store", { rows: this.rows })
+      const formData = new FormData();
+
+      this.rows.forEach((row, index) => {
+        formData.append(`rows[${index}][stocksId]`, row.stocksId);
+        formData.append(`rows[${index}][serial_no]`, row.serial_no);
+        formData.append(`rows[${index}][barcode_no]`, row.barcode_no);
+        formData.append(`rows[${index}][color]`, row.color);
+        formData.append(`rows[${index}][userid]`, row.userid);
+
+        // Check if the image is the default image, if not append the image file
+        if (row.image && row.image !== '/backend/assets/img/pic.jpeg') {
+          if (typeof row.image === 'object') {
+            formData.append(`rows[${index}][image]`, row.image); // If image is a file
+          } else {
+            formData.append(`rows[${index}][image]`, row.image); // If image is a base64 string
+          }
+        }
+      });
+
+      await axios.post("/api/serials/store", formData)
         .then((res) => {
-          this.$router.push({ name: 'All_stocks' })
+          this.$router.push({ name: 'All_stocks' });
         })
         .catch((error) => {
-          this.rows.errors = error.response.data.errors;
-        })
-    },
+          // Assign errors to respective rows
+          this.rows.forEach((row, index) => {
+            row.errors = error.response.data.errors;
+          });
+        });
+    }
+    ,
+    // async handleDynamicSubmit() {
+    //   const formData = new FormData();
+
+    //   this.rows.forEach((row, index) => {
+    //     formData.append(`rows[${index}][stocksId]`, row.stocksId);
+    //     formData.append(`rows[${index}][serial_no]`, row.serial_no);
+    //     formData.append(`rows[${index}][barcode_no]`, row.barcode_no);
+    //     formData.append(`rows[${index}][color]`, row.color);
+    //     formData.append(`rows[${index}][userid]`, row.userid);
+
+    //     // If the user has uploaded an image, append the image file
+    //     if (row.image && typeof row.image !== '/backend/assets/img/pic.jpeg') {
+    //       formData.append(`rows[${index}][image]`, row.image);
+    //     }
+    //     // if (this.form.image && this.form.image !== '/backend/assets/img/pic.jpeg') {
+    //     //         // Append the image if it's not the default
+    //     //         formData.append('image', this.form.image);
+    //     //     }
+    //   });
+    //   await axios.post("/api/serials/store", formData)
+    //     .then((res) => {
+    //       this.$router.push({ name: 'All_stocks' })
+    //     })
+    //     .catch((error) => {
+    //       this.rows.errors = error.response.data.errors;
+    //     })
+    // },
     async fetchUsers() {
       const token = localStorage.getItem('token');
       await axios.get("/api/auth/me", {
@@ -338,6 +384,7 @@ export default {
           this.userName = res.data.user_name;
           this.profile_img = res.data.profile_img
           this.users = res.data;
+          this.form.user_id = res.data.id
         })
         .catch((error) => {
           console.log(error);

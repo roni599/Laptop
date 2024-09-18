@@ -86,8 +86,8 @@
                                 </div>
                             </div>
 
-                            <div class="row mb-1">
-                                <div class="col-md-6">
+                            <div class="row mb-3">
+                                <div class="col-md-12">
                                     <div class="form-floating mb-3 mb-md-0">
                                         <input class="form-control" id="inputBuyingDate" type="text"
                                             placeholder="Buying Date" v-model="form.touch_status" />
@@ -97,7 +97,7 @@
                                         <label for="inputBuyingDate">Touch Status</label>
                                     </div>
                                 </div>
-                                <div class="col-md-6 mb-3">
+                                <div class="col-md-6 mb-3" hidden>
                                     <div class="form-floating mb-3 mb-md-0">
                                         <select class="form-select" readonly aria-label="Default select example"
                                             v-model="form.user_id">
@@ -194,6 +194,7 @@ export default {
                     this.users = res.data;
                     this.userName = res.data.user_name;
                     this.profile_img = res.data.profile_img
+                    this.form.user_id=res.data.id
                 })
                 .catch((error) => {
                     console.log(error.response ? error.response.data : error.message);

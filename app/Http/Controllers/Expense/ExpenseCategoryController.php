@@ -19,6 +19,7 @@ class ExpenseCategoryController extends Controller
     {
         $request->validate([
             'ecname' => 'required|string|max:255',
+            'cost_type' => 'required|string|max:255',
             'user_id' => 'required|exists:users,id',
             'image' => 'nullable|string',
         ]);
@@ -26,6 +27,7 @@ class ExpenseCategoryController extends Controller
         $expenseCategory = new ExpenseCategory();
         $expenseCategory->category_name = $request->ecname;
         $expenseCategory->user_id = $request->user_id;
+        $expenseCategory->cost_type = $request->cost_type;
 
 
         $imageName = '';
@@ -57,12 +59,14 @@ class ExpenseCategoryController extends Controller
         $request->validate([
             'ecname' => 'required|string|max:255',
             'user_id' => 'required',
+            'cost_type' => 'required',
             'status' => 'required|in:0,1',
             'image' => 'nullable',
         ]);
         $expenseCategory = ExpenseCategory::findOrFail($request->id);
         $expenseCategory->category_name = $request['ecname'];
         $expenseCategory->user_id = $request['user_id'];
+        $expenseCategory->cost_type = $request['cost_type'];
         $expenseCategory->status = $request['status'];
 
         if ($request->has('image') && strpos($request->image, 'data:image/') === 0) {

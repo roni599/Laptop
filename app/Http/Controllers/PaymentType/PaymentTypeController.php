@@ -30,7 +30,7 @@ class PaymentTypeController extends Controller
 
         $request->validate([
             'edit_payment_type' => 'required|string|max:255',
-            'edit_user_id' => 'required|exists:users,id',
+            'edit_user_id' => 'required',
             'edit_status' => 'required|integer|in:0,1',
         ]);
         $paymentType = Paymenttype::findOrFail($request->id);

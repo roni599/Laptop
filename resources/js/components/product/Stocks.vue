@@ -37,8 +37,9 @@
                             <td v-else><span class="text-danger">Not Available</span></td>
                             <td>{{ product.product_quantity }}</td>
                             <td>
-                                <img :src="`/backend/images/product/${product.image}`" alt="Employee Image" width="55"
+                                <img v-if="product.image" :src="`/backend/images/product/${product.image}`" alt="Employee Image" width="55"
                                     height="55" />
+                                    <span v-else>User not <br> provide image</span>
                             </td>
                             <td>
                                 <div class="buttonGroup py-2">

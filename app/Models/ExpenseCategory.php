@@ -15,6 +15,7 @@ class ExpenseCategory extends Model
         'images',
         'status',
         'user_id',
+        'cost_type'
     ];
     public function user()
     {

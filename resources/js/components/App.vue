@@ -309,7 +309,6 @@ export default {
         // Clear the timer when the component is destroyed
         clearTimeout(this.inactivityTimer);
     },
-
 };
 </script>
 

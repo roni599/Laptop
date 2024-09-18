@@ -33,12 +33,12 @@
                             <td>{{ brand.brand_name }}</td>
                             <td>{{ brand.status }}</td>
                             <td>
-                                <img  :src="`/backend/images/brands/${brand.brand_image}`"
+                                <img v-if="brand.brand_image"  :src="`/backend/images/brands/${brand.brand_image}`"
                                     alt="User Image" width="50" height="50" />
-                                
+                                <span v-else>user not <br> provide image</span>
                             </td>
                             <td>
-                                <div class="buttonGroup py-2">
+                                <div class="buttonGroup py-2 d-flex justify-between">
                                     <button type="button" class="btn btn-sm btn-success" @click="openEditModal(brand)">
                                         <i class="fa-solid fa-pen-to-square"></i>
                                     </button>
