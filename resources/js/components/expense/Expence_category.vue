@@ -317,10 +317,11 @@ export default {
           console.log(res)
           this.form = {
             ecname: null,
-            user_id: null,
+            user_id: this.users.id,
             cost_type: null,
             image: '/backend/assets/img/pic.jpeg',
           };
+          this.errors={};
           let myModal = bootstrap.Modal.getInstance(
             document.getElementById("createExpenseCategoryModal")
           );

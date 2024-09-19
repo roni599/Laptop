@@ -24,8 +24,8 @@ return new class extends Migration
             // $table->unsignedBigInteger('payment_type_id')->nullable();
 
             // Foreign key constraints
-            $table->foreign('cart_id')->references('id')->on('carts')->onDelete('cascade');
-            $table->foreign('serial_id')->references('id')->on('serials')->onDelete('cascade');
+            $table->foreign('cart_id')->references('id')->on('carts')->onDelete('set null');
+            $table->foreign('serial_id')->references('id')->on('serials')->onDelete('set null');
             // $table->foreign('payment_type_id')->references('id')->on('paymenttypes')->onDelete('set null');
 
             $table->timestamps();

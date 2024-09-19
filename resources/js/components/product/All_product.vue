@@ -59,6 +59,9 @@
                                 </div>
                             </td>
                         </tr>
+                        <tr>
+                            <td class="text-center" colspan="11">Total Products : {{ totalQuantity }}</td>
+                        </tr>
                     </tbody>
                 </table>
             </div>
@@ -94,7 +97,7 @@
                                                             v-model="form.product_model" />
                                                         <small class="text-danger" v-if="errors.product_model">{{
                                                             errors.product_model[0]
-                                                            }}</small>
+                                                        }}</small>
                                                         <label for="inputProductName">Product Model</label>
                                                     </div>
                                                 </div>
@@ -105,7 +108,7 @@
                                                             v-model="form.specification"></textarea>
                                                         <small class="text-danger" v-if="errors.specification">{{
                                                             errors.specification[0]
-                                                            }}</small>
+                                                        }}</small>
                                                         <label for="inputEmail">Specification</label>
                                                     </div>
                                                 </div>
@@ -117,7 +120,7 @@
                                                             placeholder="Root" v-model="form.quantity" />
                                                         <small class="text-danger" v-if="errors.quantity">{{
                                                             errors.quantity[0]
-                                                            }}</small>
+                                                        }}</small>
                                                         <label for="inputRoot">Quentity</label>
                                                     </div>
                                                 </div>
@@ -132,7 +135,7 @@
                                                         </select>
                                                         <small class="text-danger" v-if="errors.cat_id">{{
                                                             errors.cat_id[0]
-                                                            }}</small>
+                                                        }}</small>
                                                         <label for="Buying Price">Category</label>
                                                     </div>
                                                 </div>
@@ -150,7 +153,7 @@
                                                         </select>
                                                         <small class="text-danger" v-if="errors.brand_id">{{
                                                             errors.brand_id[0]
-                                                            }}</small>
+                                                        }}</small>
                                                         <label for="inputSellingPrice">Brand</label>
                                                     </div>
                                                 </div>
@@ -160,7 +163,7 @@
                                                             placeholder="Buying Date" v-model="form.touch_status" />
                                                         <small class="text-danger" v-if="errors.touch_status">{{
                                                             errors.touch_status[0]
-                                                            }}</small>
+                                                        }}</small>
                                                         <label for="inputBuyingDate">Touch Status</label>
                                                     </div>
                                                 </div>
@@ -172,7 +175,7 @@
                                                             placeholder="Buying Date" v-model="form.discount" />
                                                         <small class="text-danger" v-if="errors.discount">{{
                                                             errors.discount[0]
-                                                            }}</small>
+                                                        }}</small>
                                                         <label class="h6 mb-0" for="inputCategory">Discount</label>
                                                     </div>
                                                 </div>
@@ -247,6 +250,11 @@ export default {
                 );
             });
         },
+        totalQuantity() {
+            return this.products.reduce((sum, product) => {
+                return sum + parseInt(product.quantity, 10);
+            }, 0)
+        }
     },
     methods: {
 
@@ -288,7 +296,7 @@ export default {
         },
         openEditModal(product) {
             this.form = { ...product };
-            this.form.user_id=this.users.id
+            this.form.user_id = this.users.id
             let myModal = new bootstrap.Modal(
                 document.getElementById("editProductModal"),
                 {}

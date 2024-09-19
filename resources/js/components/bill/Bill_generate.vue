@@ -302,7 +302,7 @@ export default {
             // Make the API call with or without the cart ID
             axios.post("/api/barcode-search", requestPayload)
                 .then((response) => {
-                    console.log(response);
+                    console.log(response.data[0]);
 
                     // Handle the response
                     const cart_id_from_response = response.data[0]; // New cart ID from response if available

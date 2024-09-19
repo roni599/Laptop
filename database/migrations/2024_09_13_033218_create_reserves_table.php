@@ -24,11 +24,11 @@ return new class extends Migration
             $table->unsignedBigInteger('investment_id')->nullable();
             $table->unsignedBigInteger('bill_id')->nullable();
             
-            $table->foreign('expense_id')->references('id')->on('expenses')->onDelete('cascade');
-            $table->foreign('payment_type_id')->references('id')->on('paymenttypes')->onDelete('cascade');
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-            $table->foreign('investment_id')->references('id')->on('investments')->onDelete('cascade');
-            $table->foreign('bill_id')->references('id')->on('bills')->onDelete('cascade');
+            $table->foreign('expense_id')->references('id')->on('expenses')->onDelete('set null');
+            $table->foreign('payment_type_id')->references('id')->on('paymenttypes')->onDelete('set null');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('set null');
+            $table->foreign('investment_id')->references('id')->on('investments')->onDelete('set null');
+            $table->foreign('bill_id')->references('id')->on('bills')->onDelete('set null');
 
             $table->timestamps();
         });

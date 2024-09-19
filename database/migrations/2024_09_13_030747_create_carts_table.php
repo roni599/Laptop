@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('cart_id')->nullable();
             $table->unsignedBigInteger('customer_id')->nullable(); 
             $table->string('status')->nullable()->default('1');
-            $table->foreign('customer_id')->references('id')->on('customers')->onDelete('cascade');
+            $table->foreign('customer_id')->references('id')->on('customers')->onDelete('set null');
             $table->timestamps();
         });
     }

@@ -62,6 +62,9 @@
                   </div>
                 </td>
               </tr>
+              <tr>
+                <td class="text-center" colspan="11">Total Stocks : {{ totalStocks }}</td>
+              </tr>
             </tbody>
           </table>
         </div>
@@ -376,7 +379,7 @@ export default {
       this.form = { ...stock };
       this.form.product_model = stock.product.product_model;
       this.form.paymenttype_name = stock.paymenttype.pt_name;
-      this.form.user_id=this.users.id
+      this.form.user_id = this.users.id
       let myModal = new bootstrap.Modal(
         document.getElementById("editSupplierModal"),
         {}
@@ -393,12 +396,20 @@ export default {
         })
     },
   },
+
   created() {
     this.fetch_stocks();
     this.fetchUsers();
     this.fetch_products();
     this.fetch_paymenttype();
     this.fetchSuppliers();
+  },
+  computed: {
+    totalStocks() {
+      return this.Stocks.reduce((sum, stock) => {
+        return sum + parseInt(stock.stock_quantity, 10)
+      }, 0)
+    }
   }
 }
 </script>

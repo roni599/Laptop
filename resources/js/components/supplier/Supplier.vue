@@ -47,7 +47,7 @@
                                 <span v-else>User not <br> provide image</span>
                             </td>
                             <td>
-                                <div class="buttonGroup py-2">
+                                <div class="buttonGroup py-2 d-flex">
                                     <button type="button" class="btn btn-sm btn-success"
                                         @click="openEditModal(supplier)">
                                         <i class="fa-solid fa-pen-to-square"></i>
@@ -411,14 +411,15 @@ export default {
                         phone: null,
                         shopname: null,
                         product_id: null,
-                        user_id: null,
+                        user_id: this.users.id,
                         image: '/backend/assets/img/pic.jpeg',
                     };
+                    this.errors = {};
+                    this.fetch_suppliers();
                     let myModal = bootstrap.Modal.getInstance(
                         document.getElementById("createSupplierModal")
                     );
                     myModal.hide();
-                    this.fetch_suppliers();
                     Toast.fire({
                         icon: "success",
                         title: res.data.message,

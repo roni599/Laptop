@@ -245,8 +245,9 @@ export default {
                 .then((res) => {
                     this.form = {
                         brand_name: null,
-                        user_id: null,
+                        user_id: this.users.id,
                     };
+                    this.errors={};
                     let myModal = bootstrap.Modal.getInstance(
                         document.getElementById("createPaymentModal")
                     );
