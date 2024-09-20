@@ -37,33 +37,6 @@
                             </div>
                         </div>
                         <div class="col-md-6">
-                            <div class="form-floating mb-3 mb-md-0">
-                                <input class="form-control" v-model="customerEmail" id="inputCustomerEmail" type="email"
-                                    placeholder="Enter Customer Email" />
-                                <label for="inputCustomerEmail">Customer Email</label>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row mb-3">
-                        <div class="col-md-6 mb-3">
-                            <div class="form-floating mb-3 mb-md-0">
-                                <select class="form-select" v-model="user_id" aria-label="Default select example">
-                                    <option :value="users.id">{{ users.user_name }}</option>
-                                </select>
-                                <label class="h6 text-black mb-0" for="inputSupplier">Login User</label>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <!-- <div class="form-floating mb-3 mb-md-0">
-                                <select class="form-select" aria-label="Default select example"
-                                    v-model="paymenttype">
-                                    <option v-for="paymenttype in paymenttypes" :key="paymenttype.id"
-                                        :value="paymenttype.id">
-                                        {{ paymenttype.pt_name }}
-                                    </option>
-                                </select>
-                                <label for="inputSellingPrice">Payment Type</label>
-                            </div> -->
 
                             <div class="buttonpayment d-flex justify-between">
                                 <!-- Buttons for toggling inputs -->
@@ -110,10 +83,38 @@
                                     </div>
                                 </div>
                             </div>
-
+                        </div>
+                        <div class="col-md-6" hidden>
+                            <div class="form-floating mb-3 mb-md-0">
+                                <input class="form-control" v-model="customerEmail" id="inputCustomerEmail" type="email"
+                                    placeholder="Enter Customer Email" />
+                                <label for="inputCustomerEmail">Customer Email</label>
+                            </div>
                         </div>
                     </div>
                     <div class="row mb-3">
+                        <div class="col-md-6 mb-3" hidden>
+                            <div class="form-floating mb-3 mb-md-0">
+                                <select class="form-select" v-model="user_id" aria-label="Default select example">
+                                    <option :value="users.id">{{ users.user_name }}</option>
+                                </select>
+                                <label class="h6 text-black mb-0" for="inputSupplier">Login User</label>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <!-- <div class="form-floating mb-3 mb-md-0">
+                                <select class="form-select" aria-label="Default select example"
+                                    v-model="paymenttype">
+                                    <option v-for="paymenttype in paymenttypes" :key="paymenttype.id"
+                                        :value="paymenttype.id">
+                                        {{ paymenttype.pt_name }}
+                                    </option>
+                                </select>
+                                <label for="inputSellingPrice">Payment Type</label>
+                            </div> -->
+                        </div>
+                    </div>
+                    <div class="row mb-3" hidden>
                         <div class="col-md-6">
                             <div class="form-floating mb-3 mb-md-0">
                                 <input class="form-control" v-model="customerNid" id="inputcustomerNid" type="text"

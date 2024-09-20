@@ -31,8 +31,8 @@
                             <tr v-for="cartitem in bills.cart.cart_items" :key="cartitem.id">
                                 <td>{{ cartitem.serial.stock.product.product_model }}</td>
                                 <td>{{ cartitem.quantity }} Pc(s)</td>
-                                <td>{{ cartitem.sold_price }}</td>
-                                <td>{{ cartitem.sold_price * cartitem.quantity }}</td>
+                                <td>{{ cartitem.price }}</td>
+                                <td>{{ cartitem.price * cartitem.quantity }}</td>
                             </tr>
                         </tbody>
                     </table>
@@ -64,6 +64,24 @@
                             <p><span>Taka : {{ bills.total_price }} BDT</span></p>
                         </div>
                     </div>
+                </div>
+            </div>
+            <div class="numverwords container">
+                <p>In Words: {{ convertNumberToWords(bills.total_price) }} BDT</p>
+            </div>
+            <div class="mb-0 replacement w-100">
+                <p class="text-center text-danger fw-bold">15 Days Replacement Guarantee and 5 Years Service Warranty
+                </p>
+            </div>
+            <div class="mb-1 display">
+                <p class="text-center fw-bold">(Display, Keyboard and Body Without Guarantee)</p>
+            </div>
+            <div class="signature mt-4 container">
+                <div class="customer">
+                    <p>Customers Signature</p>
+                </div>
+                <div class="authorised">
+                    <p>Authorised Signature</p>
                 </div>
             </div>
 
@@ -156,6 +174,34 @@ export default {
                 displayValue: false,
             });
         },
+
+        convertNumberToWords(amount) {
+            const words = [];
+            const units = ["", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten"];
+            const teens = ["Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen", "Sixteen", "Seventeen", "Eighteen", "Nineteen"];
+            const tens = ["", "Ten", "Twenty", "Thirty", "Forty", "Fifty", "Sixty", "Seventy", "Eighty", "Ninety"];
+            const thousands = ["", "Thousand", "Million", "Billion"];
+            let number = Math.floor(amount);
+            if (number === 0) return "Zero";
+
+            let index = 0;
+            while (number > 0) {
+                let remainder = number % 1000;
+                if (remainder > 0) {
+                    let str = "";
+                    if (remainder % 100 < 20) {
+                        str = (remainder % 100 < 11) ? units[remainder % 100] : teens[remainder % 100 - 11];
+                    } else {
+                        str = tens[Math.floor(remainder / 10) % 10] + (remainder % 10 > 0 ? " " + units[remainder % 10] : "");
+                    }
+                    words.push(str + " " + thousands[index]);
+                }
+                number = Math.floor(number / 1000);
+                index++;
+            }
+
+            return words.reverse().join(" ").trim() || "Zero";
+        },
     },
     computed: {
         formattedDate() {
@@ -213,7 +259,7 @@ export default {
 }
 
 .invoice-table {
-    margin-bottom: 20px;
+    margin-bottom: 0px;
 }
 
 .invoice-table table {
@@ -237,6 +283,12 @@ export default {
     margin-left: -20px;
 }
 
+.signature {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
 /* Print styles */
 @media print {
     .print-button {
@@ -244,11 +296,26 @@ export default {
         /* Hide print button in print view */
     }
 
+    .replacement p {
+        margin-left: 170px;
+        width: 100%;
+        margin-top: -30px;
+    }
+    .display {
+        width: 100%;
+        margin-left: 170px;
+        margin-top: -10px;
+    }
+
     .container {
         padding: 0px;
         /* Remove container padding for printing */
         margin: 50px 165px;
         /* Set margins for print view */
+    }
+
+    .signature .customer .authorised {
+        margin-top: 400px;
     }
 
     .invoice-card {
@@ -268,17 +335,22 @@ export default {
         font-size: 12px;
     }
 
-    .invoice-qr img {
-        width: 30px;
-        margin-top: -25px;
-        margin-left: -20px;
-    }
+}
 
-    header,
-    footer,
-    .navbar,
-    .footer {
-        display: none !important;
-    }
+.invoice-qr img {
+    width: 30px;
+    margin-top: -25px;
+    margin-left: -20px;
+}
+
+header,
+footer,
+.navbar,
+.footer {
+    display: none !important;
+}
+
+.numverwords {
+    margin-top: -55px;
 }
 </style>
