@@ -35,7 +35,8 @@
                         <tr v-for="supplier in suppliers" :key="supplier.id">
                             <td>{{ supplier.id }}</td>
                             <td>{{ supplier.name }}</td>
-                            <td>{{ supplier.email }}</td>
+                            <td v-if="supplier.email">{{ supplier.email }}</td>
+                            <td v-else>This Supplier Have No Email</td>
                             <td>{{ supplier.phone }}</td>
                             <td>{{ supplier.address }}</td>
                             <td>{{ supplier.shopname }}</td>

@@ -11,6 +11,7 @@ use App\Models\Paymenttype;
 use App\Models\Product;
 use App\Models\Reserve;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
 
 class BillController extends Controller
@@ -23,13 +24,13 @@ class BillController extends Controller
     public function store(Request $request)
     {
 
-    //   return response()->json($request->all());
+        //   return response()->json($request->all());
         $validatedData = $request->validate([
             'customerName' => 'required',
             'customerPhone' => 'required',
             'customerAddress' => 'nullable',
             'customerEmail' => 'nullable|email',
-            'customerBirthday' => 'nullable',
+            'customerBirthday' => 'nullable|date',
             'customerNid' => 'nullable',
             'user_id' => 'required',
             'items' => 'required',
@@ -44,7 +45,7 @@ class BillController extends Controller
             'phone' => $validatedData['customerPhone'],
             'address' => $validatedData['customerAddress'],
             'email' => $validatedData['customerEmail'],
-            'dob' => $validatedData['customerBirthday'],
+            'dob' => $validatedData['customerBirthday'] ?? Carbon::today(),
             'nid' => $validatedData['customerNid'],
             'user_id' => $validatedData['user_id']
         ]);
@@ -97,21 +98,23 @@ class BillController extends Controller
         foreach ($validatedData['items'] as $item) {
             // Find the product using the product_id in the stock field
             $product = Product::find($item['stock']['product_id']);
-            
+
             if ($product) {
                 // Decrement the product quantity
                 $product->decrement('quantity', $item['quantity']);
             }
-        
+
             // Find the CartItem using serial_id
             CartItem::where('serial_id', $item['id'])
-            ->where('cart_id', $validatedData['cartId'])
-            ->update([
-                'quantity' => $item['quantity'],
-                'price' => $item['stock']['selling_price'],
-            ]);
+                ->where('cart_id', $validatedData['cartId'])
+                ->update([
+                    'quantity' => $item['quantity'],
+                    'unit_price' => $item['stock']['buying_price'],
+                    'sold_price' => $item['stock']['selling_price'],
+                    'profit' => $item['stock']['selling_price'] - $item['stock']['buying_price'],
+                ]);
         }
-        
+
 
 
         foreach ($validatedData['validInputs'] as $key => $paymentTypeId) {

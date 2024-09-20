@@ -19,7 +19,7 @@
           </div>
         </div>
         <div class="card-body">
-          <input type="text" id="searchInput" placeholder="Search for ID.." />
+          <input type="text" id="searchInput" v-model="searchStock" placeholder="Search for ID.." />
           <table class="table" id="pp">
             <thead>
               <tr>
@@ -37,7 +37,7 @@
               </tr>
             </thead>
             <tbody>
-              <tr v-for="stock in Stocks" :key="stock.id">
+              <tr v-for="stock in filteredStocks" :key="stock.id">
                 <td>{{ stock.id }}</td>
                 <td>{{ stock.product.product_model }}</td>
                 <td>{{ stock.user.user_name }}</td>
@@ -268,6 +268,7 @@ export default {
       errors: {},
       userName,
       profile_img,
+      searchStock: ''
     }
   },
   methods: {
@@ -294,6 +295,7 @@ export default {
     async fetch_stocks() {
       try {
         const response = await axios.get("/api/stocks");
+        console.log(response)
         this.Stocks = response.data;
       } catch (error) {
         console.error('Error fetching stocks:', error);
@@ -409,7 +411,14 @@ export default {
       return this.Stocks.reduce((sum, stock) => {
         return sum + parseInt(stock.stock_quantity, 10)
       }, 0)
-    }
+    },
+    filteredStocks() {
+      return this.Stocks.filter((stock) => {
+        return (
+          stock.id.toString().includes(this.searchStock) || stock.product.product_model.toLowerCase().includes(this.searchStock.toLowerCase())
+        );
+      });
+    },
   }
 }
 </script>

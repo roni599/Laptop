@@ -18,7 +18,7 @@
         </div> -->
       </div>
       <div class="card-body">
-        <input type="text" id="searchInput" placeholder="Search for ID.." />
+        <input type="text" id="searchInput" v-model="searchSerial" placeholder="Search for ID.." />
         <table class="table">
           <thead>
             <tr>
@@ -36,7 +36,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="serial in Serials" :key="serial.id">
+            <tr v-for="serial in filteredSerials" :key="serial.id">
               <td>{{ serial.id }}</td>
               <td>{{ serial.serial_no }}</td>
               <td>{{ serial.barcode_no }}</td>
@@ -226,10 +226,11 @@ export default {
         status: null,
         return_status: null,
         image: null,
-        user_id:null
+        user_id: null
       },
       barcodeImage: '',
-      errors: {}
+      errors: {},
+      searchSerial:''
     }
   },
   methods: {
@@ -288,7 +289,7 @@ export default {
     },
     openEditModal(serial) {
       this.form = { ...serial }
-      this.form.user_id=this.users.id
+      this.form.user_id = this.users.id
       let myModal = new bootstrap.Modal(
         document.getElementById("editSupplierModal"),
         {}
@@ -341,6 +342,15 @@ export default {
   created() {
     this.feth_Serials();
     this.fetchUsers();
+  },
+  computed: {
+    filteredSerials() {
+      return this.Serials.filter((serial) => {
+        return (
+          serial.id.toString().includes(this.searchSerial) || serial.barcode_no.toLowerCase().includes(this.searchSerial.toLowerCase()) || serial.serial_no.toLowerCase().includes(this.searchSerial.toLowerCase())
+        );
+      });
+    },
   }
 }
 </script>

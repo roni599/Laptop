@@ -31,8 +31,8 @@
                             <tr v-for="cartitem in bills.cart.cart_items" :key="cartitem.id">
                                 <td>{{ cartitem.serial.stock.product.product_model }}</td>
                                 <td>{{ cartitem.quantity }} Pc(s)</td>
-                                <td>{{ cartitem.price }}</td>
-                                <td>{{ cartitem.price * cartitem.quantity }}</td>
+                                <td>{{ cartitem.sold_price }}</td>
+                                <td>{{ cartitem.sold_price * cartitem.quantity }}</td>
                             </tr>
                         </tbody>
                     </table>

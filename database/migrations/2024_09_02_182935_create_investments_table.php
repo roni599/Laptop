@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('In_name');
             $table->integer('Amount');
             $table->string('date');
-            $table->string('status')->nullable()->default(0);
+            $table->string('status')->nullable()->default(1);
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('paymenttype_id');
             $table->timestamps();

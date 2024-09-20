@@ -229,7 +229,7 @@ export default {
             barcodeData: [],
             alert: { message: "", type: "" },
             timeout: null,
-            isQuantityFocused: false, // Track if quantity input is focused
+            isQuantityFocused: false,
             customerName: '',
             customerPhone: '',
             customerAddress: '',
@@ -254,7 +254,8 @@ export default {
             cashAmount: '',
             othersAmount: '',
             validInputs: [],
-            validInputs2: []
+            validInputs2: [],
+            cartId: null,
         };
     },
     methods: {
@@ -284,52 +285,42 @@ export default {
                     this.barcode = "";
                 }, 200); // Adjust timeout as needed
             }
-        }
-        ,
+        },
         fetchBarcodeData(barcode) {
-            // Retrieve the cart ID from local storage
-            const cartId = AppStorage.getCartId();
-
-            console.log('Cart ID:', cartId);
             console.log('Fetching data for barcode:', barcode);
 
             // Prepare the request payload
-            const requestPayload = { barcode };
-            if (cartId) {
-                requestPayload.cart_id = cartId;
-            }
+            const requestPayload = { barcode, cart_id: this.cartId };
 
-            // Make the API call with or without the cart ID
+            // Make the API call
             axios.post("/api/barcode-search", requestPayload)
                 .then((response) => {
-                    console.log(response.data[0]);
+                    console.log(response);
 
-                    // Handle the response
-                    const cart_id_from_response = response.data[0]; // New cart ID from response if available
-                    const serialData = response.data[1];
+                    const cartIdFromResponse = response.data.cart_id;
+                    const serialData = response.data.serial;
 
-                    if (cart_id_from_response) {
-                        // Store the new cart ID from the response
-                        AppStorage.storeCartId(cart_id_from_response);
+                    // Only store the new cart ID if it's different from the current one
+                    if (cartIdFromResponse && cartIdFromResponse !== this.cartId) {
+                        this.cartId = cartIdFromResponse;
+                        AppStorage.storeCartId(cartIdFromResponse);
                     }
 
                     // Update barcode data
                     this.barcodeData.push({
                         ...serialData,
                         quantity: 1,
-                        totalPrice: serialData.stock.selling_price // Assuming selling_price exists
+                        totalPrice: serialData.stock.selling_price
                     });
                 })
                 .catch((error) => {
-                    // Handle errors
                     this.alert = {
                         message: "Error fetching barcode data",
                         type: "alert-danger",
                     };
                     console.error("Error fetching barcode data:", error);
                 });
-        }
-        ,
+        },
         updateItemPrice(item) {
             // Find the corresponding item in barcodeData and update the price
             const foundItem = this.barcodeData.find(barcodeItem => barcodeItem === item);
@@ -451,13 +442,13 @@ export default {
 
         toggleInputs(inputType) {
             if (inputType === 'bank') {
-                this.input1 = 2;
+                this.input1 = 1;
                 this.showBankInputs = true;
             } else if (inputType === 'cash') {
-                this.input2 = 3;
+                this.input2 = 2;
                 this.showCashInputs = true;
             } else if (inputType === 'others') {
-                this.input3 = 1;
+                this.input3 = 3;
                 this.showOthersInputs = true;
             }
         },
@@ -473,6 +464,11 @@ export default {
                 this.showOthersInputs = false;
                 this.othersInputs[0] = '';  // Clear the input field
             }
+        },
+        clearCart() {
+            // Clear the cart ID and local storage when you generate a bill
+            this.cartId = null;
+            AppStorage.clearCard(); // Ensure this function clears the local storage
         }
     },
 
@@ -503,6 +499,7 @@ export default {
 
     created() {
         this.fetchUsers();
+        this.cartId = AppStorage.getCartId();
     }
 };
 </script>

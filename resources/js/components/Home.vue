@@ -77,20 +77,26 @@ export default {
         }
       })
         .then((res) => {
-          this.userName=res.data.user_name;
-          this.profile_img=res.data.profile_img
-          this.users=res.data
+          this.userName = res.data.user_name;
+          this.profile_img = res.data.profile_img
+          this.users = res.data
         })
         .catch((error) => {
           console.log(error);
         });
     },
   },
-  mounted(){
+  mounted() {
     AppStorage.clearBillId();
     AppStorage.clearCard();
+    if (!User.loggedIn()) {
+      this.$router.push({ name: "LoginForm" });
+    }
+    else {
+      this.$router.push({ name: "Home" })
+    }
   },
-  created(){
+  created() {
     this.fetchData()
     AppStorage.clearBillId();
     AppStorage.clearCard();

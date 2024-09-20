@@ -15,7 +15,9 @@ return new class extends Migration
             $table->id();
             $table->string('item_no')->nullable();
             $table->integer('quantity')->nullable();
-            $table->integer('price')->nullable();
+            $table->integer('unit_price')->nullable();
+            $table->integer('sold_price')->nullable();
+            $table->integer('profit')->nullable();
             $table->string('status')->nullable()->default('1');
 
             // Foreign key columns

@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('category_name');
             $table->string('cost_type');
             $table->string('images')->nullable();
-            $table->string('status')->default('0');
+            $table->string('status')->default('1');
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->timestamps();
         });

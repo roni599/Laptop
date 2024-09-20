@@ -64,7 +64,7 @@ class SerialController extends Controller
         }
         return response()->json($request->rows);
     }
-    
+
     public function update(Request $request)
     {
         $request->validate([
@@ -74,7 +74,7 @@ class SerialController extends Controller
             'status' => 'required',
             'return_status' => 'required',
             'image' => 'nullable|string',
-            'user_id'=>'required'
+            'user_id' => 'required'
         ]);
 
         $serial = Serial::findOrFail($request->id);
@@ -139,48 +139,192 @@ class SerialController extends Controller
         }
         return response()->json($serialsWithBarcodes);
     }
+    // public function searchBarcode(Request $request)
+    // {
+    //     $barcode = $request->input('barcode');
+    //     $cartId = $request->input('cart_id');
+
+    //     // Find the serial based on the barcode
+    //     $serial = Serial::with(['stock.product', 'user'])
+    //         ->where('barcode_no', $barcode)
+    //         ->first();
+
+    //     if (!$serial) {
+    //         return response()->json(['message' => 'Serial not found'], 404);
+    //     }
+
+    //     // Check if cart_id is provided
+    //     if ($cartId) {
+    //         // Cart ID is provided, update the existing cart
+    //         $cart = Cart::findOrFail($cartId);
+    //     } else {
+    //         // No cart_id provided, create a new cart
+    //         $cart = new Cart();
+    //         $cart->cart_id = 'LP' . substr((string) Str::uuid(), 0, 4);
+    //         $cart->save();  // Save the cart first to get its ID
+    //     }
+
+    //     // Now create the CartItem
+    //     $cartItem = new CartItem();
+    //     $cartItem->cart_id = $cart->id;
+    //     $cartItem->serial_id = $serial->id;
+    //     $cartItem->quantity = 1;
+    //     $cartItem->item_no = $serial->stock->product->id;
+    //     $cartItem->unit_price = $serial->stock->selling_price;
+    //     $cartItem->save();
+
+    //     return response()->json([
+    //         'cart_id' => $cart->id, // Using 'cart_id' for clarity
+    //         'serial' => $serial
+    //     ]);
+    // }
+
+    // public function searchBarcode(Request $request)
+    // {
+    //     $barcode = $request->input('barcode');
+    //     $cartId = $request->input('cart_id');
+
+    //     // Find the serial based on the barcode
+    //     $serial = Serial::with(['stock.product', 'user'])
+    //         ->where('barcode_no', $barcode)
+    //         ->first();
+
+    //     if (!$serial) {
+    //         return response()->json(['message' => 'Serial not found'], 404);
+    //     }
+
+    //     // Check if cart_id is provided
+    //     if ($cartId) {
+    //         // Cart ID is provided, update the existing cart
+    //         $cart = Cart::findOrFail($cartId);
+    //     } else {
+    //         // No cart_id provided, create a new cart
+    //         $cart = new Cart();
+    //         $cart->cart_id = 'LP' . substr((string) Str::uuid(), 0, 4);
+    //         $cart->save();  // Save the cart first to prevent multiple cart entries
+    //     }
+
+    //     // Now create the CartItem
+    //     $cartItem = new CartItem();
+    //     $cartItem->cart_id = $cart->id;
+    //     $cartItem->serial_id = $serial->id;
+    //     $cartItem->quantity = 1;
+    //     $cartItem->item_no = $serial->stock->product->id;
+    //     $cartItem->unit_price = $serial->stock->selling_price;
+    //     $cartItem->save();
+
+    //     return response()->json([
+    //         $cart->id,
+    //         $serial
+    //     ]);
+    // }
+
+    // public function searchBarcode(Request $request)
+    // {
+    //     $barcode = $request->input('barcode');
+    //     $cartId = $request->input('cart_id');
+
+    //     // Find the serial based on the barcode
+    //     $serial = Serial::with(['stock.product', 'user'])
+    //         ->where('barcode_no', $barcode)
+    //         ->first();
+
+    //     if (!$serial) {
+    //         return response()->json(['message' => 'Serial not found'], 404);
+    //     }
+
+    //     // Check if cart_id is provided and exists
+    //     if ($cartId) {
+    //         $cart = Cart::find($cartId);
+    //         if (!$cart) {
+    //             $cartId = null;  // If the cart does not exist, set it to null to create a new one
+    //         }
+    //     }
+
+    //     if (!$cartId) {
+    //         // Create a new cart if no valid cart_id
+    //         $cart = new Cart();
+    //         $cart->cart_id = 'LP' . substr((string) Str::uuid(), 0, 4);
+    //         $cart->save(); // Save to get its ID
+    //     } else {
+    //         $cart = Cart::findOrFail($cartId);  // Use existing cart
+    //     }
+
+    //     // Create the CartItem
+    //     $cartItem = new CartItem();
+    //     $cartItem->cart_id = $cart->id;
+    //     $cartItem->serial_id = $serial->id;
+    //     $cartItem->quantity = 1;
+    //     $cartItem->item_no = $serial->stock->product->id;
+    //     $cartItem->unit_price = $serial->stock->selling_price;
+    //     $cartItem->save();
+
+    //     return response()->json([
+    //         'cart_id' => $cart->id,
+    //         'serial' => $serial
+    //     ]);
+    // }
+
+
+
 
     public function searchBarcode(Request $request)
     {
         $barcode = $request->input('barcode');
         $cartId = $request->input('cart_id');
+
+        // Find the serial based on the barcode
         $serial = Serial::with(['stock.product', 'user'])
             ->where('barcode_no', $barcode)
             ->first();
 
-        // Check if cart_id is provided
-        if ($request->input('cart_id')) {
-            $cart = $request->input('cart_id');
-            $cartItem = new CartItem();
-            $cartItem->cart_id = $request->input('cart_id');
-            $cartItem->serial_id = $serial->id;
-            $cartItem->quantity = 1;
-            $cartItem->item_no = $serial->stock->product->id;
-            $cartItem->price = $serial->stock->selling_price;
-            $cartItem->save();
-            return response()->json([
-                $cart->id,
-                $serial
-            ]);
-        } else {
-            // No cart_id provided, create a new cart
+        if (!$serial) {
+            return response()->json(['message' => 'Serial not found'], 404);
+        }
+
+        // Check if cart_id is provided and exists
+        if ($cartId) {
+            $cart = Cart::find($cartId);
+            if (!$cart) {
+                $cartId = null;  // If the cart does not exist, set it to null to create a new one
+            }
+        }
+
+        if (!$cartId) {
+            // Create a new cart if no valid cart_id
             $cart = new Cart();
             $cart->cart_id = 'LP' . substr((string) Str::uuid(), 0, 4);
-            $cart->save();
+            $cart->save(); // Save to get its ID
+        } else {
+            $cart = Cart::findOrFail($cartId);  // Use existing cart
+        }
 
+        // Check if the CartItem already exists for the current cart and serial
+        $existingCartItem = CartItem::where('cart_id', $cart->id)
+            ->where('serial_id', $serial->id)
+            ->first();
+
+        if ($existingCartItem) {
+            // Update the existing CartItem if found
+            $existingCartItem->quantity += 1; // Increment quantity
+            $existingCartItem->save();
+        } else {
+            // Create the CartItem if it doesn't exist
             $cartItem = new CartItem();
             $cartItem->cart_id = $cart->id;
             $cartItem->serial_id = $serial->id;
             $cartItem->quantity = 1;
             $cartItem->item_no = $serial->stock->product->id;
-            $cartItem->price = $serial->stock->selling_price;
+            $cartItem->unit_price = $serial->stock->selling_price;
             $cartItem->save();
-            return response()->json([
-                $cart->id,
-                $serial
-            ]);
         }
+
+        return response()->json([
+            'cart_id' => $cart->id,
+            'serial' => $serial
+        ]);
     }
+
     public function delete_saledata($item_no)
     {
         $cartItem = CartItem::where('item_no', $item_no)->first();

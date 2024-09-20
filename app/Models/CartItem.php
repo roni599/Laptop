@@ -9,9 +9,21 @@ class CartItem extends Model
 {
     use HasFactory;
     protected $table = 'cartitems';
+    // protected $fillable = [
+    //     'item_no', 'quantity', 'price', 'status', 'cart_id', 'serial_id', 'payment_type_id'
+    // ];
     protected $fillable = [
-        'item_no', 'quantity', 'price', 'status', 'cart_id', 'serial_id', 'payment_type_id'
+        'item_no',
+        'quantity',
+        'unit_price',
+        'sold_price',
+        'profit',
+        'status',
+        'cart_id',
+        'serial_id',
+        'payment_type_id',
     ];
+    
 
     public function cart()
     {

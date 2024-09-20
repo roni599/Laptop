@@ -20,12 +20,11 @@ class SupplierController extends Controller
 
         $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:suppliers,email',
+            'email' => 'nullable',
             'address' => 'required|string|max:255',
             'phone' => 'required|string|max:15',
             'shopname' => 'required|string|max:255',
             'image' => 'nullable|string',
-            // 'product_id' => 'required',
             'user_id' => 'required'
         ]);
         $supplier = new Supplier();
