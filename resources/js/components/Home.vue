@@ -98,8 +98,6 @@ export default {
   },
   created() {
     this.fetchData()
-    AppStorage.clearBillId();
-    AppStorage.clearCard();
   }
 };
 </script>

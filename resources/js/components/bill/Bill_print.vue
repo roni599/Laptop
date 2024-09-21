@@ -22,6 +22,7 @@
                         <thead>
                             <tr>
                                 <th class="col-8">Product</th>
+                                <th class="col-8">Serial</th>
                                 <th class="col-2">Quantity</th>
                                 <th class="col-2">Unit Price</th>
                                 <th class="col-2">Subtotal</th>
@@ -30,9 +31,10 @@
                         <tbody>
                             <tr v-for="cartitem in bills.cart.cart_items" :key="cartitem.id">
                                 <td>{{ cartitem.serial.stock.product.product_model }}</td>
+                                <td>{{ cartitem.serial.serial_no }}</td>
                                 <td>{{ cartitem.quantity }} Pc(s)</td>
-                                <td>{{ cartitem.price }}</td>
-                                <td>{{ cartitem.price * cartitem.quantity }}</td>
+                                <td>{{ cartitem.unit_price }}</td>
+                                <td>{{ cartitem.sold_price * cartitem.quantity }}</td>
                             </tr>
                         </tbody>
                     </table>
@@ -44,7 +46,7 @@
                                 <p>{{ payment.paymenttype.pt_name }}</p>
                             </div>
                             <div class="amount gap-5">
-                                <p>Taka : <span>{{ payment.amount }} BDT</span></p>
+                                <p>Taka : <span>{{ payment.amount }}</span></p>
                             </div>
                         </div>
                     </div>
@@ -67,14 +69,14 @@
                 </div>
             </div>
             <div class="numverwords container">
-                <p>In Words: {{ convertNumberToWords(bills.total_price) }} BDT</p>
+                <p>In Words: {{ convertNumberToWords(bills.total_price) }}</p>
             </div>
             <div class="mb-0 replacement w-100">
                 <p class="text-center text-danger fw-bold">15 Days Replacement Guarantee and 5 Years Service Warranty
                 </p>
             </div>
             <div class="mb-1 display">
-                <p class="text-center fw-bold">(Display, Keyboard and Body Without Guarantee)</p>
+                <p class="text-center text-danger fw-bold">(Display, Keyboard and Body Without Guarantee)</p>
             </div>
             <div class="signature mt-4 container">
                 <div class="customer">
@@ -181,6 +183,7 @@ export default {
             const teens = ["Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen", "Sixteen", "Seventeen", "Eighteen", "Nineteen"];
             const tens = ["", "Ten", "Twenty", "Thirty", "Forty", "Fifty", "Sixty", "Seventy", "Eighty", "Ninety"];
             const thousands = ["", "Thousand", "Million", "Billion"];
+
             let number = Math.floor(amount);
             if (number === 0) return "Zero";
 
@@ -189,19 +192,29 @@ export default {
                 let remainder = number % 1000;
                 if (remainder > 0) {
                     let str = "";
-                    if (remainder % 100 < 20) {
-                        str = (remainder % 100 < 11) ? units[remainder % 100] : teens[remainder % 100 - 11];
+
+                    if (remainder % 100 < 10) {
+                        str = units[remainder % 10];
+                    } else if (remainder % 100 < 20) {
+                        str = teens[remainder % 100 - 11];
                     } else {
                         str = tens[Math.floor(remainder / 10) % 10] + (remainder % 10 > 0 ? " " + units[remainder % 10] : "");
                     }
+
+                    if (Math.floor(remainder / 100) > 0) {
+                        str = units[Math.floor(remainder / 100)] + " Hundred" + (str ? " " + str : "");
+                    }
+
                     words.push(str + " " + thousands[index]);
                 }
+
                 number = Math.floor(number / 1000);
                 index++;
             }
 
-            return words.reverse().join(" ").trim() || "Zero";
-        },
+            return words.reverse().join(" ").trim() + " BDT";
+        }
+
     },
     computed: {
         formattedDate() {
@@ -301,6 +314,7 @@ export default {
         width: 100%;
         margin-top: -30px;
     }
+
     .display {
         width: 100%;
         margin-left: 170px;
