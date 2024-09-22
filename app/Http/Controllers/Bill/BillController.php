@@ -156,7 +156,9 @@ class BillController extends Controller
         //         }
         //     }
         // }
-
+        $entriesToDelete = CartItem::whereNull('sold_price')   // Check if sold_price is NULL
+            ->whereNull('profit')                              // Check if profit is NULL
+            ->delete();
         return response()->json($bill->id);
     }
 
@@ -181,5 +183,9 @@ class BillController extends Controller
             'bill' => $bill,
             'payment' => $payment
         ]);
+    }
+    public function billtable(){
+        $bills=Bill::with(['cart.cartitems.serial.stock.product.brand','user'])->get();
+        return response()->json($bills);
     }
 }

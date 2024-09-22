@@ -32,6 +32,7 @@ import Expence_create from '../components/expense/Expence_create.vue';
 import Expence_category from '../components/expense/Expence_category.vue';
 import Bill_generate from '../components/bill/Bill_generate.vue';
 import Bill_print from '../components/bill/Bill_print.vue';
+import BillsTable from '../components/paymentType/BillsTable.vue';
 
 const routes = [
     { name: 'LoginForm', component: Login, path: '/' },
@@ -64,6 +65,7 @@ const routes = [
     {name:"Payment_type", component:PaymentType, path:'/payment_type'},
     {name:"Investment",component:Investment, path:'/investment'},
     {name:"Reserve_table",component:Reserve_table,path:'/reserve_table'},
+    {name:"BillsTable",component:BillsTable,path:'/bills_table'},
 
     {name:"Bill", component:Bill_generate, path:'/bill_generate'},
     {name:"Bill_print",component:Bill_print,path:'/bill_print'},

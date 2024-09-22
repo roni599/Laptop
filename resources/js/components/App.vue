@@ -136,6 +136,7 @@
                                     <router-link class="nav-link" to="/payment_type">Payment Create</router-link>
                                     <router-link class="nav-link" to="/investment">Investment</router-link>
                                     <router-link class="nav-link" to="/reserve_table">Reserve Table</router-link>
+                                    <router-link class="nav-link" to="/bills_table">Bills Table</router-link>
                                 </nav>
                             </div>
 
@@ -158,6 +159,24 @@
                                 </nav>
                             </div>
 
+                            <a class="nav-link collapsed" href="#" data-bs-toggle="collapse"
+                                data-bs-target="#collapseStocks" aria-expanded="false" aria-controls="collapseLayouts">
+                                <div class="sb-nav-link-icon">
+                                    <i class="fas fa-chart-line mt-1"></i>
+                                </div>
+                                Stocks
+                                <div class="sb-sidenav-collapse-arrow">
+                                    <i class="fas fa-angle-down"></i>
+                                </div>
+                            </a>
+                            <div class="collapse" id="collapseStocks" aria-labelledby="headingOne"
+                                data-bs-parent="#sidenavAccordion">
+                                <nav class="sb-sidenav-menu-nested nav">
+                                    <router-link class="nav-link" to="/stocks_create">Stocks Create</router-link>
+                                    <router-link class="nav-link" to="/all_stocks">Stocks List</router-link>
+                                    <router-link class="nav-link" to="/all_serials">Serials List</router-link>
+                                </nav>
+                            </div>
 
                             <a class="nav-link collapsed" href="#" data-bs-toggle="collapse"
                                 data-bs-target="#collapseExpense" aria-expanded="false" aria-controls="collapseLayouts">
@@ -175,25 +194,6 @@
                                     <router-link class="nav-link" to="/expence_category">Expense Category</router-link>
                                     <router-link class="nav-link" to="/expence_create">Expense Create</router-link>
                                     <router-link class="nav-link" to="/all_expense">Expense List</router-link>
-                                </nav>
-                            </div>
-
-                            <a class="nav-link collapsed" href="#" data-bs-toggle="collapse"
-                                data-bs-target="#collapseStocks" aria-expanded="false" aria-controls="collapseLayouts">
-                                <div class="sb-nav-link-icon">
-                                    <i class="fas fa-chart-line mt-1"></i>
-                                </div>
-                                Stocks
-                                <div class="sb-sidenav-collapse-arrow">
-                                    <i class="fas fa-angle-down"></i>
-                                </div>
-                            </a>
-                            <div class="collapse" id="collapseStocks" aria-labelledby="headingOne"
-                                data-bs-parent="#sidenavAccordion">
-                                <nav class="sb-sidenav-menu-nested nav">
-                                    <router-link class="nav-link" to="/stocks_create">Stocks Create</router-link>
-                                    <router-link class="nav-link" to="/all_stocks">Stocks List</router-link>
-                                    <router-link class="nav-link" to="/all_serials">Serials List</router-link>
                                 </nav>
                             </div>
 

@@ -139,6 +139,7 @@ Route::post('/bills/store', [BillController::class, 'store']);
 Route::put('/bills/update', [BillController::class, 'CategoryUpdate']);
 Route::delete('/bills/delete/{id}', [BillController::class, 'delete']);
 Route::get('/bills/generate/{id}', [BillController::class, 'billGenerate']);
+Route::get('/bills/table', [BillController::class, 'billtable']);
 
 
 Route::get('/carts', [CartController::class, 'index']);
