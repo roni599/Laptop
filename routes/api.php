@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Bill\BillController;
 use App\Http\Controllers\Brand\BrandController;
+use App\Http\Controllers\Calculate\CalculateController;
 use App\Http\Controllers\Cart\CartController;
 use App\Http\Controllers\CartItem\CartItemController;
 use App\Http\Controllers\Category\CategoryController;
@@ -144,6 +145,9 @@ Route::get('/bills/table', [BillController::class, 'billtable']);
 
 Route::get('/carts', [CartController::class, 'index']);
 Route::get('/cartsitmes', [CartItemController::class, 'index']);
+
+
+Route::get('/product/calculate',[CalculateController::class, 'product']);
 // Route::post('/users/store',[UserController::class, 'store']);
 // Route::get('/employees', [EmployeeController::class, 'index']);
 // Route::post('/employees/store', [EmployeeController::class, 'store']);

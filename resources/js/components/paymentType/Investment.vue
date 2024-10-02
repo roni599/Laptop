@@ -16,47 +16,48 @@
         </div>
       </div>
       <div class="card-body">
-        <table class="table text-muted">
-          <thead>
-            <tr>
-              <th scope="col">#</th>
-              <th scope="col">Investmentor Name</th>
-              <th scope="col">Amount</th>
-              <th scope="col">Payment Type</th>
-              <th scope="col">Assign By</th>
-              <th scope="col">Investment Date</th>
-              <th scope="col">Status</th>
-              <th scope="col">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="investment in investments" :key="investment.id">
-              <td>{{ investment.id }}</td>
-              <td>{{ investment.In_name }}</td>
-              <td>{{ investment.Amount }}</td>
-              <td>{{ investment.paymenttype.pt_name }}</td>
-              <td>{{ investment.user.user_name }}</td>
-              <td>{{ investment.date }}</td>
-              <td>
-                <span v-if="investment.status == 0">Inactive</span>
-                <span v-else>Active</span>
-              </td>
-              <td>
-                <div class="buttonGroup py-2">
-                  <button type="button" class="btn btn-sm btn-success" @click="openEditModal(investment)">
-                    <i class="fa-solid fa-pen-to-square"></i>
-                  </button>
-                  <button class="btn btn-sm btn-danger mx-2" @click="deleteInvestment(investment.id)">
-                    <i class="fa-solid fa-trash"></i>
-                  </button>
-                </div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+        <div class="table_size">
+          <table class="table text-muted">
+            <thead>
+              <tr>
+                <th scope="col">#</th>
+                <th scope="col">Investmentor Name</th>
+                <th scope="col">Amount</th>
+                <th scope="col">Payment Type</th>
+                <th scope="col">Assign By</th>
+                <th scope="col">Investment Date</th>
+                <th scope="col">Status</th>
+                <th scope="col">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="investment in investments" :key="investment.id">
+                <td>{{ investment.id }}</td>
+                <td>{{ investment.In_name }}</td>
+                <td>{{ investment.Amount }}</td>
+                <td>{{ investment.paymenttype.pt_name }}</td>
+                <td>{{ investment.user.user_name }}</td>
+                <td>{{ investment.date }}</td>
+                <td>
+                  <span v-if="investment.status == 0">Inactive</span>
+                  <span v-else>Active</span>
+                </td>
+                <td>
+                  <div class="buttonGroup d-flex justify-center py-2">
+                    <button type="button" class="btn btn-sm btn-success" @click="openEditModal(investment)">
+                      <i class="fa-solid fa-pen-to-square"></i>
+                    </button>
+                    <button class="btn btn-sm btn-danger mx-2" @click="deleteInvestment(investment.id)">
+                      <i class="fa-solid fa-trash"></i>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
-
     <div class="modal fade" id="createInvestmentModal" tabindex="-1" aria-labelledby="createInvestmentModalLabel"
       aria-hidden="true">
       <div class="modal-dialog full-width-modal mt-4">
@@ -467,4 +468,9 @@ export default {
 }
 </script>
 
-<style></style>
+<style scoped>
+.table_size {
+  overflow: auto;
+  width: 100%;
+}
+</style>

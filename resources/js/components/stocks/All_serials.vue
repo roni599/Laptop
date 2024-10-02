@@ -19,66 +19,67 @@
       </div>
       <div class="card-body">
         <input type="text" id="searchInput" v-model="searchSerial" placeholder="Search for ID.." />
-        <table class="table">
-          <thead>
-            <tr>
-              <th scope="col">#</th>
-              <th scope="col">Serial Number</th>
-              <th scope="col">Barcode Number</th>
-              <th scope="col">Stock ID</th>
-              <th scope="col">Assing By</th>
-              <th scope="col">Color</th>
-              <th scope="col">Status</th>
-              <th scope="col">Return Status</th>
-              <th scope="col">Image</th>
-              <!-- <th scope="col">barcode</th> -->
-              <th scope="col">Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="serial in filteredSerials" :key="serial.id">
-              <td>{{ serial.id }}</td>
-              <td>{{ serial.serial_no }}</td>
-              <td>{{ serial.barcode_no }}</td>
-              <td>{{ serial.stock_id }}</td>
-              <td>{{ serial.user.user_name }}</td>
-              <td>{{ serial.color }}</td>
-              <td>
-                <span v-if="serial.status === 0">Processing</span>
-                <span v-else>Ready for sale</span>
-              </td>
-              <td>
-                <span v-if="serial.return_status === 0">At The Shop</span>
-                <span v-else>Return</span>
-              </td>
-              <td>
-                <img v-if="serial.image" :src="`/backend/images/serial/${serial.image}`" alt="User Image" width="55"
-                  height="55" />
-                <span v-else>User not <br> provide image</span>
-              </td>
-              <!-- <td class="text-center">
+        <div class="table_size">
+          <table class="table">
+            <thead>
+              <tr>
+                <th scope="col">#</th>
+                <th scope="col">Serial Number</th>
+                <th scope="col">Barcode Number</th>
+                <th scope="col">Stock ID</th>
+                <th scope="col">Assing By</th>
+                <th scope="col">Color</th>
+                <th scope="col">Status</th>
+                <th scope="col">Return Status</th>
+                <th scope="col">Image</th>
+                <!-- <th scope="col">barcode</th> -->
+                <th scope="col">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="serial in filteredSerials" :key="serial.id">
+                <td>{{ serial.id }}</td>
+                <td>{{ serial.serial_no }}</td>
+                <td>{{ serial.barcode_no }}</td>
+                <td>{{ serial.stock_id }}</td>
+                <td>{{ serial.user.user_name }}</td>
+                <td>{{ serial.color }}</td>
+                <td>
+                  <span v-if="serial.status === 0">Processing</span>
+                  <span v-else>Ready for sale</span>
+                </td>
+                <td>
+                  <span v-if="serial.return_status === 0">At The Shop</span>
+                  <span v-else>Return</span>
+                </td>
+                <td>
+                  <img v-if="serial.image" :src="`/backend/images/serial/${serial.image}`" alt="User Image" width="55"
+                    height="55" />
+                  <span v-else>User not <br> provide image</span>
+                </td>
+                <!-- <td class="text-center">
                 <img v-if="Serial.barcode" :src="`data:image/png;base64,${Serial.barcode}`" alt="Barcode" width="100"
                   height="20" />
                 <div>
                   {{ Serial.serial.serial_no }}
                 </div>
               </td> -->
-              <td>
-                <div class="buttonGroup py-2 d-flex justify-between">
-                  <button type="button" class="btn btn-sm btn-success" @click="openEditModal(serial)">
-                    <i class="fa-solid fa-pen-to-square"></i>
-                  </button>
-                  <button class="btn btn-sm btn-danger mx-2" @click="deleteSerial(serial.id)">
-                    <i class="fa-solid fa-trash"></i>
-                  </button>
-                </div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+                <td>
+                  <div class="buttonGroup py-2 d-flex justify-between">
+                    <button type="button" class="btn btn-sm btn-success" @click="openEditModal(serial)">
+                      <i class="fa-solid fa-pen-to-square"></i>
+                    </button>
+                    <button class="btn btn-sm btn-danger mx-2" @click="deleteSerial(serial.id)">
+                      <i class="fa-solid fa-trash"></i>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
-
     <div class="modal fade" id="editSupplierModal" tabindex="-1" aria-labelledby="editSupplierLabel" aria-hidden="true">
       <div class="modal-dialog full-width-modal mt-3">
         <div class="modal-content">
@@ -230,7 +231,7 @@ export default {
       },
       barcodeImage: '',
       errors: {},
-      searchSerial:''
+      searchSerial: ''
     }
   },
   methods: {
@@ -247,6 +248,7 @@ export default {
     async serial_edit() {
       await axios.put("/api/serials/upate", this.form)
         .then((res) => {
+          console.log(res);
           let myModal = bootstrap.Modal.getInstance(
             document.getElementById("editSupplierModal")
           );
@@ -275,9 +277,11 @@ export default {
           await axios
             .delete("/api/serials/delete/" + id)
             .then((res) => {
+              console.log(res)
               this.feth_Serials()
             })
             .catch((error) => {
+              console.log(error)
             });
           Swal.fire({
             title: "Deleted!",
@@ -376,5 +380,9 @@ export default {
   width: 60%;
   height: 70vh;
   margin: auto;
+}
+.table_size{
+  width: 100%;
+  overflow: auto;
 }
 </style>

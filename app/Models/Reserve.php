@@ -43,7 +43,7 @@ class Reserve extends Model
 
     public function paymenttype()
     {
-        return $this->belongsTo(PaymentType::class, 'payment_type_id');
+        return $this->belongsTo(Paymenttype::class, 'payment_type_id');
     }
 
     public function investment()

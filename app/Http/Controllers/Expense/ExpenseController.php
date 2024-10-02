@@ -168,7 +168,7 @@ class ExpenseController extends Controller
             'expenserName' => 'required',
             'expense_description' => 'required',
             'amount' => 'required|numeric',
-            'paymenttype' => 'required',
+            // 'paymenttype' => 'required',
             'date' => 'required',
             'expensecategory' => 'required',
             // 'cost_type' => 'required',

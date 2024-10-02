@@ -399,13 +399,13 @@ export default {
         },
         toggleInputs(inputType) {
             if (inputType === 'bank') {
-                this.input1 = 2;
+                this.input1 = 1;
                 this.showBankInputs = true;
             } else if (inputType === 'cash') {
-                this.input2 = 3;
+                this.input2 = 2;
                 this.showCashInputs = true;
             } else if (inputType === 'others') {
-                this.input3 = 1;
+                this.input3 = 3;
                 this.showOthersInputs = true;
             }
         },

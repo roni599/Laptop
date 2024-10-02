@@ -16,40 +16,42 @@
                 </div>
             </div>
             <div class="card-body">
-                <table class="table text-muted">
-                    <thead>
-                        <tr>
-                            <th scope="col">#</th>
-                            <th scope="col">Category Name</th>
-                            <th scope="col">Status</th>
-                            <th scope="col">Image</th>
-                            <th scope="col">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr v-for="category in categories" :key="category.id">
-                            <th scope="row">{{ category.id }}</th>
-                            <td>{{ category.cat_name }}</td>
-                            <td>{{ category.status }}</td>
-                            <td>
-                                <img v-if="category.cat_img" :src="`/backend/images/categories/${category.cat_img}`" alt="User Image" width="50"
-                                    height="50" />
-                                <span v-else>User not <br> provide image</span>
-                            </td>
-                            <td>
-                                <div class="buttonGroup py-2 d-flex justify-between">
-                                    <button type="button" class="btn btn-sm btn-success"
-                                        @click="openEditModal(category)">
-                                        <i class="fa-solid fa-pen-to-square"></i>
-                                    </button>
-                                    <button class="btn btn-sm btn-danger mx-2" @click="deleteCategory(category.id)">
-                                        <i class="fa-solid fa-trash"></i>
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+                <div class="table_size">
+                    <table class="table text-muted">
+                        <thead>
+                            <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">Category Name</th>
+                                <th scope="col">Status</th>
+                                <th scope="col">Image</th>
+                                <th scope="col">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="category in categories" :key="category.id">
+                                <th scope="row">{{ category.id }}</th>
+                                <td>{{ category.cat_name }}</td>
+                                <td>{{ category.status }}</td>
+                                <td>
+                                    <img v-if="category.cat_img" :src="`/backend/images/categories/${category.cat_img}`"
+                                        alt="User Image" width="50" height="50" />
+                                    <span v-else>User not <br> provide image</span>
+                                </td>
+                                <td>
+                                    <div class="buttonGroup py-2 d-flex justify-between">
+                                        <button type="button" class="btn btn-sm btn-success"
+                                            @click="openEditModal(category)">
+                                            <i class="fa-solid fa-pen-to-square"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-danger mx-2" @click="deleteCategory(category.id)">
+                                            <i class="fa-solid fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
 
@@ -82,7 +84,7 @@
                                                             placeholder="Enter your name" v-model="form.cat_name" />
                                                         <small class="text-danger" v-if="errors.cat_name">{{
                                                             errors.cat_name[0]
-                                                        }}</small>
+                                                            }}</small>
                                                         <label for="inputName">Category Name</label>
                                                     </div>
                                                 </div>
@@ -152,7 +154,7 @@
                                                             placeholder="Enter your name" v-model="editForm.cat_name" />
                                                         <small class="text-danger" v-if="errors.cat_name">{{
                                                             errors.brand_name[0]
-                                                            }}</small>
+                                                        }}</small>
                                                         <label for="inputName">Category Name</label>
                                                     </div>
                                                 </div>
@@ -164,7 +166,7 @@
                                                             placeholder="Enter your name" v-model="editForm.status" />
                                                         <small class="text-danger" v-if="errors.status">{{
                                                             errors.status[0]
-                                                            }}</small>
+                                                        }}</small>
                                                         <label for="inputName">Status</label>
                                                     </div>
                                                 </div>
@@ -414,4 +416,9 @@ export default {
 }
 </script>
 
-<style></style>
+<style scoped>
+.table_size {
+    width: 100%;
+    overflow: auto;
+}
+</style>

@@ -18,56 +18,61 @@
         </div>
       </div>
       <div class="card-body">
-        <table class="table text-muted">
-          <thead>
-            <tr>
-              <th scope="col">#</th>
-              <th scope="col">Expenser Name</th>
-              <th scope="col">Expense Description</th>
-              <th scope="col">Expense Amount</th>
-              <th scope="col">Cost Type</th>
-              <th scope="col">Expense Category</th>
-              <th scope="col">Payment Type</th>
-              <th scope="col">Assinged By</th>
-              <th scope="col">Date</th>
-              <th scope="col">Status</th>
-              <th scope="col">Image</th>
-              <th scope="col">Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="expense in expenses" :key="expense.id">
-              <td>{{ expense.id }}</td>
-              <td>{{ expense.expenser.user_name }}</td>
-              <td>{{ expense.expense_desc }}</td>
-              <td>{{ expense.amount }}</td>
-              <td v-if="expense.expensecategory.cost_type == 1">Running</td>
-              <td v-else>Fixed</td>
-              <td>{{ expense.expensecategory.category_name }}</td>
+        <div class="table_size">
+          <table class="table text-muted">
+            <thead>
+              <tr>
+                <th scope="col">#</th>
+                <th scope="col">Expenser Name</th>
+                <th scope="col">Expense Description</th>
+                <th scope="col">Expense Amount</th>
+                <th scope="col">Cost Type</th>
+                <th scope="col">Expense Category</th>
+                <!-- <th scope="col">Payment Type</th> -->
+                <th scope="col">Assinged By</th>
+                <th scope="col">Date</th>
+                <th scope="col">Status</th>
+                <th scope="col">Image</th>
+                <th scope="col">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="expense in expenses" :key="expense.id">
+                <td>{{ expense.id }}</td>
+                <td>{{ expense.expenser.user_name }}</td>
+                <td>{{ expense.expense_desc }}</td>
+                <td>{{ expense.amount }}</td>
+                <td v-if="expense.expensecategory.cost_type == 1">Running</td>
+                <td v-else>Fixed</td>
+                <td>{{ expense.expensecategory.category_name }}</td>
 
-              <!-- <td>{{ expense.paymenttype.pt_name }}</td> -->
-              <td>{{ getPaymentTypeNames(expense.reserves) }}</td>
-              <td>{{ expense.user.user_name }}</td>
-              <td>{{ expense.date }}</td>
-              <td>{{ expense.status }}</td>
-              <td>
-                <img v-if="expense.receipt_img" :src="`/backend/images/expense/${expense.receipt_img}`" alt="User Image"
-                  width="50" height="50" />
-                <span v-else>User not <br> provied image</span>
-              </td>
-              <td>
-                <div class="buttonGroup py-2 d-flex justify-between">
-                  <button type="button" class="btn btn-sm btn-success ms-2 mb-1" @click="openEditModal(expense)">
-                    <i class="fa-solid fa-pen-to-square"></i>
-                  </button>
-                  <button class="btn btn-sm btn-danger mx-2" @click="deleteExpense(expense.id)">
-                    <i class="fa-solid fa-trash"></i>
-                  </button>
-                </div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+                <!-- <td>{{ expense.paymenttype.pt_name }}</td> -->
+                <!-- <td>{{ getPaymentTypeNames(expense.reserves) }}</td> -->
+                <td>{{ expense.user.user_name }}</td>
+                <td>{{ expense.date }}</td>
+                <td>
+                  <span v-if="expense.status==1" class="badge bg-success">Active</span>
+                  <span v-else class="badge bg-danger">Inactive</span>
+                </td>
+                <td>
+                  <img v-if="expense.receipt_img" :src="`/backend/images/expense/${expense.receipt_img}`"
+                    alt="User Image" width="50" height="50" />
+                  <span v-else>User not <br> provied image</span>
+                </td>
+                <td>
+                  <div class="buttonGroup py-2 d-flex justify-between">
+                    <button type="button" class="btn btn-sm btn-success ms-2 mb-1" @click="openEditModal(expense)">
+                      <i class="fa-solid fa-pen-to-square"></i>
+                    </button>
+                    <button class="btn btn-sm btn-danger mx-2" @click="deleteExpense(expense.id)">
+                      <i class="fa-solid fa-trash"></i>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
 
@@ -320,14 +325,14 @@ export default {
         })
     },
     openEditModal(expense) {
-      console.log(expense.reserves)
+      // console.log(expense.reserves)
       this.reserves = []; // Reset reserves
       this.reserves = [...expense.reserves]; // Set new reserves
-      console.log("Updated reserves:", this.reserves);
+      // console.log("Updated reserves:", this.reserves);
       this.showInputs = true;
       this.form = { ...expense }
       this.form.expenserName = expense.expenser.id;
-      this.form.paymenttype = expense.paymenttype.id
+      // this.form.paymenttype = expense.paymenttype.id
       this.form.expensecategory = expense.expensecategory.id
       this.form.expense_description = expense.expense_desc
       this.form.image = expense.receipt_img
@@ -517,5 +522,9 @@ export default {
   width: 60%;
   height: 86vh;
   margin: auto;
+}
+.table_size{
+  overflow: auto;
+  width: 100%;
 }
 </style>

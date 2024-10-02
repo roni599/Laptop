@@ -30,9 +30,9 @@ class Bill extends Model
         return $this->belongsTo(Customer::class);
     }
 
-    public function paymentType()
+    public function paymenttype()
     {
-        return $this->belongsTo(PaymentType::class);
+        return $this->belongsTo(Paymenttype::class);
     }
 
     public function user()

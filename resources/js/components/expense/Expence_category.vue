@@ -16,47 +16,51 @@
         </div>
       </div>
       <div class="card-body">
-        <table class="table text-muted">
-          <thead>
-            <tr>
-              <th scope="col">#</th>
-              <th scope="col">Expense Category Name</th>
-              <th scope="col">Cost Type</th>
-              <th scope="col">Assign By</th>
-              <th scope="col">Status</th>
-              <th scope="col">Image</th>
-              <th scope="col">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="expensecategory in expensecategories" :key="expensecategory.id">
-              <th scope="row">{{ expensecategory.id }}</th>
-              <td>{{ expensecategory.category_name }}</td>
-              <td v-if="expensecategory.cost_type == 1">Running Cost</td>
-              <td v-else>Fixed Cost</td>
-              <td>{{ expensecategory.user.user_name }}</td>
-              <td>
-                <span v-if="expensecategory.status == 0">Active</span>
-                <span v-else>Inactive</span>
-              </td>
-              <td>
-                <img v-if="expensecategory.images" :src="`/backend/images/expensecategory/${expensecategory.images}`"
-                  alt="User Image" width="50" height="50" />
-                <span v-else>User not <br> provide image</span>
-              </td>
-              <td>
-                <div class="buttonGroup py-2 d-flex justify-between">
-                  <button type="button" class="btn btn-sm btn-success" @click="openEditModal(expensecategory)">
-                    <i class="fa-solid fa-pen-to-square"></i>
-                  </button>
-                  <button class="btn btn-sm btn-danger mx-2" @click="deleteBrand(expensecategory.id)">
-                    <i class="fa-solid fa-trash"></i>
-                  </button>
-                </div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+        <div class="table_size">
+
+          <table class="table text-muted">
+            <thead>
+              <tr>
+                <th scope="col">#</th>
+                <th scope="col">Expense Category Name</th>
+                <th scope="col">Cost Type</th>
+                <th scope="col">Assign By</th>
+                <th scope="col">Status</th>
+                <th scope="col">Image</th>
+                <th scope="col">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="expensecategory in expensecategories" :key="expensecategory.id">
+                <th scope="row">{{ expensecategory.id }}</th>
+                <td>{{ expensecategory.category_name }}</td>
+                <td v-if="expensecategory.cost_type == 1">Running Cost</td>
+                <td v-else>Fixed Cost</td>
+                <td>{{ expensecategory.user.user_name }}</td>
+                <td>
+                  <span v-if="expensecategory.status == 0">Active</span>
+                  <span v-else>Inactive</span>
+                </td>
+                <td>
+                  <img v-if="expensecategory.images" :src="`/backend/images/expensecategory/${expensecategory.images}`"
+                    alt="User Image" width="50" height="50" />
+                  <span v-else>User not <br> provide image</span>
+                </td>
+                <td>
+                  <div class="buttonGroup py-2 d-flex justify-between">
+                    <button type="button" class="btn btn-sm btn-success" @click="openEditModal(expensecategory)">
+                      <i class="fa-solid fa-pen-to-square"></i>
+                    </button>
+                    <button class="btn btn-sm btn-danger mx-2" @click="deleteBrand(expensecategory.id)">
+                      <i class="fa-solid fa-trash"></i>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+        </div>
       </div>
     </div>
 
@@ -287,7 +291,7 @@ export default {
         id: null,
         user_id: null,
         ecname: null,
-        cost_type:null,
+        cost_type: null,
         image: null,
         status: null
       },
@@ -321,7 +325,7 @@ export default {
             cost_type: null,
             image: '/backend/assets/img/pic.jpeg',
           };
-          this.errors={};
+          this.errors = {};
           let myModal = bootstrap.Modal.getInstance(
             document.getElementById("createExpenseCategoryModal")
           );
@@ -350,7 +354,7 @@ export default {
       this.editForm = { ...expensecategory }
       this.editForm.image = expensecategory.images
       this.editForm.ecname = expensecategory.category_name
-      this.editForm.user_id=this.users.id
+      this.editForm.user_id = this.users.id
       let myModal = new bootstrap.Modal(
         document.getElementById("editExpenseCategoryModal"),
         {}
@@ -392,7 +396,7 @@ export default {
             user_id: null,
             ecname: null,
             image: null,
-            cost_type:null,
+            cost_type: null,
             status: null
           }
           this.fetch_expensecategories();
@@ -509,5 +513,9 @@ export default {
   width: 60%;
   height: 85vh;
   margin: auto;
+}
+.table_size{
+  overflow: auto;
+  width: 100%;
 }
 </style>

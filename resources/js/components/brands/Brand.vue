@@ -17,39 +17,42 @@
                 </div>
             </div>
             <div class="card-body">
-                <table class="table text-muted">
-                    <thead>
-                        <tr>
-                            <th scope="col">#</th>
-                            <th scope="col">Brand Name</th>
-                            <th scope="col">Status</th>
-                            <th scope="col">Image</th>
-                            <th scope="col">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr v-for="brand in brands" :key="brand.id">
-                            <th scope="row">{{ brand.id }}</th>
-                            <td>{{ brand.brand_name }}</td>
-                            <td>{{ brand.status }}</td>
-                            <td>
-                                <img v-if="brand.brand_image"  :src="`/backend/images/brands/${brand.brand_image}`"
-                                    alt="User Image" width="50" height="50" />
-                                <span v-else>user not <br> provide image</span>
-                            </td>
-                            <td>
-                                <div class="buttonGroup py-2 d-flex justify-between">
-                                    <button type="button" class="btn btn-sm btn-success" @click="openEditModal(brand)">
-                                        <i class="fa-solid fa-pen-to-square"></i>
-                                    </button>
-                                    <button class="btn btn-sm btn-danger mx-2" @click="deleteBrand(brand.id)">
-                                        <i class="fa-solid fa-trash"></i>
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+                <div class="table_size">
+                    <table class="table text-muted">
+                        <thead>
+                            <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">Brand Name</th>
+                                <th scope="col">Status</th>
+                                <th scope="col">Image</th>
+                                <th scope="col">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="brand in brands" :key="brand.id">
+                                <th scope="row">{{ brand.id }}</th>
+                                <td>{{ brand.brand_name }}</td>
+                                <td>{{ brand.status }}</td>
+                                <td>
+                                    <img v-if="brand.brand_image" :src="`/backend/images/brands/${brand.brand_image}`"
+                                        alt="User Image" width="50" height="50" />
+                                    <span v-else>user not <br> provide image</span>
+                                </td>
+                                <td>
+                                    <div class="buttonGroup py-2 d-flex justify-between">
+                                        <button type="button" class="btn btn-sm btn-success"
+                                            @click="openEditModal(brand)">
+                                            <i class="fa-solid fa-pen-to-square"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-danger mx-2" @click="deleteBrand(brand.id)">
+                                            <i class="fa-solid fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
         <div class="modal fade" id="createBrandModal" tabindex="-1" aria-labelledby="createBrandModalLabel"
@@ -107,8 +110,8 @@
                                                         <span v-if="loading"
                                                             class="spinner-border spinner-border-sm me-2" role="status"
                                                             aria-hidden="true"></span>
-                                                        <span v-if="!loading">Login</span>
-                                                        <span v-if="loading">Logging in...</span>
+                                                        <span v-if="!loading">Submit</span>
+                                                        <span v-if="loading">Submitting...</span>
                                                     </button>
                                                 </div>
                                             </div>
@@ -441,4 +444,9 @@ export default {
 }
 </script>
 
-<style></style>
+<style scoped>
+.table_size {
+    width: 100%;
+    overflow: auto;
+}
+</style>

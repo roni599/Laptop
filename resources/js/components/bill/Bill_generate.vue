@@ -315,11 +315,15 @@ export default {
                     });
                 })
                 .catch((error) => {
-                    this.alert = {
-                        message: "Error fetching barcode data",
-                        type: "alert-danger",
-                    };
-                    console.error("Error fetching barcode data:", error);
+                    // this.alert = {
+                    //     message: error.response.data.message,
+                    //     type: "alert-danger",
+                    // };
+                    Swal.fire({
+                        icon: "error",
+                        title: "Oops...",
+                        text: error.response.data.message + "!",
+                    });
                 });
         },
         updateItemPrice(item) {
@@ -410,7 +414,7 @@ export default {
                     });
                 })
                 .catch(error => {
-                    this.alert = { message: 'Error submitting sale', type: 'alert-danger' };
+                    this.alert = { message: error.response.data.message, type: 'alert-danger' };
                     console.error('Error submitting sale:', error);
                 });
         },

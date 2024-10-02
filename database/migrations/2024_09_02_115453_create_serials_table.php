@@ -13,9 +13,9 @@ return new class extends Migration
     {
         Schema::create('serials', function (Blueprint $table) {
             $table->id();
-            $table->string('serial_no');
-            $table->string('barcode_no');
-            $table->string('color');
+            $table->string('serial_no')->nullable();
+            $table->string('barcode_no')->nullable();
+            $table->string('color')->nullable();
             $table->string('image')->nullable();
             $table->tinyInteger('status')->default(0);
             $table->tinyInteger('return_status')->default(0);

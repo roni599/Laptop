@@ -19,13 +19,13 @@ return new class extends Migration
             // $table->integer('price')->nullable();
             $table->string('status')->default('1'); // Ensure status is a string if default is a string
 
-            $table->foreignId('customer_id')->nullable()->constrained('customers')->onDelete('set null');
+            $table->foreignId('customer_id')->nullable()->constrained('customers')->onDelete('cascade');
             // $table->foreignId('paymenttype_id')->nullable()->constrained('paymenttypes')->onDelete('set null');
-            $table->foreignId('user_id')->nullable()->constrained('users')->onDelete('set null');
+            $table->foreignId('user_id')->nullable()->constrained('users')->onDelete('cascade');
             // $table->foreignId('serial_id')->constrained('serials')->onDelete('cascade');
 
             // Add foreign key for cart_id
-            $table->foreignId('cart_id')->nullable()->constrained('carts')->onDelete('set null');
+            $table->foreignId('cart_id')->nullable()->constrained('carts')->onDelete('cascade');
 
             $table->timestamps();
         });

@@ -31,9 +31,9 @@ class Expense extends Model
     {
         return $this->belongsTo(User::class);
     }
-    public function paymentType()
+    public function paymenttype()
     {
-        return $this->belongsTo(PaymentType::class);
+        return $this->belongsTo(Paymenttype::class);
     }
     // public function expenser()
     // {

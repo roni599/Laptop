@@ -140,6 +140,7 @@
                                 </nav>
                             </div>
 
+
                             <a class="nav-link collapsed" href="#" data-bs-toggle="collapse"
                                 data-bs-target="#collapseproducts" aria-expanded="false"
                                 aria-controls="collapseLayouts">
@@ -154,8 +155,8 @@
                             <div class="collapse" id="collapseproducts" aria-labelledby="headingOne"
                                 data-bs-parent="#sidenavAccordion">
                                 <nav class="sb-sidenav-menu-nested nav">
-                                    <router-link class="nav-link" to="/product_create">Products Create</router-link>
-                                    <router-link class="nav-link" to="/all_product">Products List</router-link>
+                                    <router-link class="nav-link" to="/product_create">Products Purchase</router-link>
+                                    <router-link class="nav-link" to="/all_product">Purchase History</router-link>
                                 </nav>
                             </div>
 

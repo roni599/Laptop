@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Stock;
 use App\Http\Controllers\Controller;
 use App\Models\Paymenttype;
 use App\Models\Product;
+use App\Models\Serial;
 use App\Models\Stock;
 use Illuminate\Http\Request;
 
@@ -50,13 +51,13 @@ class StockController extends Controller
     }
     public function update(Request $request)
     {
-        
+
         $request->validate([
             'product_model' => 'required|string|max:255',
             'user_id' => 'required',
             'supplier_id' => 'required',
             'paymenttype_name' => 'required|string|max:255',
-            'stock_quantity' => 'required|integer|min:1',
+            // 'stock_quantity' => 'required|integer|min:1',
             'selling_price' => 'required|numeric|min:0',
             'buying_price' => 'required|numeric|min:0',
             'status' => 'required',
@@ -70,14 +71,14 @@ class StockController extends Controller
         if (!$product || !$stock) {
             return response()->json(['message' => 'Product or Stock not found!'], 404);
         }
-        if ($stock->stock_quantity != $request->stock_quantity) {
-            if ($stock->stock_quantity > $request->stock_quantity) {
-                $product->quantity -= ($stock->stock_quantity - $request->stock_quantity);
-            } else {
-                $product->quantity += ($request->stock_quantity - $stock->stock_quantity);
-            }
-            $stock->stock_quantity = $request->stock_quantity;
-        }
+        // if ($stock->stock_quantity != $request->stock_quantity) {
+        //     if ($stock->stock_quantity > $request->stock_quantity) {
+        //         $product->quantity -= ($stock->stock_quantity - $request->stock_quantity);
+        //     } else {
+        //         $product->quantity += ($request->stock_quantity - $stock->stock_quantity);
+        //     }
+        //     $stock->stock_quantity = $request->stock_quantity;
+        // }
 
         $product->product_model = $request->product_model;
         $paymenttype->pt_name = $request->paymenttype_name;
@@ -93,19 +94,46 @@ class StockController extends Controller
         $stock->save();
         return response()->json(['message' => 'Stock data updated successfully!'], 200);
     }
+    // public function delete($id)
+    // {
+    //     $stock = Stock::find($id);
+    //     $serial=Serial::where('stock_id',$id)->get();
+    //     return response()->json($serial);
+    //     if (!$stock) {
+    //         return response()->json(['message' => 'Stock not found!'], 404);
+    //     }
+    //     $product = Product::find($stock->product_id);
+    //     if (!$product) {
+    //         return response()->json(['message' => 'Product not found!'], 404);
+    //     }
+    //     $product->quantity -= $stock->stock_quantity;
+    //     $product->save();
+    //     $stock->delete();
+    //     return response()->json(['message' => 'Stock deleted and product quantity updated successfully!', 'product' => $product], 200);
+    // }
+
     public function delete($id)
     {
         $stock = Stock::find($id);
         if (!$stock) {
             return response()->json(['message' => 'Stock not found!'], 404);
         }
+
         $product = Product::find($stock->product_id);
         if (!$product) {
             return response()->json(['message' => 'Product not found!'], 404);
         }
         $product->quantity -= $stock->stock_quantity;
         $product->save();
+        $serials = Serial::where('stock_id', $id)->get();
+        foreach ($serials as $serial) {
+            $serial->delete();
+        }
         $stock->delete();
-        return response()->json(['message' => 'Stock deleted and product quantity updated successfully!', 'product' => $product], 200);
+
+        return response()->json([
+            'message' => 'Stock and associated serials deleted, and product quantity updated successfully!',
+            'product' => $product
+        ], 200);
     }
 }

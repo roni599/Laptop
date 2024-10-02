@@ -17,13 +17,13 @@
             jwtTTL: @json(env('JWT_TTL', 1440)) // Default to 1440 minutes (24 hours) if not set
         };
     </script>
-    @vite('resources/css/app.css')
+    <link rel="stylesheet" href="./build/assets/app-CQOLANB5.css">
 </head>
 
 <body class="sb-nav-fixed">
 
     <div id="app"></div>
-    @vite('resources/js/app.js')
+    <script src="./build/assets/app-D9K9aCdu.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous">
     </script>
     <script src="{{ asset('backend') }}/js/scripts.js"></script>

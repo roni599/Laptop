@@ -27,7 +27,7 @@ class Investment extends Model
     // Relationship with PaymentType
     public function paymenttype()
     {
-        return $this->belongsTo(PaymentType::class);
+        return $this->belongsTo(Paymenttype::class);
     }
     public function reserves()
     {

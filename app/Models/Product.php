@@ -46,4 +46,8 @@ class Product extends Model
     {
         return $this->hasMany(Stock::class);
     }
+    public function cartItems()
+    {
+        return $this->hasMany(CartItem::class, 'item_no', 'id');
+    }
 }

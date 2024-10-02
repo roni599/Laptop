@@ -15,50 +15,51 @@
         </div>
       </div>
       <div class="card-body">
-        <table class="table text-muted">
-          <thead>
-            <tr>
-              <th scope="col">#</th>
-              <th scope="col">Transaction Type</th>
-              <th scope="col">Amount</th>
-              <th scope="col">Investmentor Name / Expenser name</th>
-              <th scope="col">Payment Type</th>
-              <th scope="col">Assign By</th>
-              <th scope="col">Investment Date / Expense Date</th>
-              <th scope="col">Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="reserve in reserves" :key="reserve.id">
-              <td>{{ reserve.id }}</td>
-              <td>{{ reserve.transaction_type }}</td>
-              <td>{{ reserve.amount }}</td>
-              <td>
-                <span v-if="!reserve.investment">
-                  {{ reserve.expense ? reserve.expense.expenser.user_name + ' (expenser) ' : '' }}
-                </span>
-                <span v-else-if="!reserve.expense">
-                  {{ reserve.investment ? reserve.investment.In_name + ' (investor) ' : '' }}
-                </span>
-                <span v-else>
-                </span>
-              </td>
-              <td>{{ reserve.paymenttype.pt_name }}</td>
-              <td>{{ reserve.user.user_name }}</td>
-              <td>
-                <div>Date: {{ formatDate(reserve.created_at) }}</div>
-                <div>Time: {{ formatTime(reserve.created_at) }}</div>
-              </td>
-              <td>
-                <span v-if="reserve.status == 1">Inactive</span>
-                <span v-else>Active</span>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+        <div class="table_size">
+          <table class="table text-muted">
+            <thead>
+              <tr>
+                <th scope="col">#</th>
+                <th scope="col">Transaction Type</th>
+                <th scope="col">Amount</th>
+                <th scope="col">Investmentor Name / Expenser name</th>
+                <th scope="col">Payment Type</th>
+                <th scope="col">Assign By</th>
+                <th scope="col">Investment Date / Expense Date</th>
+                <th scope="col">Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="reserve in reserves" :key="reserve.id">
+                <td>{{ reserve.id }}</td>
+                <td>{{ reserve.transaction_type }}</td>
+                <td>{{ reserve.amount }}</td>
+                <td>
+                  <span v-if="!reserve.investment">
+                    {{ reserve.expense ? reserve.expense.expenser.user_name + ' (expenser) ' : '' }}
+                  </span>
+                  <span v-else-if="!reserve.expense">
+                    {{ reserve.investment ? reserve.investment.In_name + ' (investor) ' : '' }}
+                  </span>
+                  <span v-else>
+                  </span>
+                </td>
+                <td>{{ reserve.paymenttype.pt_name }}</td>
+                <td>{{ reserve.user.user_name }}</td>
+                <td>
+                  <div>Date: {{ formatDate(reserve.created_at) }}</div>
+                  <div>Time: {{ formatTime(reserve.created_at) }}</div>
+                </td>
+                <td>
+                  <span v-if="reserve.status == 1">Inactive</span>
+                  <span v-else>Active</span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
-
   </div>
 </template>
 
@@ -136,4 +137,9 @@ export default {
 }
 </script>
 
-<style></style>
+<style scoped>
+.table_size {
+  overflow: auto;
+  width: 100%;
+}
+</style>

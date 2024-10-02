@@ -16,51 +16,53 @@
                 </div>
             </div>
             <div class="card-body">
-                <table class="table text-muted">
-                    <thead>
-                        <tr>
-                            <th scope="col">#</th>
-                            <th scope="col">Supplier Name</th>
-                            <th scope="col">Eamil</th>
-                            <th scope="col">Phone</th>
-                            <th scope="col">Address</th>
-                            <th scope="col">Shop Name</th>
-                            <!-- <th scope="col">Product Name</th> -->
-                            <th scope="col">Assign By / Modified By</th>
-                            <th scope="col">Image</th>
-                            <th scope="col">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr v-for="supplier in suppliers" :key="supplier.id">
-                            <td>{{ supplier.id }}</td>
-                            <td>{{ supplier.name }}</td>
-                            <td v-if="supplier.email">{{ supplier.email }}</td>
-                            <td v-else>This Supplier Have No Email</td>
-                            <td>{{ supplier.phone }}</td>
-                            <td>{{ supplier.address }}</td>
-                            <td>{{ supplier.shopname }}</td>
-                            <!-- <td>{{ supplier.product.product_model }}</td> -->
-                            <td>{{ supplier.user.user_name }}</td>
-                            <td>
-                                <img v-if="supplier.image" :src="`/backend/images/supplier/${supplier.image}`"
-                                    alt="User Image" width="50" height="50" />
-                                <span v-else>User not <br> provide image</span>
-                            </td>
-                            <td>
-                                <div class="buttonGroup py-2 d-flex">
-                                    <button type="button" class="btn btn-sm btn-success"
-                                        @click="openEditModal(supplier)">
-                                        <i class="fa-solid fa-pen-to-square"></i>
-                                    </button>
-                                    <button class="btn btn-sm btn-danger mx-2" @click="deleteSupplier(supplier.id)">
-                                        <i class="fa-solid fa-trash"></i>
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+                <div class="table_size">
+                    <table class="table text-muted">
+                        <thead>
+                            <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">Supplier Name</th>
+                                <th scope="col">Eamil</th>
+                                <th scope="col">Phone</th>
+                                <th scope="col">Address</th>
+                                <th scope="col">Shop Name</th>
+                                <!-- <th scope="col">Product Name</th> -->
+                                <th scope="col">Assign By / Modified By</th>
+                                <th scope="col">Image</th>
+                                <th scope="col">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="supplier in suppliers" :key="supplier.id">
+                                <td>{{ supplier.id }}</td>
+                                <td>{{ supplier.name }}</td>
+                                <td v-if="supplier.email">{{ supplier.email }}</td>
+                                <td v-else>This Supplier Have No Email</td>
+                                <td>{{ supplier.phone }}</td>
+                                <td>{{ supplier.address }}</td>
+                                <td>{{ supplier.shopname }}</td>
+                                <!-- <td>{{ supplier.product.product_model }}</td> -->
+                                <td>{{ supplier.user.user_name }}</td>
+                                <td>
+                                    <img v-if="supplier.image" :src="`/backend/images/supplier/${supplier.image}`"
+                                        alt="User Image" width="50" height="50" />
+                                    <span v-else>User not <br> provide image</span>
+                                </td>
+                                <td>
+                                    <div class="buttonGroup py-2 d-flex">
+                                        <button type="button" class="btn btn-sm btn-success"
+                                            @click="openEditModal(supplier)">
+                                            <i class="fa-solid fa-pen-to-square"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-danger mx-2" @click="deleteSupplier(supplier.id)">
+                                            <i class="fa-solid fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
 
@@ -93,7 +95,7 @@
                                                             placeholder="Enter your name" v-model="form.name" />
                                                         <small class="text-danger" v-if="errors.name">{{
                                                             errors.name[0]
-                                                            }}</small>
+                                                        }}</small>
                                                         <label for="inputName">Full Name</label>
                                                     </div>
                                                 </div>
@@ -103,7 +105,7 @@
                                                             placeholder="name@example.com" v-model="form.email" />
                                                         <small class="text-danger" v-if="errors.email">{{
                                                             errors.email[0]
-                                                            }}</small>
+                                                        }}</small>
                                                         <label for="inputEmail">Email address</label>
                                                     </div>
                                                 </div>
@@ -115,7 +117,7 @@
                                                             placeholder="Address" v-model="form.address" />
                                                         <small class="text-danger" v-if="errors.address">{{
                                                             errors.address[0]
-                                                            }}</small>
+                                                        }}</small>
                                                         <label for="inputAddress">Address</label>
                                                     </div>
                                                 </div>
@@ -125,7 +127,7 @@
                                                             placeholder="Phone" v-model="form.phone" />
                                                         <small class="text-danger" v-if="errors.phone">{{
                                                             errors.phone[0]
-                                                            }}</small>
+                                                        }}</small>
                                                         <label for="inputPhone">Phone</label>
                                                     </div>
                                                 </div>
@@ -151,7 +153,7 @@
                                                             placeholder="Shop Name" v-model="form.shopname" />
                                                         <small class="text-danger" v-if="errors.shopname">{{
                                                             errors.shopname[0]
-                                                            }}</small>
+                                                        }}</small>
                                                         <label for="inputNid">Shop Name</label>
                                                     </div>
                                                 </div>
@@ -161,7 +163,7 @@
                                                             @change="onFileSelect" />
                                                         <small class="text-danger" v-if="errors.image">{{
                                                             errors.image[0]
-                                                            }}</small>
+                                                        }}</small>
                                                     </div>
                                                 </div>
                                                 <div class="col-md-1">
@@ -219,7 +221,7 @@
                                                             v-model="editForm.edit_name" />
                                                         <small class="text-danger" v-if="errors.edit_name">{{
                                                             errors.edit_name[0]
-                                                            }}</small>
+                                                        }}</small>
                                                         <label for="inputName">Full Name</label>
                                                     </div>
                                                 </div>
@@ -230,7 +232,7 @@
                                                             v-model="editForm.edit_email" />
                                                         <small class="text-danger" v-if="errors.edit_email">{{
                                                             errors.edit_email[0]
-                                                            }}</small>
+                                                        }}</small>
                                                         <label for="inputEmail">Email address</label>
                                                     </div>
                                                 </div>
@@ -242,7 +244,7 @@
                                                             placeholder="Address" v-model="editForm.edit_address" />
                                                         <small class="text-danger" v-if="errors.edit_address">{{
                                                             errors.edit_address[0]
-                                                            }}</small>
+                                                        }}</small>
                                                         <label for="inputAddress">Address</label>
                                                     </div>
                                                 </div>
@@ -252,7 +254,7 @@
                                                             placeholder="Phone" v-model="editForm.edit_phone" />
                                                         <small class="text-danger" v-if="errors.edit_phone">{{
                                                             errors.edit_phone[0]
-                                                            }}</small>
+                                                        }}</small>
                                                         <label for="inputPhone">Phone</label>
                                                     </div>
                                                 </div>
@@ -264,7 +266,7 @@
                                                             placeholder="Phone" v-model="editForm.edit_user_id" />
                                                         <small class="text-danger" v-if="errors.edit_user_id">{{
                                                             errors.edit_user_id[0]
-                                                            }}</small>
+                                                        }}</small>
                                                         <label for="inputAddress">Users Name</label>
                                                     </div>
                                                 </div>
@@ -276,7 +278,7 @@
                                                             placeholder="Shop Name" v-model="editForm.edit_shopname" />
                                                         <small class="text-danger" v-if="errors.edit_shopname">{{
                                                             errors.edit_shopname[0]
-                                                            }}</small>
+                                                        }}</small>
                                                         <label for="inputNid">Shop Name</label>
                                                     </div>
                                                 </div>
@@ -286,7 +288,7 @@
                                                             @change="onUpdateFileSelect" />
                                                         <small class="text-danger" v-if="errors.edit_image">{{
                                                             errors.edit_image[0]
-                                                            }}</small>
+                                                        }}</small>
                                                     </div>
                                                 </div>
                                                 <div class="col-md-1">
@@ -573,5 +575,9 @@ export default {
     width: 60%;
     height: 79vh;
     margin: auto;
+}
+.table_size{
+    width: 100%;
+    overflow: auto;
 }
 </style>

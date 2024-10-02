@@ -17,37 +17,39 @@
                 </div>
             </div>
             <div class="card-body">
-                <table class="table text-muted">
-                    <thead>
-                        <tr>
-                            <th scope="col">#</th>
-                            <th scope="col">Payment Type</th>
-                            <th scope="col">Assign By / Modified By</th>
-                            <th scope="col">Status</th>
-                            <th scope="col">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr v-for="paymenttype in paymenttypes" :key="paymenttype.id">
-                            <th scope="row">{{ paymenttype.id }}</th>
-                            <td>{{ paymenttype.pt_name }}</td>
-                            <td>{{ paymenttype.user.user_name }}</td>
-                            <td>{{ paymenttype.status }}</td>
-                            <td>
-                                <div class="buttonGroup py-2">
-                                    <button type="button" class="btn btn-sm btn-success"
-                                        @click="openEditModal(paymenttype)">
-                                        <i class="fa-solid fa-pen-to-square"></i>
-                                    </button>
-                                    <button class="btn btn-sm btn-danger mx-2"
-                                        @click="deletePaymentType(paymenttype.id)">
-                                        <i class="fa-solid fa-trash"></i>
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+                <div class="table_size">
+                    <table class="table text-muted">
+                        <thead>
+                            <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">Payment Type</th>
+                                <th scope="col">Assign By / Modified By</th>
+                                <th scope="col">Status</th>
+                                <th scope="col">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="paymenttype in paymenttypes" :key="paymenttype.id">
+                                <th scope="row">{{ paymenttype.id }}</th>
+                                <td>{{ paymenttype.pt_name }}</td>
+                                <td>{{ paymenttype.user.user_name }}</td>
+                                <td>{{ paymenttype.status }}</td>
+                                <td>
+                                    <div class="buttonGroup d-flex justify-center py-2">
+                                        <button type="button" class="btn btn-sm btn-success"
+                                            @click="openEditModal(paymenttype)">
+                                            <i class="fa-solid fa-pen-to-square"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-danger mx-2"
+                                            @click="deletePaymentType(paymenttype.id)">
+                                            <i class="fa-solid fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
 
@@ -80,7 +82,7 @@
                                                             placeholder="Enter your name" v-model="form.payment_type" />
                                                         <small class="text-danger" v-if="errors.payment_type">{{
                                                             errors.payment_type[0]
-                                                            }}</small>
+                                                        }}</small>
                                                         <label for="inputName">Payment Name</label>
                                                     </div>
                                                 </div>
@@ -152,7 +154,7 @@
                                                             v-model="editForm.edit_payment_type" />
                                                         <small class="text-danger" v-if="errors.edit_payment_type">{{
                                                             errors.edit_payment_type[0]
-                                                            }}</small>
+                                                        }}</small>
                                                         <label for="inputName">Payment Name</label>
                                                     </div>
                                                 </div>
@@ -247,7 +249,7 @@ export default {
                         brand_name: null,
                         user_id: this.users.id,
                     };
-                    this.errors={};
+                    this.errors = {};
                     let myModal = bootstrap.Modal.getInstance(
                         document.getElementById("createPaymentModal")
                     );
@@ -394,5 +396,9 @@ export default {
     width: 60%;
     height: 70vh;
     margin: auto;
+}
+.table_size{
+    overflow: auto;
+    width: 100%;
 }
 </style>

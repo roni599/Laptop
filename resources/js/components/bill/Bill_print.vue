@@ -33,7 +33,7 @@
                                 <td>{{ cartitem.serial.stock.product.product_model }}</td>
                                 <td>{{ cartitem.serial.serial_no }}</td>
                                 <td>{{ cartitem.quantity }} Pc(s)</td>
-                                <td>{{ cartitem.unit_price }}</td>
+                                <td>{{ cartitem.sold_price }}</td>
                                 <td>{{ cartitem.sold_price * cartitem.quantity }}</td>
                             </tr>
                         </tbody>
@@ -68,17 +68,18 @@
                     </div>
                 </div>
             </div>
-            <div class="numverwords container">
+            <div class="numverwords container mt-1">
                 <p>In Words: {{ convertNumberToWords(bills.total_price) }}</p>
             </div>
-            <div class="mb-0 replacement w-100">
+            <div class="mb-0 replacement w-100 mt-5">
                 <p class="text-center text-danger fw-bold">15 Days Replacement Guarantee and 5 Years Service Warranty
                 </p>
             </div>
             <div class="mb-1 display">
-                <p class="text-center text-danger fw-bold">(Display, Keyboard and Body Without Guarantee)</p>
+                <p class="text-center text-danger fw-bold">(Display,charger,charger-cable, Keyboard and Body Without
+                    Guarantee)</p>
             </div>
-            <div class="signature mt-4 container">
+            <div class="signature mt-5 container">
                 <div class="customer">
                     <p>Customers Signature</p>
                 </div>
@@ -87,7 +88,7 @@
                 </div>
             </div>
 
-            <div class="invoice-qr d-flex align-items-center justify-content-center gap-4 pt-1">
+            <div class="invoice-qr d-flex align-items-center justify-content-center gap-4 pt-1 mt-5">
                 <p class="fw-bold">Thank You For Your Purchases</p>
                 <img src="/public/backend/assets/img/paid3.png" alt="QR Code" width="50px" />
             </div>
@@ -107,7 +108,7 @@ import { inject } from 'vue';
 import JsBarcode from 'jsbarcode';
 export default {
     name: "Bill-vue",
-    setup() {
+    setup() {  
         const userName = inject('userName');
         const profile_img = inject('profile_img');
         return { userName, profile_img };
@@ -306,7 +307,6 @@ export default {
 @media print {
     .print-button {
         display: none;
-        /* Hide print button in print view */
     }
 
     .replacement p {
@@ -323,9 +323,7 @@ export default {
 
     .container {
         padding: 0px;
-        /* Remove container padding for printing */
-        margin: 50px 165px;
-        /* Set margins for print view */
+        margin: -5px 165px;
     }
 
     .signature .customer .authorised {
@@ -334,9 +332,7 @@ export default {
 
     .invoice-card {
         margin: 0;
-        /* Remove margin for print view */
         border: none;
-        /* Remove border for print view */
     }
 
     .invoice-qr {
@@ -348,7 +344,6 @@ export default {
     .invoice-qr p {
         font-size: 12px;
     }
-
 }
 
 .invoice-qr img {

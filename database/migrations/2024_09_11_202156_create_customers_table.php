@@ -2,7 +2,6 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
@@ -18,7 +17,7 @@ return new class extends Migration
             $table->string('phone')->nullable();
             $table->text('address')->nullable();
             $table->string('email')->nullable();
-            $table->string('dob')->default(DB::raw('CURDATE()'));
+            $table->string('dob')->nullable(); 
             $table->string('nid')->nullable();
             $table->string('status')->default(1);
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');

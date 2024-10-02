@@ -18,47 +18,49 @@
       </div>
       <div class="card-body">
         <input type="text" id="searchInput" v-model="searchUser" placeholder="Search for ID.." />
-        <table class="table">
-          <thead>
-            <tr>
-              <th scope="col">#</th>
-              <th scope="col">Name</th>
-              <th scope="col">Email</th>
-              <th scope="col">Phone</th>
-              <th scope="col">Role Name</th>
-              <th scope="col">Status</th>
-              <th scope="col">Image</th>
-              <th scope="col">Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="user in filteredUsers" :key="user.id">
-              <th scope="row">{{ user.id }}</th>
-              <td>{{ user.user_name }}</td>
-              <td>{{ user.email }}</td>
-              <td>{{ user.phone }}</td>
-              <td>{{ user.role.role_name }}</td>
-              <td>{{ user.status }}</td>
-              <td>
-                <img v-if="user.profile_img" :src="`/backend/images/users/${user.profile_img}`" alt="User Image" width="55" height="55" />
-                <span v-else>User not <br> provide image</span>
-              </td>
-              <td>
-                <div class="buttonGroup py-2">
-                  <button type="button" class="btn btn-sm btn-success" @click="openEditModal(user)">
-                    <i class="fa-solid fa-pen-to-square"></i>
-                  </button>
-                  <button class="btn btn-sm btn-danger mx-2" @click="deleteUser(user.id)">
-                    <i class="fa-solid fa-trash"></i>
-                  </button>
-                </div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+        <div class="table_size">
+          <table class="table">
+            <thead>
+              <tr>
+                <th scope="col">#</th>
+                <th scope="col">Name</th>
+                <th scope="col">Email</th>
+                <th scope="col">Phone</th>
+                <th scope="col">Role Name</th>
+                <th scope="col">Status</th>
+                <th scope="col">Image</th>
+                <th scope="col">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="user in filteredUsers" :key="user.id">
+                <th scope="row">{{ user.id }}</th>
+                <td>{{ user.user_name }}</td>
+                <td>{{ user.email }}</td>
+                <td>{{ user.phone }}</td>
+                <td>{{ user.role.role_name }}</td>
+                <td>{{ user.status }}</td>
+                <td>
+                  <img v-if="user.profile_img" :src="`/backend/images/users/${user.profile_img}`" alt="User Image"
+                    width="55" height="55" />
+                  <span v-else>User not <br> provide image</span>
+                </td>
+                <td>
+                  <div class="buttonGroup d-flex justify-between py-2">
+                    <button type="button" class="btn btn-sm btn-success" @click="openEditModal(user)">
+                      <i class="fa-solid fa-pen-to-square"></i>
+                    </button>
+                    <button class="btn btn-sm btn-danger mx-2" @click="deleteUser(user.id)">
+                      <i class="fa-solid fa-trash"></i>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
-
     <div class="modal fade" id="editUserModal" tabindex="-1" aria-labelledby="editUserModalLabel" aria-hidden="true">
       <div class="modal-dialog full-width-modal mt-5">
         <div class="modal-content">
@@ -231,7 +233,7 @@ export default {
         reader.readAsDataURL(file);
       }
     },
-    
+
     async fetch_user() {
       await axios.get('/api/alluser')
         .then((res) => {
@@ -333,11 +335,6 @@ export default {
         .then((res) => {
           this.userName = res.data.user_name;
           this.profile_img = res.data.profile_img;
-          if (Array.isArray(res.data.users)) {
-            this.users = res.data.users;
-          } else {
-            this.users = [];
-          }
         })
         .catch((error) => {
           console.log(error);
@@ -348,6 +345,7 @@ export default {
   created() {
     this.fetch_user();
     this.all_roles();
+    this.fetchUsers();
   },
 };
 </script>
@@ -373,5 +371,9 @@ export default {
   width: 60%;
   height: 70vh;
   margin: auto;
+}
+.table_size{
+  width: 100%;
+  overflow: auto;
 }
 </style>

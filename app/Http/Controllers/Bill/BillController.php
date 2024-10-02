@@ -40,6 +40,59 @@ class BillController extends Controller
             'validInputs2' => 'required',
         ]);
 
+
+        // foreach ($validatedData['items'] as $item) {
+        //     // Find the product using the product_id in the stock field
+        //     $product = Product::find($item['stock']['product_id']);
+
+        //     if ($product) {
+        //         // Decrement the product quantity
+        //         $product->decrement('quantity', $item['quantity']);
+        //     }
+
+        //     // Find the CartItem using serial_id
+        //     CartItem::where('serial_id', $item['id'])
+        //         ->where('cart_id', $validatedData['cartId'])
+        //         ->update([
+        //             'quantity' => $item['quantity'],
+        //             'unit_price' => $item['stock']['buying_price'],
+        //             'sold_price' => $item['stock']['selling_price'],
+        //             'profit' => $item['stock']['selling_price'] - $item['stock']['buying_price'],
+        //             'total_profit' => ($item['stock']['selling_price'] * $item['quantity']) - ($item['stock']['buying_price'] * $item['quantity']),
+        //         ]);
+        // }
+
+        foreach ($validatedData['items'] as $item) {
+            // Find the product using the product_id in the stock field
+            $product = Product::find($item['stock']['product_id']);
+
+            if ($product) {
+                // Check if the requested quantity is greater than available stock
+                if ($item['quantity'] > $product->quantity) {
+                    return response()->json([
+                        'message' => 'Order quantity is greater than available stock for product: ' . $product->name,
+                        'available_stock' => $product->quantity,
+                        'requested_quantity' => $item['quantity']
+                    ], 400);
+                }
+
+                // Decrement the product quantity by the requested quantity
+                $product->decrement('quantity', $item['quantity']);
+            }
+
+            // Find the CartItem using serial_id and update its details
+            CartItem::where('serial_id', $item['id'])
+                ->where('cart_id', $validatedData['cartId'])
+                ->update([
+                    'quantity' => $item['quantity'],
+                    'unit_price' => $item['stock']['buying_price'],
+                    'sold_price' => $item['stock']['selling_price'],
+                    'profit' => $item['stock']['selling_price'] - $item['stock']['buying_price'],
+                    'total_profit' => ($item['stock']['selling_price'] * $item['quantity']) - ($item['stock']['buying_price'] * $item['quantity']),
+                ]);
+        }
+
+
         $customer = Customer::create([
             'customer_name' => $validatedData['customerName'],
             'phone' => $validatedData['customerPhone'],
@@ -66,54 +119,6 @@ class BillController extends Controller
         $bill->cart_id = $cart->id;
         $bill->save();
 
-        // foreach ($validatedData['items'] as $item) {
-        //     // Find the product and update its quantity
-        //     $product = Product::find($item['stock']['product_id']);
-        //     if ($product) {
-        //         $product->quantity -= $item['quantity'];
-        //         $product->save();
-        //     }
-        //     $cartItem = CartItem::where('item_no', $item['stock']['product_id'])->first();
-        //     if ($cartItem) {
-        //        $cartItem->quantity=$item['quantity'];
-        //        $cartItem->price=$item['quantity']* $item['stock']['selling_price'];
-        //        $cartItem->save();
-        //     }
-        // }
-
-        // foreach ($validatedData['items'] as $item) {
-        //     $product = Product::find($item['stock']['product_id']);
-        //     if ($product) {
-        //         $product->decrement('quantity', $item['quantity']);
-        //     }
-        //     $cartItem = CartItem::where('cart_id',$validatedData['cartId'])->get();
-        //     if ($cartItem) {
-        //         $cartItem->update([
-        //             'quantity' => $item['quantity'],
-        //             'price' => $item['quantity'] * $item['stock']['selling_price'],
-        //         ]);
-        //     }
-        // }
-        //$cartItem = CartItem::where('cart_id', $validatedData['cartId'])->get();
-        foreach ($validatedData['items'] as $item) {
-            // Find the product using the product_id in the stock field
-            $product = Product::find($item['stock']['product_id']);
-
-            if ($product) {
-                // Decrement the product quantity
-                $product->decrement('quantity', $item['quantity']);
-            }
-
-            // Find the CartItem using serial_id
-            CartItem::where('serial_id', $item['id'])
-                ->where('cart_id', $validatedData['cartId'])
-                ->update([
-                    'quantity' => $item['quantity'],
-                    'unit_price' => $item['stock']['buying_price'],
-                    'sold_price' => $item['stock']['selling_price'],
-                    'profit' => $item['stock']['selling_price'] - $item['stock']['buying_price'],
-                ]);
-        }
 
 
 
@@ -132,42 +137,11 @@ class BillController extends Controller
             }
         }
 
-
-        // $pay = [];
-        // $pay = Paymenttype::whereIn('id', $validatedData['validInputs'])->get()->keyBy('id'); // Fetch and key by 'id'
-
-        // foreach ($validatedData['items'] as $item) {
-        //     $product = Product::find($item['stock']['product_id']);
-        //     if ($product) {
-        //         $product->quantity -= $item['quantity'];
-        //         $product->save();
-        //     }
-        //     foreach ($validatedData['validInputs'] as $paymenttype) {
-        //         if (isset($pay[$paymenttype])) {
-        //             Bill::create([
-        //                 'total_price' => $item['totalPrice'],
-        //                 'quantity' => $item['quantity'],
-        //                 'price' => $item['stock']['selling_price'],
-        //                 'customer_id' => $customer->id,
-        //                 'user_id' => $validatedData['user_id'],
-        //                 'serial_id' => $item['id'],
-        //                 'paymenttype_id' => $pay[$paymenttype]->id,
-        //             ]);
-        //         }
-        //     }
-        // }
         $entriesToDelete = CartItem::whereNull('sold_price')   // Check if sold_price is NULL
             ->whereNull('profit')                              // Check if profit is NULL
             ->delete();
         return response()->json($bill->id);
     }
-
-    // public function billGenerate($id){
-    //     // $bill = Bill::with(['cart.cartItems', 'customer'])->find($id);
-    //     $bill = Bill::with(['cart.cartItems.serial.stock.product', 'customer'])->find($id);
-    //     $payment=Reserve::with(['paymenttype'])->find($id);
-    //     return response()->json($bill);
-    // }
 
     public function billGenerate($id)
     {
@@ -184,8 +158,38 @@ class BillController extends Controller
             'payment' => $payment
         ]);
     }
-    public function billtable(){
-        $bills=Bill::with(['cart.cartitems.serial.stock.product.brand','user'])->get();
+    public function billtable()
+    {
+        $bills = Bill::with([
+            'cart.cartitems.serial.stock.product.brand',
+            'cart.cartitems.serial.stock.product.category',
+            'user',
+            'customer'
+        ])->get();
         return response()->json($bills);
+    }
+    public function delete($id)
+    {
+        // $bill=Bill::findOrFail($id);
+        $bill = Bill::with([
+            'cart.cartitems.serial.stock.product',
+        ])->where('id', $id)->first();
+        
+        foreach ($bill->cart as $cart) {
+            foreach ($cart->cartitems as $cartItem) {
+                $product = $cartItem->serial->stock;
+                return response()->json($bill->cart->cartitems);
+                // Subtract cart item quantity from product quantity
+                $newProductQuantity = $product->quantity - $cartItem->quantity;
+
+                // Ensure product quantity doesn't go below zero
+                $product->quantity = max($newProductQuantity, 0);
+
+                // Save the updated product quantity
+                $product->save();
+            }
+        }
+        $bill->delete();
+        return response()->json(['message' => 'Bill deleted updated successfully!']);
     }
 }

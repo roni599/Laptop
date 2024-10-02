@@ -33,9 +33,9 @@ class Stock extends Model
     {
         return $this->hasMany(Serial::class);
     }
-    public function paymentType()
+    public function paymenttype()
     {
-        return $this->belongsTo(PaymentType::class, 'paymenttype_id');
+        return $this->belongsTo(Paymenttype::class, 'paymenttype_id');
     }
     public function supplier()
     {

@@ -35,8 +35,8 @@ class CartItem extends Model
         return $this->belongsTo(Serial::class);
     }
 
-    public function paymentType()
+    public function paymenttype()
     {
-        return $this->belongsTo(PaymentType::class);
+        return $this->belongsTo(Paymenttype::class);
     }
 }
