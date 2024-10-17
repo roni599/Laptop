@@ -31,8 +31,8 @@
               </tr>
             </thead>
             <tbody>
-              <tr v-for="expensecategory in expensecategories" :key="expensecategory.id">
-                <th scope="row">{{ expensecategory.id }}</th>
+              <tr v-for="(expensecategory,index) in expensecategories" :key="expensecategory.id">
+                <th scope="row">{{ index+1 }}</th>
                 <td>{{ expensecategory.category_name }}</td>
                 <td v-if="expensecategory.cost_type == 1">Running Cost</td>
                 <td v-else>Fixed Cost</td>

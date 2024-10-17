@@ -13,7 +13,7 @@ class StockController extends Controller
 {
     public function index()
     {
-        $stocks = Stock::with(['product', 'user', 'paymenttype', 'supplier'])->get();
+        $stocks = Stock::with(['product.brand', 'product.category', 'user', 'paymenttype', 'supplier'])->get();
         return response()->json($stocks);
     }
     public function store(Request $request)
@@ -57,7 +57,7 @@ class StockController extends Controller
             'user_id' => 'required',
             'supplier_id' => 'required',
             'paymenttype_name' => 'required|string|max:255',
-            // 'stock_quantity' => 'required|integer|min:1',
+            'stock_quantity' => 'required|integer|min:1',
             'selling_price' => 'required|numeric|min:0',
             'buying_price' => 'required|numeric|min:0',
             'status' => 'required',
@@ -71,14 +71,14 @@ class StockController extends Controller
         if (!$product || !$stock) {
             return response()->json(['message' => 'Product or Stock not found!'], 404);
         }
-        // if ($stock->stock_quantity != $request->stock_quantity) {
-        //     if ($stock->stock_quantity > $request->stock_quantity) {
-        //         $product->quantity -= ($stock->stock_quantity - $request->stock_quantity);
-        //     } else {
-        //         $product->quantity += ($request->stock_quantity - $stock->stock_quantity);
-        //     }
-        //     $stock->stock_quantity = $request->stock_quantity;
-        // }
+        if ($stock->stock_quantity != $request->stock_quantity) {
+            if ($stock->stock_quantity > $request->stock_quantity) {
+                $product->quantity -= ($stock->stock_quantity - $request->stock_quantity);
+            } else {
+                $product->quantity += ($request->stock_quantity - $stock->stock_quantity);
+            }
+            $stock->stock_quantity = $request->stock_quantity;
+        }
 
         $product->product_model = $request->product_model;
         $paymenttype->pt_name = $request->paymenttype_name;

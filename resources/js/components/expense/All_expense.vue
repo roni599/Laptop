@@ -28,7 +28,7 @@
                 <th scope="col">Expense Amount</th>
                 <th scope="col">Cost Type</th>
                 <th scope="col">Expense Category</th>
-                <!-- <th scope="col">Payment Type</th> -->
+                <th scope="col">Payment Type</th>
                 <th scope="col">Assinged By</th>
                 <th scope="col">Date</th>
                 <th scope="col">Status</th>
@@ -37,8 +37,8 @@
               </tr>
             </thead>
             <tbody>
-              <tr v-for="expense in expenses" :key="expense.id">
-                <td>{{ expense.id }}</td>
+              <tr v-for="(expense, index) in expenses" :key="expense.id">
+                <td>{{ index + 1 }}</td>
                 <td>{{ expense.expenser.user_name }}</td>
                 <td>{{ expense.expense_desc }}</td>
                 <td>{{ expense.amount }}</td>
@@ -47,11 +47,11 @@
                 <td>{{ expense.expensecategory.category_name }}</td>
 
                 <!-- <td>{{ expense.paymenttype.pt_name }}</td> -->
-                <!-- <td>{{ getPaymentTypeNames(expense.reserves) }}</td> -->
+                <td>{{ getPaymentTypeNames(expense.reserves) }}</td>
                 <td>{{ expense.user.user_name }}</td>
                 <td>{{ expense.date }}</td>
                 <td>
-                  <span v-if="expense.status==1" class="badge bg-success">Active</span>
+                  <span v-if="expense.status == 1" class="badge bg-success">Active</span>
                   <span v-else class="badge bg-danger">Inactive</span>
                 </td>
                 <td>
@@ -325,10 +325,8 @@ export default {
         })
     },
     openEditModal(expense) {
-      // console.log(expense.reserves)
-      this.reserves = []; // Reset reserves
-      this.reserves = [...expense.reserves]; // Set new reserves
-      // console.log("Updated reserves:", this.reserves);
+      this.reserves = [];
+      this.reserves = [...expense.reserves];
       this.showInputs = true;
       this.form = { ...expense }
       this.form.expenserName = expense.expenser.id;
@@ -387,7 +385,7 @@ export default {
             status: null,
             image: '',
           },
-            this.fetch_expense();
+          this.fetch_expense();
           let myModal = bootstrap.Modal.getInstance(
             document.getElementById("editExpenseModal")
           );
@@ -523,7 +521,8 @@ export default {
   height: 86vh;
   margin: auto;
 }
-.table_size{
+
+.table_size {
   overflow: auto;
   width: 100%;
 }

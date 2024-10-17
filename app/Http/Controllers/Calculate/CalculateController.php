@@ -3,14 +3,16 @@
 namespace App\Http\Controllers\Calculate;
 
 use App\Http\Controllers\Controller;
+use App\Models\Bill;
 use App\Models\Investment;
 use App\Models\Product;
 use App\Models\Reserve;
-use Illuminate\Http\Request;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\Request;
 
 class CalculateController extends Controller
 {
-    public function product()
+    public function product(Request $request)
     {
         $items = [
             'T-14 Core i5 10th Gen 16GB-Ram 256GB-SSD',
@@ -76,6 +78,23 @@ class CalculateController extends Controller
             'HP 15s Core i5 12th Gen 8GB-Ram 512GB-SSD',
         ];
 
+        $todaysBills = Bill::whereDate('created_at', Carbon::today())->count();
+        $yesterdaysBills = Bill::whereDate('created_at', Carbon::yesterday())->count();
+
+        // $request->validate([
+        //     'start_date' => 'required|date',
+        //     'end_date' => 'required|date|after_or_equal:start_date',
+        // ]);
+    
+        // $startDate = $request->input('start_date');
+        // $endDate = $request->input('end_date');
+    
+        // $bills = Bill::with([
+        //     'cart.cartItems.serial.stock.product'
+        // ])
+        // ->whereBetween('created_at', [$startDate, $endDate])
+        // ->get();
+
         $products = Product::whereIn('product_model', $items)->get();
 
         $totalProductsCount = Product::count();
@@ -88,14 +107,14 @@ class CalculateController extends Controller
         $laptopQuantity = $products->where('cat_id', 1)->sum('quantity');
         $ipadQuantity = $products->where('cat_id', 15)->sum('quantity');
 
-        
+
         $totalIn = Reserve::where('transaction_type', 'in')->sum('amount');
         $totalOut = Reserve::where('transaction_type', 'out')->sum('amount');
         $investmentTotalAmount = Investment::sum('amount');
         // Calculate the balance
         // $balance = $totalIn - $totalOut;
-        $balance = ($totalIn+$totalOut);
-        $netBalance=$balance - $investmentTotalAmount;
+        $balance = ($totalIn + $totalOut);
+        $netBalance = $balance - $investmentTotalAmount;
 
         if ($products->isNotEmpty()) {
             return response()->json([
@@ -112,8 +131,10 @@ class CalculateController extends Controller
                 'total_in' => $totalIn,
                 'total_out' => $totalOut,
                 'balance' => $balance,
-                'netbalance'=>$netBalance,
-                'investmentTotalAmount'=> $investmentTotalAmount
+                'netbalance' => $netBalance,
+                'investmentTotalAmount' => $investmentTotalAmount,
+                'todaysBills' => $todaysBills,
+                'yesterdaysBills'=>$yesterdaysBills
             ]);
         } else {
             return response()->json([

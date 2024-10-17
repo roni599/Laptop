@@ -291,13 +291,11 @@ export default {
             console.log('Fetching data for barcode:', barcode);
 
             // Prepare the request payload
-            const requestPayload = { barcode, cart_id: this.cartId };
+            const requestPayload = { barcode:barcode, cart_id: this.cartId };
 
             // Make the API call
             axios.post("/api/barcode-search", requestPayload)
                 .then((response) => {
-                    console.log(response);
-
                     const cartIdFromResponse = response.data.cart_id;
                     const serialData = response.data.serial;
 
@@ -315,15 +313,12 @@ export default {
                     });
                 })
                 .catch((error) => {
-                    // this.alert = {
-                    //     message: error.response.data.message,
-                    //     type: "alert-danger",
-                    // };
                     Swal.fire({
-                        icon: "error",
-                        title: "Oops...",
-                        text: error.response.data.message + "!",
+                        icon: "info",
+                        title: "Notice",
+                        text: error.response.data.message,
                     });
+
                 });
         },
         updateItemPrice(item) {
@@ -405,7 +400,8 @@ export default {
                         this.bankAmount = '',
                         this.cashAmount = '',
                         this.othersAmount = '',
-                        AppStorage.clearCard()
+                        AppStorage.clearCard(),
+                        this.cartId = null
                     AppStorage.storebillId(response.data);
                     this.$router.push({ name: "Bill_print" })
                     Toast.fire({

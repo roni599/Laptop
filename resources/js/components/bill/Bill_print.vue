@@ -1,6 +1,6 @@
 <template>
-    <div class="container">
-        <div class="invoice-card container" ref="invoice">
+    <div class="container ty">
+        <div class="invoice-card container mt-5" ref="invoice">
             <!-- <div class="invoice-header">
             <img src="./logos.png" alt="Invoice Logo" class="invoice-logo" />
           </div> -->
@@ -108,7 +108,7 @@ import { inject } from 'vue';
 import JsBarcode from 'jsbarcode';
 export default {
     name: "Bill-vue",
-    setup() {  
+    setup() {
         const userName = inject('userName');
         const profile_img = inject('profile_img');
         return { userName, profile_img };
@@ -139,7 +139,7 @@ export default {
                 this.bills = res.data.bill;
                 this.generateBarcode();
                 AppStorage.clearBillId();
-                AppStorage.clearCard();
+                // AppStorage.clearCard();
             } catch (error) {
                 console.log(error);
             }
@@ -164,7 +164,7 @@ export default {
         printInvoice() {
             window.print();
             AppStorage.clearBillId();
-            AppStorage.clearCard();
+            // AppStorage.clearCard();
             this.$router.push({ name: "Home" })
         },
         generateBarcode() {
@@ -221,13 +221,12 @@ export default {
         formattedDate() {
             if (this.bills && this.bills.updated_at) {
                 const date = new Date(this.bills.updated_at);
-                return date.toLocaleString("en-BD", {
-                    timeZone: "Asia/Dhaka",
-                    day: "2-digit",
-                    month: "2-digit",
-                    year: "numeric",
-                    hour12: true,
-                });
+                // Format the date as day/month/year manually
+                const day = date.getDate().toString().padStart(2, '0');
+                const month = (date.getMonth() + 1).toString().padStart(2, '0'); // getMonth() is 0-indexed, so add 1
+                const year = date.getFullYear();
+
+                return `${day}/${month}/${year}`;
             }
             return "";
         },
@@ -322,8 +321,12 @@ export default {
     }
 
     .container {
-        padding: 0px;
+        padding: 10px 0px;
         margin: -5px 165px;
+    }
+
+    .ty {
+        margin: 25px 170px;
     }
 
     .signature .customer .authorised {
@@ -333,6 +336,7 @@ export default {
     .invoice-card {
         margin: 0;
         border: none;
+        margin-top: 30px;
     }
 
     .invoice-qr {

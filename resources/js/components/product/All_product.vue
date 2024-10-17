@@ -17,6 +17,7 @@
                 </div>
                 <div class="addNew">
                     <router-link to="/stocks_create" class="btn btn-sm btn-success">Add New</router-link>
+                    <button class="btn btn-sm btn-success ms-2" @click="exportToExcel">Export to Excel</button>
                 </div>
             </div>
             <div class="card-body">
@@ -27,6 +28,9 @@
                             <tr>
                                 <th scope="col">#</th>
                                 <th scope="col">Product Name</th>
+                                <th scope="col">Specification</th>
+                                <th scope="col">Brand Name</th>
+                                <th scope="col">Category</th>
                                 <th scope="col">Assigned By</th>
                                 <th scope="col">Stock Quantity</th>
                                 <th scope="col">Buying Price</th>
@@ -39,9 +43,12 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr v-for="stock in filteredStocks" :key="stock.id">
-                                <td>{{ stock.id }}</td>
+                            <tr v-for="(stock,index ) in filteredStocks" :key="stock.id">
+                                <td>{{ index+1 }}</td>
                                 <td>{{ stock.product.product_model }}</td>
+                                <td>{{ stock.product.specification }}</td>
+                                <td>{{ stock.product.brand.brand_name }}</td>
+                                <td>{{ stock.product.category.cat_name }}</td>
                                 <td>{{ stock.user.user_name }}</td>
                                 <td>{{ stock.stock_quantity }}</td>
                                 <td>{{ stock.buying_price }}</td>
@@ -110,7 +117,7 @@
                                                         </select>
                                                         <small class="text-danger" v-if="errors.product_model">{{
                                                             errors.product_model[0]
-                                                        }}</small>
+                                                            }}</small>
                                                         <label for="inputEmail">Product Name</label>
                                                     </div>
                                                 </div>
@@ -125,13 +132,13 @@
                                                         </select> -->
                                                         <small class="text-danger" v-if="errors.user_id">{{
                                                             errors.user_id[0]
-                                                        }}</small>
+                                                            }}</small>
                                                         <label for="inputAddress">Users Name</label>
                                                     </div>
                                                 </div>
                                             </div>
                                             <div class="row mb-3">
-                                                <!-- <div class="col-md-6">
+                                                <div class="col-md-12">
                                                     <div class="form-floating mb-3 mb-md-0">
                                                         <input class="form-control" id="inputAddress" type="text"
                                                             placeholder="Address" v-model="form.stock_quantity" />
@@ -140,14 +147,16 @@
                                                             }}</small>
                                                         <label for="inputAddress">Stock Quantity</label>
                                                     </div>
-                                                </div> -->
+                                                </div>
+                                            </div>
+                                            <div class="row mb-3">
                                                 <div class="col-md-6">
                                                     <div class="form-floating mb-3 mb-md-0">
                                                         <input class="form-control" id="inputPhone" type="text"
                                                             placeholder="Phone" v-model="form.buying_price" />
                                                         <small class="text-danger" v-if="errors.buying_price">{{
                                                             errors.buying_price[0]
-                                                        }}</small>
+                                                            }}</small>
                                                         <label for="inputAddress">Buying Price</label>
                                                     </div>
                                                 </div>
@@ -157,7 +166,7 @@
                                                             placeholder="Phone" v-model="form.selling_price" />
                                                         <small class="text-danger" v-if="errors.selling_price">{{
                                                             errors.selling_price[0]
-                                                        }}</small>
+                                                            }}</small>
                                                         <label for="inputPhone">Selling Price</label>
                                                     </div>
                                                 </div>
@@ -185,7 +194,7 @@
                                                         </select>
                                                         <small class="text-danger" v-if="errors.product_id">{{
                                                             errors.product_id[0]
-                                                        }}</small>
+                                                            }}</small>
                                                         <label for="inputPhone">Supplier Name</label>
                                                     </div>
                                                 </div>
@@ -197,7 +206,7 @@
                                                             placeholder="Shop Name" v-model="form.stock_date" />
                                                         <small class="text-danger" v-if="errors.stock_date">{{
                                                             errors.stock_date[0]
-                                                        }}</small>
+                                                            }}</small>
                                                         <label for="inputNid">Stock Date</label>
                                                     </div>
                                                 </div>
@@ -213,7 +222,7 @@
                                                         </select>
                                                         <small class="text-danger" v-if="errors.pt_name">{{
                                                             errors.pt_name[0]
-                                                        }}</small>
+                                                            }}</small>
                                                         <label for="inputEmail">Payment Type</label>
                                                     </div>
                                                 </div>
@@ -264,6 +273,7 @@
 <script>
 import axios from 'axios';
 import { inject } from 'vue';
+import * as XLSX from 'xlsx';
 export default {
     name: "All_stocks",
     data() {
@@ -280,7 +290,7 @@ export default {
                 product_model: null,
                 paymenttype_name: null,
                 user_id: null,
-                // stock_quantity: null,
+                stock_quantity: null,
                 selling_price: null,
                 buying_price: null,
                 status: null,
@@ -305,7 +315,32 @@ export default {
                 console.error('Error fetching serials:', error);
             }
         },
+        exportToExcel() {
+            // Prepare data for the Excel file
+            const worksheetData = this.filteredStocks.map(stock => ({
+                'ID': stock.id,
+                'Product Name': stock.product.product_model,
+                'Specification': stock.product.specification,
+                'Brand': stock.product.brand.brand_name,
+                'Category': stock.product.category.cat_name,
+                'Assigned By': stock.user.user_name,
+                'Stock Quantity': stock.stock_quantity,
+                'Buying Price': stock.buying_price,
+                'Selling Price': stock.selling_price,
+                'Payment Methods': stock.paymenttype.pt_name,
+                'Supplied By': stock.supplier.name,
+                'Status': stock.status === 0 ? 'Active' : 'Inactive',
+                'Stocks Data': stock.stock_date
+            }));
 
+            // Create a worksheet from the data
+            const worksheet = XLSX.utils.json_to_sheet(worksheetData);
+            const workbook = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(workbook, worksheet, 'Stocks');
+
+            // Generate the Excel file and prompt for download
+            XLSX.writeFile(workbook, 'stocks_data.xlsx');
+        },
         printBarcodes() {
             document.getElementById('main-content').style.display = 'none';
             document.getElementById('print-area').style.display = 'block';
@@ -488,7 +523,8 @@ export default {
     width: 100%;
     height: 100%;
 }
-.table_size{
+
+.table_size {
     width: 100%;
     overflow: auto;
 }

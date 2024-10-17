@@ -8,6 +8,7 @@
     <meta name="description" content="" />
     <meta name="author" content="" />
     <title>Laptop_Paradise</title>
+    <link rel="icon" href="{{ asset('backend/assets/img/l_favicon.jpg') }}" type="image/x-icon" />
     <link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet" />
     <link href="{{ asset('backend') }}/css/styles.css" rel="stylesheet" />
     <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
@@ -17,13 +18,13 @@
             jwtTTL: @json(env('JWT_TTL', 1440)) // Default to 1440 minutes (24 hours) if not set
         };
     </script>
-    <link rel="stylesheet" href="./build/assets/app-CQOLANB5.css">
+    @vite('resources/css/app.css')
 </head>
 
 <body class="sb-nav-fixed">
 
     <div id="app"></div>
-    <script src="./build/assets/app-D9K9aCdu.js"></script>
+    @vite('resources/js/app.js')
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous">
     </script>
     <script src="{{ asset('backend') }}/js/scripts.js"></script>

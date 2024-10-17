@@ -110,7 +110,7 @@ return [
     |
     */
 
-    'refresh_ttl' => env('JWT_REFRESH_TTL', 60), // 24 hours in minutes
+    'refresh_ttl' => env('JWT_REFRESH_TTL', 1440), // 24 hours in minutes
 
     /*
     |--------------------------------------------------------------------------

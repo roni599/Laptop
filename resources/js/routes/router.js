@@ -33,6 +33,8 @@ import Expence_category from '../components/expense/Expence_category.vue';
 import Bill_generate from '../components/bill/Bill_generate.vue';
 import Bill_print from '../components/bill/Bill_print.vue';
 import BillsTable from '../components/paymentType/BillsTable.vue';
+import Return_repair from '../components/stocks/Return_repair.vue';
+import Edit_profile from '../components/auth/Edit_profile.vue';
 
 const routes = [
     { name: 'LoginForm', component: Login, path: '/' },
@@ -40,6 +42,7 @@ const routes = [
     { name: 'Forget', component: Forget, path: '/forget' },
     { name: 'Home', component: Home, path: '/home' },
     { name: 'Logout', component: Logout, path: '/logout' },
+    { name: "Edit_profile", component: Edit_profile, path: '/edit_profile' },
 
     { name: 'User_create', component: Create_user, path: '/user_create' },
     { name: 'All_user', component: User_list, path: '/all_user' },
@@ -55,20 +58,23 @@ const routes = [
     { name: "Stocks_create", component: Stocks_create, path: '/stocks_create' },
     { name: 'All_stocks', component: All_stocks, path: '/all_stocks' },
     { name: 'All_serials', component: All_serials, path: '/all_serials' },
+    { name: 'Return_repair', component: Return_repair, path: '/return_repair' },
 
     { name: "Supplier", component: Supplier, path: '/supplier' },
 
-    {name:"Expence_category",component:Expence_category, path:'/expence_category'},
-    {name:"Expence_create", component:Expence_create, path:'/expence_create'},
-    {name:"All_expense", component:All_expense, path:'/all_expense'},
+    { name: "Expence_category", component: Expence_category, path: '/expence_category' },
+    { name: "Expence_create", component: Expence_create, path: '/expence_create' },
+    { name: "All_expense", component: All_expense, path: '/all_expense' },
 
-    {name:"Payment_type", component:PaymentType, path:'/payment_type'},
-    {name:"Investment",component:Investment, path:'/investment'},
-    {name:"Reserve_table",component:Reserve_table,path:'/reserve_table'},
-    {name:"BillsTable",component:BillsTable,path:'/bills_table'},
+    { name: "Payment_type", component: PaymentType, path: '/payment_type' },
+    { name: "Investment", component: Investment, path: '/investment' },
+    { name: "Reserve_table", component: Reserve_table, path: '/reserve_table' },
+    { name: "BillsTable", component: BillsTable, path: '/bills_table' },
 
-    {name:"Bill", component:Bill_generate, path:'/bill_generate'},
-    {name:"Bill_print",component:Bill_print,path:'/bill_print'},
+    { name: "Bill", component: Bill_generate, path: '/bill_generate' },
+    { name: "Bill_print", component: Bill_print, path: '/bill_print' },
+
+
 ];
 
 const router = createRouter({

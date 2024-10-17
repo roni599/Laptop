@@ -1,5 +1,5 @@
 <template>
-    <div id="layoutAuthentication mt-5">
+    <div id="layoutAuthentication">
         <div id="layoutAuthentication_content">
             <main>
                 <div class="container">

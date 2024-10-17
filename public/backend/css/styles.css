@@ -10846,7 +10846,7 @@ body {
   height: 100%;
 }
 
-#layoutAuthentication {
+/* #layoutAuthentication {
   display: flex;
   flex-direction: column;
   max-height: 100vh;
@@ -10857,7 +10857,25 @@ body {
 }
 #layoutAuthentication #layoutAuthentication_footer {
   min-width: 0;
+} */
+
+#layoutAuthentication {
+  display: flex;
+  flex-direction: column;
+  min-height: 95vh; /* Full height */
+  justify-content: center; /* Vertical centering */
+  align-items: center; /* Horizontal centering */
 }
+
+#layoutAuthentication_content {
+  width: 100%;
+  min-width: 400px;
+}
+
+#layoutAuthentication_footer {
+  min-width: 0;
+}
+
 
 #layoutSidenav {
   display: flex;

@@ -29,7 +29,7 @@
                                             placeholder="Enter product name" v-model="form.product_model" />
                                         <small class="text-danger" v-if="errors.product_model">{{
                                             errors.product_model[0]
-                                            }}</small>
+                                        }}</small>
                                         <label for="inputProductName">Product Model</label>
                                     </div>
                                 </div>
@@ -39,7 +39,7 @@
                                             placeholder="Product Code" v-model="form.specification"></textarea>
                                         <small class="text-danger" v-if="errors.specification">{{
                                             errors.specification[0]
-                                            }}</small>
+                                        }}</small>
                                         <label for="inputEmail">Specification</label>
                                     </div>
                                 </div>
@@ -66,7 +66,7 @@
                                         </select>
                                         <small class="text-danger" v-if="errors.cat_id">{{
                                             errors.cat_id[0]
-                                            }}</small>
+                                        }}</small>
                                         <label for="Buying Price">Category</label>
                                     </div>
                                 </div>
@@ -80,7 +80,7 @@
                                         </select>
                                         <small class="text-danger" v-if="errors.brand_id">{{
                                             errors.brand_id[0]
-                                            }}</small>
+                                        }}</small>
                                         <label for="inputSellingPrice">Brand</label>
                                     </div>
                                 </div>
@@ -93,7 +93,7 @@
                                             placeholder="Buying Date" v-model="form.touch_status" />
                                         <small class="text-danger" v-if="errors.touch_status">{{
                                             errors.touch_status[0]
-                                            }}</small>
+                                        }}</small>
                                         <label for="inputBuyingDate">Touch Status</label>
                                     </div>
                                 </div>
@@ -194,7 +194,7 @@ export default {
                     this.users = res.data;
                     this.userName = res.data.user_name;
                     this.profile_img = res.data.profile_img
-                    this.form.user_id=res.data.id
+                    this.form.user_id = res.data.id
                 })
                 .catch((error) => {
                     console.log(error.response ? error.response.data : error.message);

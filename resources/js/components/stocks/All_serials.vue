@@ -381,7 +381,8 @@ export default {
   height: 70vh;
   margin: auto;
 }
-.table_size{
+
+.table_size {
   width: 100%;
   overflow: auto;
 }

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Serial;
 use App\Http\Controllers\Controller;
 use App\Models\Cart;
 use App\Models\CartItem;
+use App\Models\Reserve;
 use App\Models\Serial;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
@@ -110,6 +111,7 @@ class SerialController extends Controller
 
     public function update(Request $request)
     {
+
         $request->validate([
             'serial_no' => 'required',
             'barcode_no' => 'required',
@@ -122,7 +124,8 @@ class SerialController extends Controller
 
         $serial = Serial::findOrFail($request->id);
         $product = $serial->stock->product;
-
+        $buyingPrice = $serial->stock->buying_price;
+        
         if ($request->has('image') && strpos($request->image, 'data:image/') === 0) {
             $oldImagePath = public_path('backend/images/serial/' . $serial->image);
             if ($serial->image && file_exists($oldImagePath)) {
@@ -152,13 +155,43 @@ class SerialController extends Controller
         $serial->user_id = $request->user_id;
         $serial->status = $request->status;
 
+        // if ($serial->return_status != $request->return_status) {
+        //     if ($request->return_status == 1) {
+        //         $product->decrement('quantity', 1);
+        //     }
+        //     if ($request->return_status == 0) {
+        //         $product->increment('quantity', 1);
+        //     }
+        // }
+
+
         if ($serial->return_status != $request->return_status) {
+            // Only adjust quantity if the return_status has changed
             if ($request->return_status == 1) {
+                // If new return_status is 1 (item returned), decrement product quantity
                 $product->decrement('quantity', 1);
-            }
-            if ($request->return_status == 0) {
+                Reserve::create([ // Value from validInputs (payment_type_id)
+                    'amount' => $buyingPrice, // Value from validInputs2 (amount as a string)
+                    'transaction_type'=> 'in', // Default value for transaction type
+                    'payment_type_id' => $serial->stock->paymenttype_id,
+                    'status' => '0', // Default value for status
+                    'user_id' => $request->user_id
+                ]);
+            } elseif ($request->return_status == 0) {
+                // If new return_status is 0 (item not returned), increment product quantity
                 $product->increment('quantity', 1);
+                Reserve::create([ // Value from validInputs (payment_type_id)
+                    'amount' => $buyingPrice, // Value from validInputs2 (amount as a string)
+                    'transaction_type' => 'out', // Default value for transaction type
+                    'payment_type_id' => $serial->stock->paymenttype_id,
+                    'status' => '0', // Default value for status
+                    'user_id' => $request->user_id
+                ]);
             }
+
+            // Update the return_status in the serial
+            $serial->return_status = $request->return_status;
+            $serial->save();
         }
         $serial->return_status = $request->return_status;
         $serial->save();
@@ -300,6 +333,91 @@ class SerialController extends Controller
     // }
 
 
+    // public function searchBarcode(Request $request)
+    // {
+    //     $barcode = $request->input('barcode');
+    //     $cartId = $request->input('cart_id');
+    //     $newQuantity = $request->input('quantity', 1); // Allow quantity to be specified in the request
+
+    //     // Check if a cart exists for the cart_id provided
+    //     $cart = $cartId ? Cart::find($cartId) : null;
+
+    //     // If no valid cart_id is provided or cart does not exist, create a new cart
+    //     if (!$cart) {
+    //         $cart = new Cart();
+    //         $cart->cart_id = 'LP' . substr((string) Str::uuid(), 0, 4); // Unique cart ID
+    //         $cart->save(); // Save the new cart
+    //     }
+
+    //     // Find the serial based on the barcode, but exclude items already in the cart
+
+    //     $serial = Serial::with(['stock.product', 'user'])
+    //         ->where('barcode_no', $barcode)
+    //         ->first();
+
+    //     // $serial = Serial::with(['stock.product', 'user'])
+    //     //     ->where('barcode_no', $barcode)
+    //     //     ->whereDoesntHave('stock.product.cartItems', function ($query) use ($cart) {
+    //     //         $query->where('cart_id', $cart->id);
+    //     //     })
+    //     //     ->first();
+
+    //     if (!$serial) {
+    //         return response()->json(['message' => 'Serial not found'], 404);
+    //     }
+
+    //     // Check if the product's quantity is 0
+    //     if ($serial->stock->product->quantity == 0) {
+    //         return response()->json(['message' => 'Product is out of stock'], 400);
+    //     }
+
+    //     // Check if the item already exists in the cart
+    //     $existingCartItem = CartItem::where('cart_id', $cart->id)
+    //         ->where('item_no', $serial->stock->product->id)
+    //         ->first();
+    //     // return response()->json($existingCartItem);
+    //     if (!$existingCartItem) {
+    //         // If the item already exists, increment the quantity
+    //         // $existingCartItem->quantity += $newQuantity;
+    //         // $existingCartItem->save();
+    //         CartItem::create([
+    //             'cart_id' => $cart->id,
+    //             'serial_id' => $serial->id,
+    //             'quantity' => $newQuantity,  // Default or specified quantity
+    //             'item_no' => $serial->stock->product->id,
+    //             'unit_price' => $serial->stock->selling_price // Use the selling price
+    //         ]);
+
+    //         return response()->json([
+    //             'message' => 'Item added to cart.',
+    //             'cart_id' => $cart->id,
+    //             'serial' => $serial
+    //         ]);
+    //     } else {
+    //         return response()->json([
+    //             'message' => 'Item already exists in the cart, quantity incremented.',
+    //             // 'cart_id' => $cart->id,
+    //             // 'quantity' => $existingCartItem->quantity,
+    //             // 'serial' => $serial
+    //         ]);
+    //     }
+    //     // If the item doesn't exist, create a new CartItem
+    //     // CartItem::create([
+    //     //     'cart_id' => $cart->id,
+    //     //     'serial_id' => $serial->id,
+    //     //     'quantity' => $newQuantity,  // Default or specified quantity
+    //     //     'item_no' => $serial->stock->product->id,
+    //     //     'unit_price' => $serial->stock->selling_price // Use the selling price
+    //     // ]);
+
+    //     // return response()->json([
+    //     //     'message' => 'Item added to cart.',
+    //     //     'cart_id' => $cart->id,
+    //     //     'serial' => $serial
+    //     // ]);
+    // }
+
+
     public function searchBarcode(Request $request)
     {
         $barcode = $request->input('barcode');
@@ -308,64 +426,99 @@ class SerialController extends Controller
 
         // Check if a cart exists for the cart_id provided
         $cart = $cartId ? Cart::find($cartId) : null;
-
+        $serial = Serial::with(['stock.product', 'user'])
+            ->where('barcode_no', $barcode)
+            ->first();
+        if (!$serial) {
+            return response()->json(['message' => 'Serial not found'], 404);
+        }
+        if ($serial->stock->product->quantity == 0) {
+            return response()->json(['message' => 'Product is out of stock'], 400);
+        }
         // If no valid cart_id is provided or cart does not exist, create a new cart
         if (!$cart) {
             $cart = new Cart();
             $cart->cart_id = 'LP' . substr((string) Str::uuid(), 0, 4); // Unique cart ID
-            $cart->save(); // Save the new cart
-        }
-
-        // Find the serial based on the barcode, but exclude items already in the cart
-        $serial = Serial::with(['stock.product', 'user'])
-            ->where('barcode_no', $barcode)
-            ->whereDoesntHave('stock.product.cartItems', function ($query) use ($cart) {
-                $query->where('cart_id', $cart->id);
-            })
-            ->first();
-
-        if (!$serial) {
-            return response()->json(['message' => 'Serial not found or already in the cart'], 404);
-        }
-
-        // Check if the product's quantity is 0
-        if ($serial->stock->product->quantity == 0) {
-            return response()->json(['message' => 'Product is out of stock'], 400);
-        }
-
-        // Check if the item already exists in the cart
-        $existingCartItem = CartItem::where('cart_id', $cart->id)
-            ->where('item_no', $serial->stock->product->id)
-            ->first();
-
-        if ($existingCartItem) {
-            // If the item already exists, increment the quantity
-            $existingCartItem->quantity += $newQuantity;
-            $existingCartItem->save();
-
-            return response()->json([
-                'message' => 'Item already exists in the cart, quantity incremented.',
+            $cart->save(); // Sa ve the new cart
+            CartItem::create([
                 'cart_id' => $cart->id,
-                'quantity' => $existingCartItem->quantity,
-                'serial' => $serial
+                'serial_id' => $serial->id,
+                'quantity' => $newQuantity,  // Default or specified quantity
+                'item_no' => $serial->stock->product->id,
+                'unit_price' => $serial->stock->selling_price // Use the selling price
             ]);
+            return response()->json([
+                'message' => 'card created successfully.',
+                'cart_id' => $cart->id,
+                'serial' => $serial
+            ], 200);
+        } else {
+            $existingCartItem = CartItem::where('cart_id', $cart->id)
+                ->where('serial_id', $serial->id)
+                ->first();
+            if ($existingCartItem) {
+                return response()->json([
+                    'message' => 'Item already exists in the cart.'
+                ],400);
+            } else {
+                CartItem::create([
+                    'cart_id' => $cart->id,
+                    'serial_id' => $serial->id,
+                    'quantity' => $newQuantity,  // Default or specified quantity
+                    'item_no' => $serial->stock->product->id,
+                    'unit_price' => $serial->stock->selling_price // Use the selling price
+                ]);
+                return response()->json([
+                    'message' => 'card is available',
+                    'serial' => $serial,
+                ]);
+            }
         }
 
-        // If the item doesn't exist, create a new CartItem
-        CartItem::create([
-            'cart_id' => $cart->id,
-            'serial_id' => $serial->id,
-            'quantity' => $newQuantity,  // Default or specified quantity
-            'item_no' => $serial->stock->product->id,
-            'unit_price' => $serial->stock->selling_price // Use the selling price
-        ]);
+        // Find the serial based on the barcode
+        // $serial = Serial::with(['stock.product', 'user'])
+        //     ->where('barcode_no', $barcode)
+        //     ->first();
 
-        return response()->json([
-            'message' => 'Item added to cart.',
-            'cart_id' => $cart->id,
-            'serial' => $serial
-        ]);
+        // if (!$serial) {
+        //     return response()->json(['message' => 'Serial not found'], 404);
+        // }
+
+        // // Check if the product's quantity is 0
+        // if ($serial->stock->product->quantity == 0) {
+        //     return response()->json(['message' => 'Product is out of stock'], 400);
+        // }
+
+        // // Check if the item already exists in the cart
+        // $existingCartItem = CartItem::where('cart_id', $cart->id)
+        //     ->where('item_no', $serial->stock->product->id)
+        //     ->first();
+
+        // if ($existingCartItem) {
+        //     // If the item exists, just return a message that it's already in the cart
+        //     return response()->json([
+        //         'message' => 'Item already exists in the cart.',
+
+        //     ]);
+        // } else {
+        //     // If the item doesn't exist, create a new CartItem
+        //     CartItem::create([
+        //         'cart_id' => $cart->id,
+        //         'serial_id' => $serial->id,
+        //         'quantity' => $newQuantity,  // Default or specified quantity
+        //         'item_no' => $serial->stock->product->id,
+        //         'unit_price' => $serial->stock->selling_price // Use the selling price
+        //     ]);
+
+        //     return response()->json([
+        //         'message' => 'Item added to cart.',
+        //         'cart_id' => $cart->id,
+        //         'serial' => $serial
+        //     ], 200);
+        // }
     }
+
+
     // public function delete_saledata($item_no)
     // {
     //     $cartItem = CartItem::where('item_no', $item_no)
@@ -393,12 +546,13 @@ class SerialController extends Controller
 
     public function delete_saledata($item_no)
     {
+        return response()->json($item_no);
         // Retrieve the cart items matching the conditions
-        $cartItems = CartItem::where('item_no', $item_no)
+        $cartItem = CartItem::where('item_no', $item_no)
             ->whereNull('sold_price')
             ->whereNull('profit')
             ->whereNull('total_profit')
-            ->get();
+            ->first();
 
         // Check if there are any items to delete
         if ($cartItems->isNotEmpty()) {

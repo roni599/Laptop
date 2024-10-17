@@ -119,9 +119,6 @@ class BillController extends Controller
         $bill->cart_id = $cart->id;
         $bill->save();
 
-
-
-
         foreach ($validatedData['validInputs'] as $key => $paymentTypeId) {
             // Check if a corresponding amount exists in validInputs2
             if (isset($validatedData['validInputs2'][$key])) {
@@ -140,19 +137,15 @@ class BillController extends Controller
         $entriesToDelete = CartItem::whereNull('sold_price')   // Check if sold_price is NULL
             ->whereNull('profit')                              // Check if profit is NULL
             ->delete();
+        $entriesToDeleteCart = Cart::whereNull('customer_id')->delete();
         return response()->json($bill->id);
     }
 
     public function billGenerate($id)
     {
-        // Fetch the bill along with related cart, serial, stock, product, and customer information
+
         $bill = Bill::with(['cart.cartItems.serial.stock.product', 'customer'])->find($id);
-
-        // Fetch the payment details related to the reserve and payment type
-        // $payment = Reserve::with(['paymenttype'])->find($id);
         $payment = Reserve::with('paymenttype')->where('bill_id', $id)->get();
-
-        // Return both the bill and payment data in the response
         return response()->json([
             'bill' => $bill,
             'payment' => $payment
@@ -160,36 +153,128 @@ class BillController extends Controller
     }
     public function billtable()
     {
+        // $bills = Bill::with([
+        //     'cart.cartitems.serial.stock.product.brand',
+        //     'cart.cartitems.serial.stock.product.category',
+        //     'user',
+        //     'customer'
+        // ])->get();
         $bills = Bill::with([
             'cart.cartitems.serial.stock.product.brand',
             'cart.cartitems.serial.stock.product.category',
             'user',
-            'customer'
-        ])->get();
+            'customer',
+            'reserves.paymenttype' // Load the reserves and their related payment type
+        ])
+            ->get();
+        // $bills = Bill::with([
+        //     'cart.cartitems.serial.stock.product.brand',
+        //     'cart.cartitems.serial.stock.product.category',
+        //     'user',
+        //     'customer',
+        //     'paymenttype' // Load the related payment data
+        // ])
+        // ->whereNotNull('bill_id') // Filter reserves where bill_id is not null
+        // ->get();
         return response()->json($bills);
     }
     public function delete($id)
     {
-        // $bill=Bill::findOrFail($id);
         $bill = Bill::with([
             'cart.cartitems.serial.stock.product',
-        ])->where('id', $id)->first();
-        
-        foreach ($bill->cart as $cart) {
-            foreach ($cart->cartitems as $cartItem) {
-                $product = $cartItem->serial->stock;
-                return response()->json($bill->cart->cartitems);
-                // Subtract cart item quantity from product quantity
-                $newProductQuantity = $product->quantity - $cartItem->quantity;
+            'reserves.paymenttype'
+        ])->where('id', $id)->firstOrFail();
+        foreach ($bill->cart->cartitems as $cartItem) {
+            $product = $cartItem->serial->stock->product;
+            $newProductQuantity = $product->quantity + $cartItem->quantity;
+            $product->quantity = max($newProductQuantity, 0);
+            $product->save();
+        }
+        foreach ($bill->reserves as $reserve) {
+            Reserve::create([
+                'bill_id' => $bill->id,
+                'payment_type_id' => $reserve->payment_type_id,
+                'amount' => $reserve->amount,
+                'transaction_type' => 'out',
+                'status' => '0',
+                'user_id' => $reserve->user_id
+            ]);
+        }
+        $bill->cart->delete();
+        $bill->delete();
+        return response()->json(['message' => 'Bill, cart, and cart items deleted successfully. Product quantities restored!']);
+    }
+    public function bill_edit_reserve_delete($id)
+    {
+        $reserve = Reserve::find($id);
+        return response()->json($reserve);
+    }
+    public function billUpdate(Request $request)
+    {
+        $validated = $request->validate([
+            'customer_name' => 'required|string|max:255',
+            'user_id' => 'required|integer|exists:users,id',
+            'products.*.product_name' => 'required|string',
+            'products.*.sold_price' => 'required|numeric',
+            'reserves.*.payment_type' => 'required|string',
+            'reserves.*.amount' => 'required|numeric'
+        ]);
+        $bill = Bill::with([
+            'cart.cartitems.serial.stock.product',
+            'reserves.paymenttype'
+        ])->where('cart_id', $request->id)->firstOrFail();
+        $customer_id = $bill->cart->customer->id;
+        $customer = Customer::findOrFail($customer_id);
+        $customer->customer_name = $request->customer_name;
+        $customer->save();
 
-                // Ensure product quantity doesn't go below zero
-                $product->quantity = max($newProductQuantity, 0);
+        $productIds = [];
+        $cartItemsIds = [];
+        $totalPrice = 0;
 
-                // Save the updated product quantity
-                $product->save();
+        if ($bill->cart && $bill->cart->cartitems) {
+            foreach ($bill->cart->cartitems as $cartItem) {
+                $cartItemsIds[] = $cartItem->id;
+                if (isset($cartItem->serial->stock->product->id)) {
+                    $productIds[] = $cartItem->serial->stock->product->id;
+                }
             }
         }
-        $bill->delete();
-        return response()->json(['message' => 'Bill deleted updated successfully!']);
+        foreach ($productIds as $index => $productId) {
+            if (isset($request->products[$index])) {
+                $product = Product::find($productId);
+                if ($product) {
+                    $product->product_model = $request->products[$index]['product_name'];
+                    $product->save();
+                }
+            }
+        }
+
+        foreach ($cartItemsIds as $index => $productId) {
+            if (isset($request->products[$index]['sold_price'])) {
+                $product = CartItem::find($productId);
+                $bill_id = Bill::findOrFail($bill->id);
+                if ($product) {
+                    $soldPrice = $request->products[$index]['sold_price'];
+                    $unitPrice = $product->unit_price;
+                    $product->sold_price = $soldPrice;
+                    $product->profit = $soldPrice - $unitPrice;
+                    $product->total_profit = $soldPrice - $unitPrice;
+                    $totalPrice += $soldPrice;
+                    $product->save();
+                }
+            }
+        }
+        $bill->total_price = $totalPrice;
+        $bill->save();
+
+        $reserves = $request->input('reserves');
+
+        foreach ($reserves as $reserve) {
+            Reserve::where('id', $reserve['id'])->update([
+                'amount' => $reserve['amount']
+            ]);
+        }
+        return response()->json(['message' => 'Bills updated successfully']);
     }
 }

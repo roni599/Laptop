@@ -30,8 +30,8 @@
               </tr>
             </thead>
             <tbody>
-              <tr v-for="reserve in reserves" :key="reserve.id">
-                <td>{{ reserve.id }}</td>
+              <tr v-for="(reserve,index) in reserves" :key="reserve.id">
+                <td>{{index+1  }}</td>
                 <td>{{ reserve.transaction_type }}</td>
                 <td>{{ reserve.amount }}</td>
                 <td>

@@ -11,12 +11,12 @@ class ProductController extends Controller
 {
     public function index()
     {
-        // $product = Product::with(['category', 'brand', 'user'])->get();
-        $product = Product::with(['category', 'brand', 'user'])
-        ->whereHas('category', function ($query) {
-            $query->whereIn('id', [1, 15]);  // Filter by category ID 1 or 15
-        })
-        ->get();
+        $product = Product::with(['category', 'brand', 'user'])->get();
+        // $product = Product::with(['category', 'brand', 'user'])
+        // ->whereHas('category', function ($query) {
+        //     $query->whereIn('id', [1, 15]);  // Filter by category ID 1 or 15
+        // })
+        // ->get();
         return response($product);
     }
     public function store(Request $request)
@@ -57,7 +57,7 @@ class ProductController extends Controller
         $request->validate([
             'product_model' => 'required|string|max:255',
             'specification' => 'required|string',
-            // 'quantity' => 'required|integer|min:1',
+            'quantity' => 'required|integer|min:1',
             'touch_status' => 'nullable',
             'discount' => 'nullable|numeric|min:0|max:10000',
             'user_id' => 'required|exists:users,id',
@@ -73,7 +73,7 @@ class ProductController extends Controller
         $product->update($request->only([
             'product_model',
             'specification',
-            // 'quantity',
+            'quantity',
             'touch_status',
             'discount',
             'user_id',

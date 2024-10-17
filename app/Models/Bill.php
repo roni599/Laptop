@@ -52,4 +52,8 @@ class Bill extends Model
     {
         return $this->hasMany(Reserve::class);
     }
+    // public function reserve()
+    // {
+    //     return $this->hasOne(Reserve::class, 'bill_id'); // Assuming `bill_id` is the foreign key in the Reserve table
+    // }
 }

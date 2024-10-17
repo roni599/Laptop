@@ -76,7 +76,6 @@
                     <label for="inputPasswordConfirm">Confirm Password</label>
                   </div>
                 </div>
-
               </div>
 
               <div class="row mb-3">

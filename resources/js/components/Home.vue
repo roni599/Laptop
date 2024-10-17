@@ -143,6 +143,9 @@
     InVestment Amount {{ investmentTotalAmount }} <br>
     Total In {{ totalIn }} +Total Out {{ totalOut }} = {{ balance }} Balance <br>
     Net Balance {{ netbalance }}
+    <br><br><br>
+    TodaysSells {{ todaysBills }} Item Products <br>
+    yesterdaysBills {{ yesterdaysBills }} Item Products
     <div class="card mb-4 tt">
       <div class="card-header d-flex justify-content-between">
         <div class="employee_table fw-bold text-muted">
@@ -230,7 +233,9 @@ export default {
       totalOut: 0,
       balance: 0,
       netbalance: 0,
-      investmentTotalAmount: 0
+      investmentTotalAmount: 0,
+      todaysBills:0,
+      yesterdaysBills:0
     };
   },
   computed: {
@@ -301,7 +306,9 @@ export default {
           this.totalOut = res.data.total_out;
           this.balance = res.data.balance;
           this.investmentTotalAmount = res.data.investmentTotalAmount
-          this.netbalance = res.data.netbalance
+          this.netbalance = res.data.netbalance,
+          this.todaysBills=res.data.todaysBills,
+          this.yesterdaysBills=res.data.yesterdaysBills
         })
         .catch((error) => {
           console.log(error);

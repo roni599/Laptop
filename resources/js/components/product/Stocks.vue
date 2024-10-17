@@ -33,13 +33,13 @@
                             <th scope="row">{{ product.id }}</th>
                             <td>{{ product.product_name }}</td>
                             <td>{{ product.product_code }}</td>
-                            <td v-if="product.product_quantity>=1"><span class="text-success">Available</span></td>
+                            <td v-if="product.product_quantity >= 1"><span class="text-success">Available</span></td>
                             <td v-else><span class="text-danger">Not Available</span></td>
                             <td>{{ product.product_quantity }}</td>
                             <td>
-                                <img v-if="product.image" :src="`/backend/images/product/${product.image}`" alt="Employee Image" width="55"
-                                    height="55" />
-                                    <span v-else>User not <br> provide image</span>
+                                <img v-if="product.image" :src="`/backend/images/product/${product.image}`"
+                                    alt="Employee Image" width="55" height="55" />
+                                <span v-else>User not <br> provide image</span>
                             </td>
                             <td>
                                 <div class="buttonGroup py-2">
@@ -85,7 +85,7 @@
                                                             v-model="form.product_name" readonly />
                                                         <small class="text-danger" v-if="errors.product_name">{{
                                                             errors.product_name[0]
-                                                            }}</small>
+                                                        }}</small>
                                                         <label for="inputProductName">Product Name</label>
                                                     </div>
                                                 </div>
@@ -98,7 +98,7 @@
                                                             v-model="form.product_quantity" />
                                                         <small class="text-danger" v-if="errors.product_quantity">{{
                                                             errors.product_quantity[0]
-                                                        }}</small>
+                                                            }}</small>
                                                         <label for="inputProductQuentity">Product Quentity</label>
                                                     </div>
                                                 </div>

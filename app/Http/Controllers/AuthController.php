@@ -135,7 +135,7 @@ class AuthController extends Controller
         return response()->json([
             'access_token' => $token,
             'token_type' => 'bearer',
-            'expires_in' => $ttl*60,
+            'expires_in' => $ttl, // TTL in seconds for 24 hours
             'user_id' => auth()->user()->id,
             'name' => auth()->user()->user_name,
             'email' => auth()->user()->email,

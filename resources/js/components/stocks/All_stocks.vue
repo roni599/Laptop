@@ -123,7 +123,7 @@
                               <label class="h6 mb-0" for="inputCategory">Discount</label>
                             </div>
                           </div>
-                          <!-- <div class="col-md-6">
+                          <div class="col-md-6">
                             <div class="form-floating mb-3 mb-md-0">
                               <input class="form-control" id="inputRoot" type="text" placeholder="Root"
                                 v-model="form.quantity" />
@@ -132,8 +132,8 @@
                               }}</small>
                               <label for="inputRoot">Quentity</label>
                             </div>
-                          </div> -->
-                          <div class="col-md-6">
+                          </div>
+                          <div class="col-md-12">
                             <div class="form-floating mb-3 mb-md-0">
                               <select class="form-select" aria-label="Default select example" v-model="form.cat_id">
                                 <option v-for="category in categories" :key="category.id" :value="category.id">
@@ -234,7 +234,7 @@ export default {
         id: null,
         product_model: null,
         specification: null,
-        // quantity: null,
+        quantity: null,
         touch_status: null,
         discount: null,
         user_id: null,
@@ -410,5 +410,4 @@ export default {
   overflow: auto;
   width: 100%;
 }
-
 </style>
