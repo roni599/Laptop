@@ -87,6 +87,7 @@ export default {
       this.loading = true;
       try {
         const res = await axios.post("/api/auth/login", this.form);
+        console.log(res)
         User.responseAfterLogin(res);
         Toast.fire({
           icon: "success",

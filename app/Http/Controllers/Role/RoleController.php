@@ -7,6 +7,7 @@ use App\Models\Role;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Hash;
 
 class RoleController extends Controller
 {
@@ -117,5 +118,58 @@ class RoleController extends Controller
         } else {
             $user->delete();
         }
+    }
+    public function userSelfUpdate(Request $request)
+    {
+        $request->validate([
+            'id' => 'required',
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255',
+            'phone' => 'required|string|max:15',
+            'image' => 'nullable|string',
+        ]);
+
+        $user = User::find($request->id);
+        if (!$user) {
+            return response()->json(['message' => 'User not found'], 404);
+        }
+        if ($request->has('image') && strpos($request->image, 'data:image/') === 0) {
+            $imagePath = public_path('backend/images/users/' . $user->image);
+            if ($user->image && file_exists($imagePath)) {
+                unlink($imagePath);
+            }
+
+            $position = strpos($request->image, ';');
+            $sub = substr($request->image, 0, $position);
+            $ext = explode('/', $sub)[1];
+            $imageName = rand(1, 1000) . '_' . $request->name . '.' . $ext;
+            $image = str_replace('data:image/' . $ext . ';base64,', '', $request->image);
+            $image = str_replace(' ', '+', $image);
+
+            $imagePath = public_path('backend/images/users/' . $imageName);
+            if (!File::isDirectory(public_path('backend/images/users'))) {
+                File::makeDirectory(public_path('backend/images/users'), 0755, true, true);
+            }
+
+            File::put($imagePath, base64_decode($image));
+            $user->profile_img = $imageName;
+        }
+        $user->update([
+            'user_name' => $request->name,
+            'email' => $request->email,
+            'phone' => $request->phone,
+        ]);
+        return response()->json(['message' => 'User updated successfully']);
+    }
+    public function userSelfUpdatePassword(Request $request)
+    {
+        $request->validate([
+            'password' => 'required|string|min:8|confirmed',
+        ]);
+        $user = User::find($request->id);
+        $user->password = Hash::make($request->password);
+        $user->save();
+
+        return response()->json(['message' => 'Password updated successfully']);
     }
 }

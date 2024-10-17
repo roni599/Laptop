@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Models\ActivityLog;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
@@ -37,7 +38,10 @@ class AuthController extends Controller
         if (!$token = auth()->attempt($credentials)) {
             return response()->json(['error' => 'Email or password is invalid'], 401);
         }
-
+        ActivityLog::create([
+            'user_id' => auth()->user()->id,
+            'type' => 'login',
+        ]);
         return $this->respondWithToken($token);
     }
 

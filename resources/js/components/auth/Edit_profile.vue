@@ -27,7 +27,7 @@
                         Profile Details
                     </div>
                     <div class="card-body shadow-sm py-4">
-                        <form @submit.prevent="updateEmployee" enctype="multipart/form-data">
+                        <form @submit.prevent="updateUser" enctype="multipart/form-data">
                             <div class="row mb-4">
                                 <!-- Image Preview -->
                                 <div class="col-md-1">
@@ -40,7 +40,8 @@
                                 <!-- Button to trigger file input -->
                                 <div class="col-md-5">
                                     <div class="form-floating mb-3 mb-md-0 mt-2">
-                                        <button class="btn btn-primary btn-sm" @click="triggerFileInput">Upload New
+                                        <button type="button" class="btn btn-primary btn-sm"
+                                            @click="triggerFileInput">Upload New
                                             Photo</button>
                                         <input type="file" ref="fileInput" style="display: none;"
                                             @change="onFileSelect" />
@@ -84,50 +85,10 @@
                                         <label for="inputAddress">Phone</label>
                                     </div>
                                 </div>
-                                <!-- <div class="col-md-6">
-                                    <div class="form-floating mb-3 mb-md-0">
-                                        <select class="form-select text-muted h7" v-model="form.role_id"
-                                            aria-label="Default select example">
-                                            <option :value="role.id" selected v-for="role in roles" :key="role.id">{{
-                                                role.role_name
-                                            }}
-                                            </option>
-                                        </select>
-                                        <small class="text-danger" v-if="errors.role_id">{{ errors.role_id[0] }}</small>
-                                        <label for="inputNid">Role</label>
-                                    </div>
-                                </div> -->
                             </div>
-                            <!-- <div class="row mb-4">
-                                <div class="col-md-6">
-                                    <div class="form-floating mb-3 mb-md-0">
-                                        <input class="form-control" id="inputNid" type="text" placeholder="Phone"
-                                            v-model="form.status" />
-                                        <small class="text-danger" v-if="errors.status">{{
-                                            errors.status[0]
-                                        }}</small>
-                                        <label for="inputNid">Status</label>
-                                    </div>
-                                </div>
-                                <div class="col-md-5">
-                                    <div class="form-floating mb-3 mb-md-0">
-                                        <input class="form-control p-3 px-4" id="inputFile" type="file"
-                                            @change="onFileSelect" />
-                                        <small class="text-danger" v-if="errors.image">{{
-                                            errors.image[0]
-                                        }}</small>
-                                    </div>
-                                </div>
-                                <div class="col-md-1">
-                                    <div class="form-floating mb-3 mb-md-0">
-                                        <img v-if="form.image !== null" :src="getimageSrc()" alt="" width="55"
-                                            height="55" />
-                                    </div>
-                                </div>
-                            </div> -->
                             <div class="mt-4 mb-0">
                                 <div class="d-grid">
-                                    <button class="btn btn-primary w-100 mb-2" :disabled="loading">
+                                    <button type="submit" class="btn btn-primary w-100 mb-2" :disabled="loading">
                                         <span v-if="loading" class="spinner-border spinner-border-sm me-2" role="status"
                                             aria-hidden="true"></span>
                                         <span v-if="!loading">Update</span>
@@ -145,7 +106,7 @@
                         Change Password
                     </div>
                     <div class="card-body shadow-sm py-5">
-                        <form @submit.prevent="updateEmployee" enctype="multipart/form-data">
+                        <!-- <form @submit.prevent="updateUserPassword" enctype="multipart/form-data">
                             <div class="row mb-3">
                                 <div class="col-md-12">
                                     <div class="form-floating mb-3 mb-md-0">
@@ -168,7 +129,7 @@
                             </div>
                             <div class="mt-4 mb-0">
                                 <div class="d-grid">
-                                    <button class="btn btn-primary w-100 mb-2" :disabled="loading">
+                                    <button type="submit" class="btn btn-primary w-100 mb-2" :disabled="loading">
                                         <span v-if="loading" class="spinner-border spinner-border-sm me-2" role="status"
                                             aria-hidden="true"></span>
                                         <span v-if="!loading">Update</span>
@@ -176,7 +137,54 @@
                                     </button>
                                 </div>
                             </div>
+                        </form> -->
+                        <form @submit.prevent="updateUserPassword" enctype="multipart/form-data">
+                            <!-- Password Input -->
+                            <div class="row mb-3">
+                                <div class="col-md-12">
+                                    <div class="form-floating mb-3 mb-md-0">
+                                        <input class="form-control" id="inputPassword" type="password"
+                                            placeholder="Password" v-model="form2.password" />
+                                        <small class="text-danger" v-if="errors.password">{{ errors.password[0]
+                                            }}</small>
+                                        <label for="inputPassword">Password</label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Confirm Password Input with Show/Hide Toggle -->
+                            <div class="row mb-4">
+                                <div class="col-md-12">
+                                    <div class="form-floating mb-3 mb-md-0 position-relative">
+                                        <input :type="showConfirmPassword ? 'text' : 'password'" class="form-control"
+                                            id="inputPasswordConfirm" placeholder="Confirm password"
+                                            v-model="form2.password_confirmation" />
+                                        <label for="inputPasswordConfirm">Confirm Password</label>
+
+                                        <!-- Eye Icon for Toggling Password Visibility -->
+                                        <span class="position-absolute"
+                                            style="top: 50%; right: 10px; transform: translateY(-50%); cursor: pointer;"
+                                            @click="toggleConfirmPassword">
+                                            <i :class="showConfirmPassword ? 'fas fa-eye' : 'fas fa-eye-slash'"></i>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Submit Button -->
+                            <div class="mt-5 mb-0">
+                                <div class="d-grid">
+                                    <button type="submit" class="btn btn-primary w-100 mb-2" :disabled="loading">
+                                        <span v-if="loading" class="spinner-border spinner-border-sm me-2" role="status"
+                                            aria-hidden="true"></span>
+                                        <span v-if="!loading">Change Password</span>
+                                        <span v-if="loading">Cahnging...</span>
+                                    </button>
+                                </div>
+                            </div>
                         </form>
+
+
                     </div>
                 </div>
             </div>
@@ -202,14 +210,14 @@ export default {
                 name: null,
                 email: null,
                 phone: null,
-                role_id: null,
-                status: null,
                 image: null
             },
             form2: {
+                id: null,
                 password: null,
                 password_confirmation: null,
             },
+            showConfirmPassword: false,
             errors: {},
             roles: [],
 
@@ -227,9 +235,12 @@ export default {
                     this.userName = res.data.user_name;
                     this.profile_img = res.data.profile_img
                     this.users = res.data;
-                    this.form = { ...res.data }
                     this.form.image = res.data.profile_img
-                    this.form.name = res.data.user_name
+                    this.form.name = res.data.user_name,
+                        this.form.id = res.data.id,
+                        this.form.phone = res.data.phone
+                    this.form.email = res.data.email
+                    this.form2.id = res.data.id
                 })
                 .catch((error) => {
                     console.log(error.response ? error.response.data : error.message);
@@ -264,6 +275,44 @@ export default {
                 }
             }
             return "";
+        },
+        async updateUser() {
+            this.loading = true;
+            await axios.put('/api/roles/userSelfUpdate', this.form)
+                .then((res) => {
+                    console.log(res);
+                    this.fetchData();
+                    Toast.fire({
+                        icon: "success",
+                        title: res.data.message
+                    });
+                })
+                .catch((error) => {
+                    this.errors = error.response.data.errors;
+                })
+                .finally(() => {
+                    this.loading = false;
+                });
+        },
+        toggleConfirmPassword() {
+            this.showConfirmPassword = !this.showConfirmPassword; // Toggle visibility
+        },
+        async updateUserPassword() {
+            this.loading = true;
+            await axios.put('/api/roles/userSelfUpdaePassword', this.form2)
+                .then((res) => {
+                    this.fetchData();
+                    Toast.fire({
+                        icon: "success",
+                        title: res.data.message
+                    });
+                })
+                .catch((error) => {
+                    this.errors = error.response.data.errors;
+                })
+                .finally(() => {
+                    this.loading = false;
+                });
         },
         async all_roles() {
             await axios.get('/api/roles')

@@ -35,6 +35,7 @@ import Bill_print from '../components/bill/Bill_print.vue';
 import BillsTable from '../components/paymentType/BillsTable.vue';
 import Return_repair from '../components/stocks/Return_repair.vue';
 import Edit_profile from '../components/auth/Edit_profile.vue';
+import Activity_log from '../components/auth/Activity_log.vue';
 
 const routes = [
     { name: 'LoginForm', component: Login, path: '/' },
@@ -43,6 +44,7 @@ const routes = [
     { name: 'Home', component: Home, path: '/home' },
     { name: 'Logout', component: Logout, path: '/logout' },
     { name: "Edit_profile", component: Edit_profile, path: '/edit_profile' },
+    {name:"Activity_log",component:Activity_log,path:'/activity_log'},
 
     { name: 'User_create', component: Create_user, path: '/user_create' },
     { name: 'All_user', component: User_list, path: '/all_user' },

@@ -29,7 +29,7 @@
                         data-bs-toggle="dropdown" aria-expanded="false"><i class="fas fa-user fa-fw text-white"></i></a> -->
                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
                         <li><router-link class="dropdown-item" to="/edit_profile">Settings</router-link></li>
-                        <li><a class="dropdown-item" href="#!">Activity Log</a></li>
+                        <li><router-link class="dropdown-item" to="/activity_log">Activity Log</router-link></li>
                         <li>
                             <hr class="dropdown-divider" />
                         </li>
@@ -202,7 +202,7 @@
                                     <router-link class="nav-link"
                                         :class="{ 'active text-primary': $route.path === '/all_serials' }"
                                         to="/all_serials">Serials List</router-link>
-                                        <router-link class="nav-link"
+                                    <router-link class="nav-link"
                                         :class="{ 'active text-primary': $route.path === '/return_repair' }"
                                         to="/return_repair">Return && Repair</router-link>
                                 </nav>
@@ -289,57 +289,85 @@
 
 <script>
 import { ref, provide } from 'vue';
+import axios from 'axios'; // Make sure to import axios
+
 export default {
     name: "App",
     data() {
         const userName = ref('');
         const profile_img = ref('');
+        const user_id = ref(null); // Define user_id here
         provide('userName', userName);
         provide('profile_img', profile_img);
+
         return {
             userName,
             profile_img,
+            user_id, // Return user_id
             loading: true,
             inactivityTimer: null,
+            form: {
+                user_id: null,
+            }
         };
     },
     methods: {
         handleImageLoad() {
             this.loading = false;
         },
+        async activityLogout() {
+            try {
+                await axios.post('/api/activityLog/create', this.form);
+            } catch (error) {
+                console.error('Error creating activity log:', error);
+            }
+        },
+        async fetchUsers() {
+            const token = localStorage.getItem('token');
+            try {
+                const res = await axios.get("/api/auth/me", {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                this.user_id = res.data.id; // Set the user_id correctly
+                this.form.user_id = this.user_id; // Also set form.user_id
+            } catch (error) {
+                console.error('Error fetching user data:', error);
+            }
+        },
+        async logout() {
+            await User.logout();
+            this.$router.push({ name: "LoginForm" });
+            Toast.fire({
+                icon: "success",
+                title: "Successfully Logged Out!"
+            });
+        },
         resetInactivityTimer() {
-            // Clear the existing timer
             clearTimeout(this.inactivityTimer);
-
-            // Set a new timer for 10 minutes (600,000 milliseconds)
-            this.inactivityTimer = setTimeout(() => {
-                // Check if the user is logged in
+            this.inactivityTimer = setTimeout(async () => {
                 if (User.loggedIn()) {
-                    // Trigger logout if the user is inactive for 10 minutes
-                    User.logout();
-                    window.location.href = '/'; // Redirect to login page after logout
+                    await this.fetchUsers(); // Fetch user details first
+                    await this.activityLogout(); // Make sure to wait for it
+                    this.logout();
+                    window.location.href = '/';
                 }
-            }, 1800000); // 10 minutes in milliseconds
+            }, 1800000);
         },
     },
     mounted() {
-        // Set up event listeners for user activity
         window.addEventListener('mousemove', this.resetInactivityTimer);
         window.addEventListener('keypress', this.resetInactivityTimer);
         window.addEventListener('click', this.resetInactivityTimer);
         window.addEventListener('scroll', this.resetInactivityTimer);
-
-        // Start the timer initially
         this.resetInactivityTimer();
     },
     beforeUnmount() {
-        // Remove event listeners when the component is destroyed
         window.removeEventListener('mousemove', this.resetInactivityTimer);
         window.removeEventListener('keypress', this.resetInactivityTimer);
         window.removeEventListener('click', this.resetInactivityTimer);
         window.removeEventListener('scroll', this.resetInactivityTimer);
-
-        // Clear the timer when the component is destroyed
         clearTimeout(this.inactivityTimer);
     },
 };

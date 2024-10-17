@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ActivityLogController\ActivityLogController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Bill\BillController;
 use App\Http\Controllers\Brand\BrandController;
@@ -51,7 +52,11 @@ Route::group([
 Route::get('/roles', [RoleController::class, 'index']);
 Route::post('/roles/store', [RoleController::class, 'store']);
 Route::put('/roles/update', [RoleController::class, 'update']);
+Route::put('/roles/userSelfUpdate', [RoleController::class, 'userSelfUpdate']);
+Route::put('/roles/userSelfUpdaePassword', [RoleController::class, 'userSelfUpdatePassword']);
 Route::delete('/roles/delete/{id}', [RoleController::class, 'delete']);
+Route::get('/activityLog/{id}', [ActivityLogController::class, 'index']);
+Route::post('/activityLog/create', [ActivityLogController::class, 'create']);
 
 //for user
 Route::get('/alluser', [RoleController::class, 'all']);
