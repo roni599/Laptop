@@ -30,18 +30,55 @@
               </tr>
             </thead>
             <tbody>
-              <tr v-for="(reserve,index) in reserves" :key="reserve.id">
-                <td>{{index+1  }}</td>
+              <tr v-for="(reserve, index) in reserves" :key="reserve.id">
+                <td>{{ index + 1 }}</td>
                 <td>{{ reserve.transaction_type }}</td>
                 <td>{{ reserve.amount }}</td>
                 <td>
-                  <span v-if="!reserve.investment">
+                  <!-- <span v-if="!reserve.investment">
                     {{ reserve.expense ? reserve.expense.expenser.user_name + ' (expenser) ' : '' }}
                   </span>
                   <span v-else-if="!reserve.expense">
                     {{ reserve.investment ? reserve.investment.In_name + ' (investor) ' : '' }}
                   </span>
-                  <span v-else>
+                  <span v-if="reserve.bill_id">
+                    For Product Sell
+                  </span>
+                  <span
+                    v-if="reserve.bill === null || (reserve.bill.cart && reserve.bill.cart.cartitems && reserve.bill.cart.cartitems.some(item => item.serial && item.serial.status === '1'))">
+                    Show for return
+                  </span> -->
+                  <!-- <span v-if="!reserve.investment && (reserve.bill === null || !reserve.bill.cart) && (reserve.expense)">
+                    {{ reserve.expense ? reserve.expense.expenser.user_name + ' (expenser)' : '' }}
+                  </span>
+
+                  <span v-else-if="!reserve.expense && (reserve.bill === null || !reserve.bill.cart)">
+                    {{ reserve.investment ? reserve.investment.In_name + ' (investor)' : '' }}
+                  </span>
+
+                  <span v-if="reserve.bill_id">
+                    For Product Sell
+                  </span>
+
+                  <span
+                    v-else-if="(reserve.expense === null && reserve.investment === null) || (reserve.bill === null || (reserve.bill.cart && reserve.bill.cart.cartitems && reserve.bill.cart.cartitems.some(item => item.serial && item.serial.status === '1')))">
+                    Show for return
+                  </span> -->
+
+                  <span v-if="!reserve.investment && (reserve.bill === null || !reserve.bill.cart) && reserve.expense">
+                    {{ reserve.expense.expenser.user_name }} (expenser)
+                  </span>
+
+                  <span v-else-if="!reserve.expense && (reserve.bill === null || !reserve.bill.cart)">
+                    {{ reserve.investment ? reserve.investment.In_name + ' (investor)' : '' }}
+                  </span>
+                  <span v-if="reserve.bill_id">
+                    For Product Sale
+                  </span>
+
+                  <span
+                    v-else-if="!reserve.expense && !reserve.investment && (reserve.bill === null || (reserve.bill.cart && reserve.bill.cart.cartitems && reserve.bill.cart.cartitems.some(item => item.serial && item.serial.status === '1')))">
+                    For Product Return
                   </span>
                 </td>
                 <td>{{ reserve.paymenttype.pt_name }}</td>
@@ -51,8 +88,8 @@
                   <div>Time: {{ formatTime(reserve.created_at) }}</div>
                 </td>
                 <td>
-                  <span v-if="reserve.status == 1">Inactive</span>
-                  <span v-else>Active</span>
+                  <span v-if="reserve.status == 1" class="badge bg-danger">Inactive</span>
+                  <span v-else class="badge bg-success">Active</span>
                 </td>
               </tr>
             </tbody>

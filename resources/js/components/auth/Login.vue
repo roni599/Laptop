@@ -84,6 +84,7 @@ export default {
       this.showPassword = !this.showPassword;
     },
     async login() {
+      console.log(this.form)
       this.loading = true;
       try {
         const res = await axios.post("/api/auth/login", this.form);
@@ -95,6 +96,7 @@ export default {
         });
         this.$router.push({ name: "Home" });
       } catch (error) {
+        console.log(error)
         if (error.response && error.response.data.errors) {
           this.errors = error.response.data.errors;
           Toast.fire({

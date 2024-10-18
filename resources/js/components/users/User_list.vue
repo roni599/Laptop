@@ -341,7 +341,11 @@ export default {
         });
     },
   },
-
+  mounted() {
+    if (!User.loggedIn()) {
+      this.$router.push({ name: "LoginForm" });
+    }
+  },
   created() {
     this.fetch_user();
     this.all_roles();
@@ -372,7 +376,8 @@ export default {
   height: 70vh;
   margin: auto;
 }
-.table_size{
+
+.table_size {
   width: 100%;
   overflow: auto;
 }
