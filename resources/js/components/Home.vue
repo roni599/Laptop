@@ -8,214 +8,262 @@
     </div>
     <div class="row">
       <div class="col-xl-3 col-md-6">
-        <div class="card mb-3">
-          <div id="carouselExampleCaptions" class="carousel slide" data-bs-ride="carousel">
+        <div class="card  mb-3">
+          <div id="carouselExample" class="carousel slide" data-bs-ride="carousel">
             <div class="carousel-inner">
-              <div class="carousel-item active">
-                <img src="../../../public/backend/assets/img/laptop2.jpg" class="d-block w-100 rounded-top" alt="...">
+              <!-- Loop through a fixed number (5) for the same image -->
+              <div class="carousel-item" :class="{ active: index === 0 }" v-for="(product, index) in products"
+                :key="index">
+                <img :src="imageSrc" class="d-block w-100 rounded-top" alt="Laptop" />
               </div>
-              <div class="carousel-item">
-                <img src="../../../public/backend/assets/img/ipad1.png" class="d-block w-100 rounded-top" height="144"
-                  alt="...">
-              </div>
-              <!-- <div class="carousel-item">
-                <img src="..." class="d-block w-100" alt="...">
-              </div> -->
             </div>
+            <!-- Carousel controls -->
           </div>
           <div class="card-body rounded-bottom">
-            <div id="carouselExampleCaptions2" class="carousel slide" data-bs-ride="carousel">
+            <div id="carouselExample" class="carousel slide" data-bs-ride="carousel">
               <div class="carousel-inner">
-                <div class="carousel-item active">
-                  <h5>Laptop : {{ totalLaptop }}</h5>
+                <div class="carousel-item" :class="{ active: index === 0 }" v-for="(product, index) in products"
+                  :key="index">
+                  <p class="mt-4">
+                    <span class="h6">Total {{ product.category.cat_name }}</span> :
+                    <span class="h6 fs-5">{{ product.total_quantity }}</span>
+                  </p>
                 </div>
-                <div class="carousel-item">
-                  <h5>IPad : {{ totalIpad }}</h5>
-                </div>
-                <!-- <div class="carousel-item">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
 
+      <div class="col-xl-3 col-md-6">
+        <div class="card mb-3">
+          <div id="carouselExample1" class="carousel slide" data-bs-ride="carousel">
+            <div class="carousel-inner">
+              <!-- Loop through a fixed number (5) for the same image -->
+              <div class="carousel-item" :class="{ active: index === 0 }" v-for="(product, index) in products"
+                :key="index">
+                <img :src="imageSrc" class="d-block w-100 rounded-top" alt="Laptop" />
+              </div>
+            </div>
+            <!-- Carousel controls -->
+          </div>
+          <div class="card-body rounded-bottom">
+            <div id="carouselExample2" class="carousel slide" data-bs-ride="carousel">
+              <div class="carousel-inner">
+                <div class="carousel-item" :class="{ active: index === 0 }" v-for="(product, index) in brandProducts"
+                  :key="index">
+                  <p class="mt-4">
+                    <span class="h6">{{ product.brand.brand_name }} {{ product.category.cat_name }}</span> :
+                    <span class="h6 fs-5">{{ product.total_quantity }}</span>
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-xl-3 col-md-6">
+        <div class="card">
+          <div id="carouselExample32" class="carousel slide" data-bs-ride="carousel">
+            <div class="carousel-inner">
+              <!-- Loop through a fixed number (5) for the same image -->
+              <div class="carousel-item" :class="{ active: index === 0 }" v-for="(product, index) in products"
+                :key="index">
+                <img :src="imageSrc" class="d-block w-100 rounded-top" alt="Laptop" />
+              </div>
+            </div>
+            <!-- Carousel controls -->
+          </div>
+          <div class="card-body rounded-bottom">
+            <div id="carouselExample35" class="carousel slide" data-bs-ride="carousel">
+              <div class="carousel-inner">
+                <div class="carousel-item" :class="{ active: index === 0 }" v-for="(product, index) in brandProducts"
+                  :key="index">
+                  <p class="mt-2">
+                    <span class="h6">
+                      Todays Sales : {{ todaysBills || 0 }} <br>
+                      Todays Profit : {{ todaysProfit || 0 }}
+                    </span>
+                  </p>
+                </div>
+                <!-- <div class="carousel-item active">
+                 
                 </div> -->
               </div>
             </div>
           </div>
         </div>
       </div>
+
       <div class="col-xl-3 col-md-6">
         <div class="card mb-3">
-          <div id="carouselExampleCaptions3" class="carousel slide" data-bs-ride="carousel">
+          <div id="carouselExampl5" class="carousel slide" data-bs-ride="carousel">
             <div class="carousel-inner">
-              <div class="carousel-item active">
-                <img src="../../../public/backend/assets/img/laptop2.jpg" class="d-block w-100 rounded-top" alt="...">
+              <!-- Loop through a fixed number (5) for the same image -->
+              <div class="carousel-item" :class="{ active: index === 0 }" v-for="(product, index) in products"
+                :key="index">
+                <img :src="imageSrc" class="d-block w-100 rounded-top" alt="Laptop" />
               </div>
-              <div class="carousel-item">
-                <img src="../../../public/backend/assets/img/ipad1.png" class="d-block w-100 rounded-top" height="144"
-                  alt="...">
-              </div>
-              <!-- <div class="carousel-item">
-                <img src="..." class="d-block w-100" alt="...">
-              </div> -->
             </div>
+            <!-- Carousel controls -->
           </div>
           <div class="card-body rounded-bottom">
-            <div id="carouselExampleCaptions4" class="carousel slide" data-bs-ride="carousel">
+            <div id="carouselExample6" class="carousel slide" data-bs-ride="carousel">
               <div class="carousel-inner">
-                <div class="carousel-item active">
-                  <h5>In : {{ totalIn }}</h5>
+                <div class="carousel-item" :class="{ active: index === 0 }" v-for="(product, index) in brandProducts"
+                  :key="index">
+                  <span class="h6">
+                    This Month Cost : {{ currentMonthCost || 0 }}<br>
+                    This Month Profit : {{ thisMonthProfit || 0 }}<br>
+                    <span v-if="thisMonthCostProfit < 0">
+                      You need to sell more : {{ thisMonthCostProfit || 0 }}
+                    </span>
+                    <span v-else>
+                      You are profitable : {{ thisMonthCostProfit || 0 }}
+                    </span>
+                  </span>
                 </div>
-                <div class="carousel-item">
-                  <h5>Out : {{ totalOut }}</h5>
-                </div>
-                <!-- <div class="carousel-item">
-
-                </div> -->
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="col-xl-3 col-md-6">
-        <div class="card mb-3">
-          <div id="carouselExampleCaptions5" class="carousel slide" data-bs-ride="carousel">
-            <div class="carousel-inner">
-              <div class="carousel-item active">
-                <img src="../../../public/backend/assets/img/laptop2.jpg" class="d-block w-100 rounded-top" alt="...">
-              </div>
-              <div class="carousel-item">
-                <img src="../../../public/backend/assets/img/ipad1.png" class="d-block w-100 rounded-top" height="144"
-                  alt="...">
-              </div>
-              <!-- <div class="carousel-item">
-                <img src="..." class="d-block w-100" alt="...">
-              </div> -->
-            </div>
-          </div>
-          <div class="card-body rounded-bottom">
-            <div id="carouselExampleCaptions6" class="carousel slide" data-bs-ride="carousel">
-              <div class="carousel-inner">
-                <div class="carousel-item active">
-                  <h5>In : {{ totalIn }}</h5>
-                </div>
-                <div class="carousel-item">
-                  <h5>Out : {{ totalOut }}</h5>
-                </div>
-                <!-- <div class="carousel-item">
-
-                </div> -->
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="col-xl-3 col-md-6">
-        <div class="card mb-3">
-          <div id="carouselExampleCaptions3" class="carousel slide" data-bs-ride="carousel">
-            <div class="carousel-inner">
-              <div class="carousel-item active">
-                <img src="../../../public/backend/assets/img/laptop2.jpg" class="d-block w-100 rounded-top" alt="...">
-              </div>
-              <div class="carousel-item">
-                <img src="../../../public/backend/assets/img/ipad1.png" class="d-block w-100 rounded-top" height="144"
-                  alt="...">
-              </div>
-              <!-- <div class="carousel-item">
-                <img src="..." class="d-block w-100" alt="...">
-              </div> -->
-            </div>
-          </div>
-          <div class="card-body rounded-bottom">
-            <div id="carouselExampleCaptions4" class="carousel slide" data-bs-ride="carousel">
-              <div class="carousel-inner">
-                <div class="carousel-item active">
-                  <h5>In : {{ totalIn }}</h5>
-                </div>
-                <div class="carousel-item">
-                  <h5>Out : {{ totalOut }}</h5>
-                </div>
-                <!-- <div class="carousel-item">
-
-                </div> -->
               </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-    InVestment Amount {{ investmentTotalAmount }} <br>
-    Total In {{ totalIn }} +Total Out {{ totalOut }} = {{ balance }} Balance <br>
-    Net Balance {{ netbalance }}
-    <br><br><br>
-    TodaysSells {{ todaysBills }} Item Products <br>
-    yesterdaysBills {{ yesterdaysBills }} Item Products
-    <div class="card mb-4 tt">
-      <div class="card-header d-flex justify-content-between">
-        <div class="employee_table fw-bold text-muted">
-          <i class="fas fa-table me-1"></i>
-          Stocks List
+    <div class="row mb-3">
+      <div class="col-xl-3 col-md-6">
+        <div class="card mb-">
+          <div id="carouselExample3" class="carousel slide" data-bs-ride="carousel">
+            <div class="carousel-inner">
+              <!-- Loop through a fixed number (5) for the same image -->
+              <!-- <div class="carousel-item" :class="{ active: index === 0 }" v-for="(product, index) in products"
+                :key="index">
+                <img :src="imageSrc" class="d-block w-100 rounded-top" alt="Laptop" />
+              </div> -->
+            </div>
+            <!-- Carousel controls -->
+          </div>
+          <div class="card-body rounded">
+            <div id="carouselExample4" class="carousel slide" data-bs-ride="carousel">
+              <div class="carousel-inner">
+                <div class="carousel-item active">
+                  <p class=""><span>Today Bank In : {{ insums.Bank }} <br>
+                      Today Cash In : {{ insums.Cash || 0 }} <br>
+                      Today Others In : {{ insums.Others || 0 }}</span>
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
-      <div class="card-body">
-        <input type="text" id="searchInput" v-model="searchProducts" @input="handleSearchInput"
-          placeholder="Search for Product Name..." />
+      <div class="col-xl-3 col-md-6">
+        <div class="card mb-">
+          <div id="carouselExample3" class="carousel slide" data-bs-ride="carousel">
+            <div class="carousel-inner">
+              <!-- Loop through a fixed number (5) for the same image -->
+              <!-- <div class="carousel-item" :class="{ active: index === 0 }" v-for="(product, index) in products"
+                :key="index">
+                <img :src="imageSrc" class="d-block w-100 rounded-top" alt="Laptop" />
+              </div> -->
+            </div>
+            <!-- Carousel controls -->
+          </div>
+          <div class="card-body rounded-bottom">
+            <div id="carouselExample4" class="carousel slide" data-bs-ride="carousel">
+              <div class="carousel-inner">
+                <div class="carousel-item active">
+                  <p><span>Today Bank out : {{ outsums.Bank || 0 }} <br>
+                      Today Cash out : {{ outsums.Cash || 0 }} <br>
+                      Today Others out : {{ outsums.Others || 0 }}</span>
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-xl-3 col-md-6">
+        <div class="card mb-">
+          <div id="carouselExample3" class="carousel slide" data-bs-ride="carousel">
+            <div class="carousel-inner">
+              <!-- Loop through a fixed number (5) for the same image -->
+              <!-- <div class="carousel-item" :class="{ active: index === 0 }" v-for="(product, index) in products"
+                :key="index">
+                <img :src="imageSrc" class="d-block w-100 rounded-top" alt="Laptop" />
+              </div> -->
+            </div>
+            <!-- Carousel controls -->
+          </div>
+          <div class="card-body rounded-bottom">
+            <div id="carouselExample4" class="carousel slide" data-bs-ride="carousel">
+              <div class="carousel-inner">
+                <div class="carousel-item active">
+                  <p><span>Today Net Bank Volume : {{ differences.Bank || 0 }} <br>
+                      Today Net Cash Volume : {{ differences.Cash || 0 }} <br>
+                      Today Net Others Volume : {{ differences.Others || 0 }}</span>
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
 
-        <div class="table_size">
-          <table class="table text-muted table-striped table-bordered">
-            <thead>
-              <tr>
-                <th scope="col">#</th>
-                <th scope="col">Product Name</th>
-                <th scope="col">Product Quantity</th>
-                <th scope="col">Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="(product, index) in paginatedFilteredProducts" :key="product.id">
-                <td>{{ index + 1 + (currentPage - 1) * perPage }}</td>
-                <td>{{ product.name }}</td>
-                <td>{{ product.quantity }}</td>
-                <td>
-                  <span v-if="product.quantity > 0" class="badge bg-success">Available</span>
-                  <span v-else class="badge bg-danger">Out Of Stock</span>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-        <div class="page d-flex justify-around align-items-center w-100">
-          <div class="text-muted mb-2 w-50">
-            Showing {{ startEntry }} to {{ endEntry }} of {{ filteredTotalEntries }} entries
+      <div class="col-xl-3 col-md-6">
+        <div class="card mb-">
+          <div id="carouselExample3" class="carousel slide" data-bs-ride="carousel">
+            <div class="carousel-inner">
+              <!-- Loop through a fixed number (5) for the same image -->
+              <!-- <div class="carousel-item" :class="{ active: index === 0 }" v-for="(product, index) in products"
+                :key="index">
+                <img :src="imageSrc" class="d-block w-100 rounded-top" alt="Laptop" />
+              </div> -->
+            </div>
+            <!-- Carousel controls -->
           </div>
-          <div class="pagination_link mt-2 w-50 d-flex justify-content-end">
-            <nav>
-              <ul class="pagination justify-content-center">
-                <li class="page-item" :class="{ disabled: currentPage === 1 }">
-                  <a class="page-link" href="#" @click.prevent="goToPage(currentPage - 1)">
-                    <i class="fas fa-angle-left"></i>
-                  </a>
-                </li>
-                <li class="page-item" v-for="page in totalFilteredPages" :key="page"
-                  :class="{ active: currentPage === page }">
-                  <a class="page-link" href="#" @click.prevent="goToPage(page)">{{ page }}</a>
-                </li>
-                <li class="page-item" :class="{ disabled: currentPage === totalFilteredPages }">
-                  <a class="page-link" href="#" @click.prevent="goToPage(currentPage + 1)">
-                    <i class="fas fa-angle-right"></i>
-                  </a>
-                </li>
-              </ul>
-            </nav>
+          <div class="card-body rounded-bottom">
+            <div id="carouselExample4" class="carousel slide" data-bs-ride="carousel">
+              <div class="carousel-inner">
+                <div class="carousel-item active">
+                  <p><span>Today total in : {{ totalin || 0 }} <br>
+                      Today total out : {{ totalout || 0 }} <br>
+                      Today total difference : {{ totaldifference || 0 }}</span>
+                  </p>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
+
+    </div>
+    <div class="chart row">
+      <div class="col-md-6">
+        <ColumnChart :labels="monthlyLabels" :data="monthlyData" />
+      </div>
+      <div class="col-md-6">
+        <MonthlyprofitChart :labels="monthlyProfitLabels" :data="monthlyProfitData" />
+      </div>
+    </div>
+    <div class="row chart">
+
     </div>
   </div>
 </template>
 
 <script>
+import ColumnChart from './auth/ColumnChart.vue';
+import MonthlyprofitChart from './auth/MonthlyprofitChart.vue';
 import { inject } from 'vue';
 import AppStorage from '../Helpers/AppStorage';
 import axios from 'axios';
 export default {
   name: "Home-vue",
+  components: {
+    ColumnChart,
+    MonthlyprofitChart
+  },
   data() {
     const userName = inject('userName');
     const profile_img = inject('profile_img');
@@ -223,45 +271,24 @@ export default {
       userName,
       profile_img,
       products: [],
-      currentPage: 1,
-      perPage: 10,
-      searchProducts: '',
-      totalProduct: 0,
-      totalLaptop: 0,
-      totalIpad: 0,
-      totalIn: 0,
-      totalOut: 0,
-      balance: 0,
-      netbalance: 0,
-      investmentTotalAmount: 0,
-      todaysBills:0,
-      yesterdaysBills:0
+      brandProducts: [],
+      todaysProfit: 0,
+      todaysBills: 0,
+      insums: [],
+      outsums: [],
+      differences: [],
+      totaldifference: null,
+      totalin: null,
+      totalout: null,
+      thisMonthCostProfit: 0,
+      currentMonthCost: 0,
+      thisMonthProfit: 0,
+      imageSrc: '/backend/assets/img/laptop2.jpg',
+      monthlyLabels: [], // For monthly labels
+      monthlyData: [],   // For monthly data
+      monthlyProfitLabels: [], // For monthly labels
+      monthlyProfitData: [],   // For monthly data
     };
-  },
-  computed: {
-    filteredProducts() {
-      return this.products.filter((product) => {
-        return product.name.toLowerCase().includes(this.searchProducts.toLowerCase());
-      });
-    },
-    paginatedFilteredProducts() {
-      let start = (this.currentPage - 1) * this.perPage;
-      let end = start + this.perPage;
-      return this.filteredProducts.slice(start, end);
-    },
-    filteredTotalEntries() {
-      return this.filteredProducts.length;
-    },
-    totalFilteredPages() {
-      return Math.ceil(this.filteredProducts.length / this.perPage);
-    },
-    startEntry() {
-      return (this.currentPage - 1) * this.perPage + 1;
-    },
-    endEntry() {
-      const end = this.currentPage * this.perPage;
-      return end > this.filteredTotalEntries ? this.filteredTotalEntries : end;
-    }
   },
   methods: {
     async fetchData() {
@@ -275,40 +302,35 @@ export default {
           this.userName = res.data.user_name;
           this.profile_img = res.data.profile_img
           this.users = res.data
+
         })
         .catch((error) => {
           console.log(error);
         });
     },
-    goToPage(page) {
-      if (page > 0 && page <= this.totalFilteredPages) {
-        this.currentPage = page;
-      }
-    },
-    handleSearchInput() {
-      if (this.searchProducts !== '') {
-        this.currentPage = 1;
-      }
-    },
-    handleSearchInput() {
-      if (this.searchProducts !== '') {
-        this.currentPage = 1;
-      }
-    },
     fetchProduct() {
       axios.get('/api/product/calculate')
         .then((res) => {
-          this.products = res.data.products;
-          this.totalProduct = res.data.total_products;
-          this.totalLaptop = res.data.total_laptop;
-          this.totalIpad = res.data.ipadQuantity;
-          this.totalIn = res.data.total_in;
-          this.totalOut = res.data.total_out;
-          this.balance = res.data.balance;
-          this.investmentTotalAmount = res.data.investmentTotalAmount
-          this.netbalance = res.data.netbalance,
-          this.todaysBills=res.data.todaysBills,
-          this.yesterdaysBills=res.data.yesterdaysBills
+          this.products = res.data.categories
+          this.brandProducts = res.data.products
+          this.todaysBills = res.data.todaysBills
+          this.todaysProfit = res.data.todaysProfit
+          this.insums = res.data.insums
+          this.outsums = res.data.outsums
+          this.differences = res.data.differences
+          this.totalin = res.data.totalin
+          this.totalout = res.data.totalout
+          this.totaldifference = res.data.totaldifference
+          this.thisMonthCostProfit = res.data.thisMonthCostProfit
+          this.thisMonthProfit = res.data.thisMonthProfit
+          this.currentMonthCost = res.data.currentMonthCost
+
+          this.monthlyLabels = res.data.monthlyData.map(item => item.month_name);
+          this.monthlyData = res.data.monthlyData.map(item => item.bill_count);
+
+          this.monthlyProfitLabels = res.data.responsedatatotal.map(item => item.month_name);
+          this.monthlyProfitData = res.data.responsedatatotal.map(item => item.net_profit);
+          console.log(res.data.responsedatatotal)
         })
         .catch((error) => {
           console.log(error);
