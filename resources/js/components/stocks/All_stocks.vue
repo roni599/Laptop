@@ -7,7 +7,6 @@
           <span class="text-muted h5"> / Stocks List</span>
         </div>
       </div>
-
       <div class="card mb-4">
         <div class="card-header card_size d-flex justify-content-between w-100">
           <div class="employee_table">
@@ -21,6 +20,20 @@
         </div>
         <div class="card-body">
           <input type="text" id="searchInput" v-model="searchProducts" placeholder="Search for ID.." />
+          <div class="row mb-3">
+            <div class="col-md-6">
+              <div class="form-floating mb-3 mb-md-0">
+                <input class="form-control" id="inputStartDate" type="date" v-model="startDate" />
+                <label for="inputDate">Start Date</label>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-floating mb-3 mb-md-0">
+                <input class="form-control" id="inputEndDate" type="date" v-model="endDate" />
+                <label for="inputDate">End Date</label>
+              </div>
+            </div>
+          </div>
           <div class="table_size">
             <table class="table">
               <thead>
@@ -30,7 +43,7 @@
                   <th scope="col">Specification</th>
                   <th scope="col">Quantity</th>
                   <th scope="col">Touch Status</th>
-                  <th scope="col">Discount</th>
+                  <!-- <th scope="col">Discount</th> -->
                   <th scope="col">Stored By</th>
                   <th scope="col">Category Name</th>
                   <th scope="col">Brand Name</th>
@@ -44,7 +57,7 @@
                   <td>{{ product.specification }}</td>
                   <td>{{ product.quantity }}</td>
                   <td>{{ product.touch_status }}</td>
-                  <td>{{ product.discount }}</td>
+                  <!-- <td>{{ product.discount }}</td> -->
                   <td>{{ product.user.user_name }}</td>
                   <td>{{ product.category.cat_name }}</td>
                   <td>{{ product.brand.brand_name }}</td>
@@ -244,53 +257,103 @@ export default {
       errors: {},
       categories: [],
       brands: [],
-      users: ''
+      users: '',
+      startDate: '',
+      endDate: '',
     };
   },
+  // computed: {
+  //   filteredProducts() {
+  //     return this.products.filter((product) => {
+  //       return (
+  //         product.id.toString().includes(this.searchProducts) || product.product_model.toLowerCase().includes(this.searchProducts.toLowerCase())
+  //       );
+  //     });
+  //   },
+  //   totalQuantity() {
+  //     return this.products.reduce((sum, product) => {
+  //       return sum + parseInt(product.quantity, 10);
+  //     }, 0)
+  //   }
+  // },
   computed: {
     filteredProducts() {
       return this.products.filter((product) => {
-        return (
-          product.id.toString().includes(this.searchProducts) || product.product_model.toLowerCase().includes(this.searchProducts.toLowerCase())
-        );
+        const matchesSearch = this.searchProducts
+          ? product.id.toString().includes(this.searchProducts) ||
+          product.product_model.toLowerCase().includes(this.searchProducts.toLowerCase())
+          : true;
+        const productDate = new Date(product.created_at);
+        const startDate = this.startDate ? new Date(this.startDate) : null;
+        let endDate = this.endDate ? new Date(this.endDate) : null;
+        if (endDate) {
+          endDate.setHours(23, 59, 59, 999);
+        }
+        const isInRange =
+          (!startDate || productDate >= startDate) &&
+          (!endDate || productDate <= endDate);
+
+        return matchesSearch && isInRange;
       });
     },
     totalQuantity() {
-      return this.products.reduce((sum, product) => {
+      return this.filteredProducts.reduce((sum, product) => {
         return sum + parseInt(product.quantity, 10);
-      }, 0)
+      }, 0);
     }
   },
   methods: {
 
+    // exportToExcel() {
+    //   // Prepare data for Excel export
+    //   const exportData = this.filteredProducts.map(product => ({
+    //     "Product Sn": product.id,
+    //     "Product Model": product.product_model,
+    //     "Specification": product.specification,
+    //     "Quantity": product.quantity,
+    //     "Touch Status": product.touch_status,
+    //     "Discount": product.discount,
+    //     "Stored By": product.user.user_name,
+    //     "Category Name": product.category.cat_name,
+    //     "Brand Name": product.brand.brand_name
+    //   }));
+
+    //   // Create a new worksheet from the data
+    //   const worksheet = XLSX.utils.json_to_sheet(exportData);
+
+    //   // Create a new workbook and append the worksheet
+    //   const workbook = XLSX.utils.book_new();
+    //   XLSX.utils.book_append_sheet(workbook, worksheet, "Products");
+
+    //   // Trigger file download
+    //   XLSX.writeFile(workbook, "Product_Table.xlsx");
+    // },
+
     exportToExcel() {
-      // Prepare data for Excel export
-      const exportData = this.filteredProducts.map(product => ({
-        "Product Sn": product.id,
-        "Product Model": product.product_model,
-        "Specification": product.specification,
-        "Quantity": product.quantity,
-        "Touch Status": product.touch_status,
-        "Discount": product.discount,
-        "Stored By": product.user.user_name,
-        "Category Name": product.category.cat_name,
-        "Brand Name": product.brand.brand_name
-      }));
-
-      // Create a new worksheet from the data
+      const exportData = this.filteredProducts
+        .filter(product => product.quantity > 0)
+        .map(product => ({
+          "Product Sn": product.id,
+          "Product Model": product.product_model,
+          "Specification": product.specification,
+          "Quantity": product.quantity,
+          "Touch Status": product.touch_status,
+          // "Discount": product.discount,
+          "Stored By": product.user.user_name,
+          "Category Name": product.category.cat_name,
+          "Brand Name": product.brand.brand_name
+        }));
       const worksheet = XLSX.utils.json_to_sheet(exportData);
-
-      // Create a new workbook and append the worksheet
       const workbook = XLSX.utils.book_new();
       XLSX.utils.book_append_sheet(workbook, worksheet, "Products");
-
-      // Trigger file download
       XLSX.writeFile(workbook, "Product_Table.xlsx");
     },
+
 
     async fetch_products() {
       await axios.get("/api/products")
         .then((res) => {
+          console.log(res)
           this.products = res.data
         })
         .catch((error) => {
@@ -361,6 +424,7 @@ export default {
         }
       })
         .then((res) => {
+          console.log(res)
           this.userName = res.data.user_name;
           this.profile_img = res.data.profile_img
           this.users = res.data;

@@ -1,5 +1,10 @@
 <template>
   <div class="container">
+    <div v-if="isSpin" class="loader">
+      <div class="spinner-border" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+    </div>
     <div class="card mt-4 mb-2">
       <div class="card-header border-bottom-0 p-4">
         <router-link class="text-decoration-none h5" to="/home">Dashboard</router-link>
@@ -11,14 +16,28 @@
       <div class="card-header d-flex justify-content-between">
         <div class="employee_table">
           <i class="fas fa-table me-1"></i>
-          Stocks List Table
+          Serial List Table
         </div>
-        <!-- <div class="addNew">
-          <router-link to="/stocks_create" class="btn btn-sm btn-success">Add New</router-link>
-        </div> -->
+        <div class="addNew">
+          <button class="btn btn-sm btn-success ms-2" @click="exportToExcel">Export to Excel</button>
+        </div>
       </div>
       <div class="card-body">
         <input type="text" id="searchInput" v-model="searchSerial" placeholder="Search for ID.." />
+        <div class="row mb-3">
+          <div class="col-md-6">
+            <div class="form-floating mb-3 mb-md-0">
+              <input class="form-control" id="inputStartDate" type="date" v-model="startDate" />
+              <label for="inputDate">Start Date</label>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="form-floating mb-3 mb-md-0">
+              <input class="form-control" id="inputEndDate" type="date" v-model="endDate" />
+              <label for="inputDate">End Date</label>
+            </div>
+          </div>
+        </div>
         <div class="table_size">
           <table class="table">
             <thead>
@@ -27,6 +46,8 @@
                 <th scope="col">Serial Number</th>
                 <th scope="col">Barcode Number</th>
                 <th scope="col">Stock ID</th>
+                <th scope="col">Buying Price</th>
+                <th scope="col">Selling Price</th>
                 <th scope="col">Assing By</th>
                 <th scope="col">Color</th>
                 <th scope="col">Status</th>
@@ -42,6 +63,8 @@
                 <td>{{ serial.serial_no }}</td>
                 <td>{{ serial.barcode_no }}</td>
                 <td>{{ serial.stock_id }}</td>
+                <td>{{ serial.stock.buying_price }}</td>
+                <td>{{ serial.stock.selling_price }}</td>
                 <td>{{ serial.user.user_name }}</td>
                 <td>{{ serial.color }}</td>
                 <td>
@@ -209,6 +232,7 @@
 <script>
 import axios from 'axios';
 import { inject } from 'vue';
+import * as XLSX from 'xlsx';
 export default {
   name: 'All_serials',
   data() {
@@ -231,19 +255,25 @@ export default {
       },
       barcodeImage: '',
       errors: {},
-      searchSerial: ''
+      searchSerial: '',
+      isSpin: false,
+      startDate: '',
+      endDate: '',
     }
   },
   methods: {
     async feth_Serials() {
+      this.isSpin = true;
       await axios.get("/api/serials")
         .then((res) => {
-          console.log(res)
           this.Serials = res.data
         })
         .catch((error) => {
           console.log(error)
         })
+        .finally(() => {
+          this.isSpin = false;
+        });
     },
     async serial_edit() {
       await axios.put("/api/serials/upate", this.form)
@@ -342,17 +372,57 @@ export default {
           console.log(error);
         });
     },
+    exportToExcel() {
+      const worksheet = XLSX.utils.json_to_sheet(this.filteredSerials.map(serial => ({
+        ID: serial.id,
+        'Serial Number': serial.serial_no,
+        'Barcode Number': serial.barcode_no,
+        'Stock ID': serial.stock_id,
+        'Buying Price': serial.stock.buying_price,
+        'Selling Price': serial.stock.selling_price,
+        'Assigned By': serial.user.user_name,
+        Color: serial.color,
+        Status: serial.status === 0 ? 'Processing' : 'Ready for sale',
+        'Return Status': serial.return_status === 0 ? 'At The Shop' : 'Return',
+      })));
+
+      // Create a new workbook and append the worksheet
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, 'Stocks');
+
+      // Export the workbook
+      XLSX.writeFile(workbook, 'stocks_list.xlsx');
+    },
   },
   created() {
     this.feth_Serials();
     this.fetchUsers();
   },
+  // computed: {
+  //   filteredSerials() {
+  //     return this.Serials.filter((serial) => {
+  //       return (
+  //         serial.id.toString().includes(this.searchSerial) || serial.barcode_no.toLowerCase().includes(this.searchSerial.toLowerCase()) || serial.serial_no.toLowerCase().includes(this.searchSerial.toLowerCase())
+  //       );
+  //     });
+  //   },
+  // }
   computed: {
     filteredSerials() {
       return this.Serials.filter((serial) => {
-        return (
-          serial.id.toString().includes(this.searchSerial) || serial.barcode_no.toLowerCase().includes(this.searchSerial.toLowerCase()) || serial.serial_no.toLowerCase().includes(this.searchSerial.toLowerCase())
-        );
+        const serialDate = new Date(serial.created_at);
+        const startDate = this.startDate ? new Date(this.startDate) : null;
+        const endDate = this.endDate ? new Date(this.endDate) : null;
+        if (startDate) startDate.setHours(0, 0, 0, 0);
+        if (endDate) endDate.setHours(23, 59, 59, 999);
+        const matchesSearch =
+          serial.id.toString().includes(this.searchSerial) ||
+          serial.barcode_no.toLowerCase().includes(this.searchSerial.toLowerCase()) ||
+          serial.serial_no.toLowerCase().includes(this.searchSerial.toLowerCase());
+        const matchesDate =
+          (!startDate || serialDate >= startDate) &&
+          (!endDate || serialDate <= endDate);
+        return matchesSearch && matchesDate;
       });
     },
   }
@@ -385,5 +455,20 @@ export default {
 .table_size {
   width: 100%;
   overflow: auto;
+}
+
+.loader {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(255, 255, 255, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  /* Ensure loader is on top */
+  color: blue;
 }
 </style>

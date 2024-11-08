@@ -15,10 +15,25 @@
         </div>
         <div class="addNew">
           <router-link to="/expence_create" class="btn btn-sm btn-success">Create Expense</router-link>
+          <button class="btn btn-sm btn-primary ms-2" @click="exportToExcel">Export to Excel</button>
         </div>
       </div>
       <div class="card-body">
         <div class="table_size">
+          <div class="row mb-3">
+            <div class="col-md-6">
+              <div class="form-floating mb-3 mb-md-0">
+                <input class="form-control" id="inputStartDate" type="date" v-model="startDate" />
+                <label for="inputDate">Start Date</label>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-floating mb-3 mb-md-0">
+                <input class="form-control" id="inputEndDate" type="date" v-model="endDate" />
+                <label for="inputDate">End Date</label>
+              </div>
+            </div>
+          </div>
           <table class="table text-muted">
             <thead>
               <tr>
@@ -37,7 +52,7 @@
               </tr>
             </thead>
             <tbody>
-              <tr v-for="(expense, index) in expenses" :key="expense.id">
+              <tr v-for="(expense, index) in filteredExpenses" :key="expense.id">
                 <td>{{ index + 1 }}</td>
                 <td>{{ expense.expenser.user_name }}</td>
                 <td>{{ expense.expense_desc }}</td>
@@ -173,19 +188,9 @@
                             <label for="inputSellingPrice">Expense Category Name</label>
                           </div>
                         </div>
-                        <!-- <div class="col-md-6 mb-3">
-                          <div class="form-floating mb-3 mb-md-0">
-                            <select class="form-select" readonly aria-label="Default select example"
-                              v-model="form.cost_type">
-                              <option value="1">Fixed Cost</option>
-                              <option value="2">Running Cost</option>
-                            </select>
-                            <small class="text-danger" v-if="errors.cost_type">{{ errors.cost_type[0]
-                              }}</small>
-                            <label class="h6 text-black mb-0" for="inputSupplier">Cost Type</label>
-                          </div>
-                        </div> -->
                       </div>
+
+
                       <div class="row">
                         <div class="col-md-6 mb-3" hidden>
                           <div class="form-floating mb-3 mb-md-0">
@@ -199,21 +204,6 @@
                             <label class="h6 text-black mb-0" for="inputSupplier">Login User</label>
                           </div>
                         </div>
-                        <!-- <div class="col-md-6">
-                          <div class="form-floating mb-3 mb-md-0">
-                            <select class="form-select" aria-label="Default select example"
-                              v-model="form.expensecategory">
-                              <option v-for="expensecategory in expensecategories" :key="expensecategory.id"
-                                :value="expensecategory.id">
-                                {{ expensecategory.category_name }}
-                              </option>
-                            </select>
-                            <small class="text-danger" v-if="errors.expensecategory">{{
-                              errors.expensecategory[0]
-                            }}</small>
-                            <label for="inputSellingPrice">Expense Category Name</label>
-                          </div>
-                        </div> -->
                       </div>
                       <div class="row mb-2">
                         <div class="col-md-6 mb-2">
@@ -243,16 +233,6 @@
                         </div>
                       </div>
 
-                      <!-- <div v-if="showInputs" class="row mt-3">
-                        <div v-for="(reserve, index) in reserves" :key="index" class="col-md-4">
-                          <div class="form-floating mb-3 mb-md-0">
-                            <input class="form-control" :id="'inputReserve' + index" type="text"
-                              :placeholder="'Reserve ' + (index + 1)" v-model="reserves[index]" />
-                            <label :for="'inputReserve' + index">Reserve {{ index + 1 }}</label>
-                          </div>
-                        </div>
-                      </div> -->
-
                       <div class="mt-3 mb-0">
                         <div class="d-grid">
                           <button class="btn btn-primary w-100 mb-2" :disabled="loading">
@@ -278,6 +258,7 @@
 <script>
 import axios from 'axios';
 import { inject } from 'vue';
+import * as XLSX from "xlsx";
 export default {
   name: "All_expense",
   data() {
@@ -297,6 +278,7 @@ export default {
         // cost_type: null,
         status: null,
         image: '/backend/assets/img/pic.jpeg',
+
       },
       userName,
       profile_img,
@@ -307,7 +289,9 @@ export default {
       errors: {},
       loading: false,
       showInputs: false,
-      reserves: []
+      reserves: [],
+      startDate: '',
+      endDate: '',
     }
   },
   methods: {
@@ -317,185 +301,216 @@ export default {
     async fetch_expense() {
       await axios.get("/api/expense")
         .then((res) => {
-          // console.log(res)
           this.expenses = res.data;
         })
         .catch((error) => {
           console.log(error.response ? error.response.data : error.message);
         })
     },
-    openEditModal(expense) {
-      this.reserves = [];
-      this.reserves = [...expense.reserves];
-      this.showInputs = true;
-      this.form = { ...expense }
-      this.form.expenserName = expense.expenser.id;
-      // this.form.paymenttype = expense.paymenttype.id
-      this.form.expensecategory = expense.expensecategory.id
-      this.form.expense_description = expense.expense_desc
-      this.form.image = expense.receipt_img
-      this.form.user_id = this.users.id
-      let myModal = new bootstrap.Modal(
-        document.getElementById("editExpenseModal"),
-        {}
-      );
-      myModal.show();
+    exportToExcel() {
+      // Prepare data for export
+      const exportData = this.filteredExpenses.map((expense, index) => ({
+        '#': index + 1,
+        'Expenser Name': expense.expenser.user_name,
+        'Expense Description': expense.expense_desc,
+        'Expense Amount': expense.amount,
+        'Cost Type': expense.expensecategory.cost_type == 1 ? 'Running' : 'Fixed',
+        'Expense Category': expense.expensecategory.category_name,
+        'Payment Type': this.getPaymentTypeNames(expense.reserves),
+        'Assigned By': expense.user.user_name,
+        'Date': expense.date,
+        'Status': expense.status == 1 ? 'Active' : 'Inactive',
+        'Image': expense.receipt_img ? `backend/images/expense/${expense.receipt_img}` : 'No image'
+      }));
+
+      // Create a new workbook and add the data
+      const worksheet = XLSX.utils.json_to_sheet(exportData);
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, 'Expenses');
+
+      // Export the workbook to an Excel file
+      XLSX.writeFile(workbook, 'Expenses.xlsx');
     },
-    onFileSelect(event) {
-      let file = event.target.files[0]
-      if (file.size > 1048576) {
+    // Other methods like getPaymentTypeNames
+  openEditModal(expense) {
+    this.reserves = [];
+    this.reserves = [...expense.reserves];
+    this.showInputs = true;
+    this.form = { ...expense }
+    this.form.expenserName = expense.expenser.id;
+    // this.form.paymenttype = expense.paymenttype.id
+    this.form.expensecategory = expense.expensecategory.id
+    this.form.expense_description = expense.expense_desc
+    this.form.image = expense.receipt_img
+    this.form.user_id = this.users.id
+    let myModal = new bootstrap.Modal(
+      document.getElementById("editExpenseModal"),
+      {}
+    );
+    myModal.show();
+  },
+  onFileSelect(event) {
+    let file = event.target.files[0]
+    if (file.size > 1048576) {
+      Toast.fire({
+        icon: "warning",
+        title: "image must be less then 1 mb!"
+      });
+    }
+    else {
+      let reader = new FileReader();
+      reader.onload = (event) => {
+        this.form.image = event.target.result;
+      }
+      reader.readAsDataURL(file);
+    }
+  },
+  getimageSrc() {
+    if (this.form.image) {
+      if (this.form.image.startsWith("data")) {
+        return this.form.image;
+      } else {
+        return `/backend/images/expense/${this.form.image}`;
+      }
+    }
+    return "";
+  },
+  async Expense_update() {
+    this.loading = true
+    await axios.put("/api/expense/upate", this.form)
+      .then((res) => {
+        console.log(res)
+        this.form = {
+          id: null,
+          expenserName: null,
+          expense_description: null,
+          amount: null,
+          date: null,
+          user_id: null,
+          expensecategory: null,
+          paymenttype: null,
+          cost_type: null,
+          status: null,
+          image: '',
+        },
+          this.fetch_expense();
+        let myModal = bootstrap.Modal.getInstance(
+          document.getElementById("editExpenseModal")
+        );
+        myModal.hide();
         Toast.fire({
-          icon: "warning",
-          title: "image must be less then 1 mb!"
+          icon: "success",
+          title: res.data.message,
+        });
+
+      })
+      .catch((error) => {
+        console.log(error)
+      })
+      .finally(() => {
+        this.loading = false;
+      })
+  },
+  async deleteExpense(id) {
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        await axios
+          .delete("/api/expense/delete/" + id)
+          .then((res) => {
+            console.log(res)
+            this.fetch_expense()
+          })
+          .catch((error) => {
+          });
+        Swal.fire({
+          title: "Deleted!",
+          text: "Category has been deleted.",
+          icon: "success",
         });
       }
-      else {
-        let reader = new FileReader();
-        reader.onload = (event) => {
-          this.form.image = event.target.result;
-        }
-        reader.readAsDataURL(file);
+    });
+  },
+  async fetchUsers() {
+    const token = localStorage.getItem('token');
+    await axios.get("/api/auth/me", {
+      headers: {
+        'Authorization': `Bearer ${token}`
       }
-    },
-    getimageSrc() {
-      if (this.form.image) {
-        if (this.form.image.startsWith("data")) {
-          return this.form.image;
-        } else {
-          return `/backend/images/expense/${this.form.image}`;
-        }
-      }
-      return "";
-    },
-    async Expense_update() {
-      this.loading = true
-      await axios.put("/api/expense/upate", this.form)
-        .then((res) => {
-          console.log(res)
-          this.form = {
-            id: null,
-            expenserName: null,
-            expense_description: null,
-            amount: null,
-            date: null,
-            user_id: null,
-            expensecategory: null,
-            paymenttype: null,
-            cost_type: null,
-            status: null,
-            image: '',
-          },
-          this.fetch_expense();
-          let myModal = bootstrap.Modal.getInstance(
-            document.getElementById("editExpenseModal")
-          );
-          myModal.hide();
-          Toast.fire({
-            icon: "success",
-            title: res.data.message,
-          });
-
-        })
-        .catch((error) => {
-          console.log(error)
-        })
-        .finally(() => {
-          this.loading = false;
-        })
-    },
-    async deleteExpense(id) {
-      Swal.fire({
-        title: "Are you sure?",
-        text: "You won't be able to revert this!",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonColor: "#3085d6",
-        cancelButtonColor: "#d33",
-        confirmButtonText: "Yes, delete it!",
-      }).then(async (result) => {
-        if (result.isConfirmed) {
-          await axios
-            .delete("/api/expense/delete/" + id)
-            .then((res) => {
-              console.log(res)
-              this.fetch_expense()
-            })
-            .catch((error) => {
-            });
-          Swal.fire({
-            title: "Deleted!",
-            text: "Category has been deleted.",
-            icon: "success",
-          });
-        }
+    })
+      .then((res) => {
+        this.userName = res.data.user_name;
+        this.profile_img = res.data.profile_img
+        this.users = res.data;
+      })
+      .catch((error) => {
+        console.log(error);
       });
-    },
-    async fetchUsers() {
-      const token = localStorage.getItem('token');
-      await axios.get("/api/auth/me", {
-        headers: {
-          'Authorization': `Bearer ${token}`
+  },
+  async fetch_paymenttype() {
+    await axios.get('/api/payment-types')
+      .then((res) => {
+        this.paymenttypes = res.data;
+      })
+      .catch((res) => {
+        console.log(res)
+      })
+  },
+  async fetch_user() {
+    await axios.get('/api/alluser')
+      .then((res) => {
+        if (Array.isArray(res.data)) {
+          this.userslist = res.data;
+        } else {
+          this.userslist = [];
         }
       })
-        .then((res) => {
-          this.userName = res.data.user_name;
-          this.profile_img = res.data.profile_img
-          this.users = res.data;
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    },
-    async fetch_paymenttype() {
-      await axios.get('/api/payment-types')
-        .then((res) => {
-          this.paymenttypes = res.data;
-        })
-        .catch((res) => {
-          console.log(res)
-        })
-    },
-    async fetch_user() {
-      await axios.get('/api/alluser')
-        .then((res) => {
-          if (Array.isArray(res.data)) {
-            this.userslist = res.data;
-          } else {
-            this.userslist = [];
-          }
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    },
-    async fetch_expensecategories() {
-      axios.get('/api/expensecategory')
-        .then((res) => {
-          this.expensecategories = res.data;
-        })
-        .catch((error) => {
-          console.log(error)
-        })
-    }
-
+      .catch((error) => {
+        console.log(error);
+      });
   },
-  created() {
-    this.fetch_expense()
-    this.fetchUsers();
-    this.fetch_paymenttype();
-    this.fetch_user();
-    this.fetch_expensecategories();
-  },
-  computed: {
-    totalAmount() {
-      return this.reserves.reduce((total, reserve) => total + parseFloat(reserve.amount || 0), 0);
-    }
-  },
-  watch: {
-    totalAmount(newAmount) {
-      this.form.amount = newAmount; // Update form amount when totalAmount changes
-    }
+  async fetch_expensecategories() {
+    axios.get('/api/expensecategory')
+      .then((res) => {
+        this.expensecategories = res.data;
+      })
+      .catch((error) => {
+        console.log(error)
+      })
   }
+
+},
+created() {
+  this.fetch_expense()
+  this.fetchUsers();
+  this.fetch_paymenttype();
+  this.fetch_user();
+  this.fetch_expensecategories();
+},
+computed: {
+  filteredExpenses() {
+    return this.expenses.filter(expense => {
+      const expenseDate = new Date(expense.date);
+      return (!this.startDate || expenseDate >= new Date(this.startDate)) &&
+        (!this.endDate || expenseDate <= new Date(this.endDate));
+    });
+  },
+  totalAmount() {
+    return this.reserves.reduce((total, reserve) => total + parseFloat(reserve.amount || 0), 0);
+  }
+},
+watch: {
+  totalAmount(newAmount) {
+    this.form.amount = newAmount;
+  }
+}
 }
 </script>
 

@@ -11,7 +11,12 @@ class ProductController extends Controller
 {
     public function index()
     {
-        $product = Product::with(['category', 'brand', 'user'])->get();
+        // $product = Product::with(['category', 'brand', 'user'])->get();
+        $product = Product::with(['category', 'brand', 'user'])
+            ->where('quantity', '>', 0) // Only products with quantity greater than 0
+            ->get();
+
+            
         // $product = Product::with(['category', 'brand', 'user'])
         // ->whereHas('category', function ($query) {
         //     $query->whereIn('id', [1, 15]);  // Filter by category ID 1 or 15
@@ -57,7 +62,7 @@ class ProductController extends Controller
         $request->validate([
             'product_model' => 'required|string|max:255',
             'specification' => 'required|string',
-            'quantity' => 'required|integer|min:1',
+            'quantity' => 'required|integer',
             'touch_status' => 'nullable',
             'discount' => 'nullable|numeric|min:0|max:10000',
             'user_id' => 'required|exists:users,id',

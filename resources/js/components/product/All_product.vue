@@ -32,7 +32,7 @@
                                 <th scope="col">Brand Name</th>
                                 <th scope="col">Category</th>
                                 <th scope="col">Assigned By</th>
-                                <th scope="col">Stock Quantity</th>
+                                <th scope="col">Purchases Quantity</th>
                                 <th scope="col">Buying Price</th>
                                 <th scope="col">Selling Price</th>
                                 <th scope="col">Payment Methods</th>
@@ -43,8 +43,8 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr v-for="(stock,index ) in filteredStocks" :key="stock.id">
-                                <td>{{ index+1 }}</td>
+                            <tr v-for="(stock, index ) in filteredStocks" :key="stock.id">
+                                <td>{{ index + 1 }}</td>
                                 <td>{{ stock.product.product_model }}</td>
                                 <td>{{ stock.product.specification }}</td>
                                 <td>{{ stock.product.brand.brand_name }}</td>
@@ -117,7 +117,7 @@
                                                         </select>
                                                         <small class="text-danger" v-if="errors.product_model">{{
                                                             errors.product_model[0]
-                                                            }}</small>
+                                                        }}</small>
                                                         <label for="inputEmail">Product Name</label>
                                                     </div>
                                                 </div>
@@ -132,7 +132,7 @@
                                                         </select> -->
                                                         <small class="text-danger" v-if="errors.user_id">{{
                                                             errors.user_id[0]
-                                                            }}</small>
+                                                        }}</small>
                                                         <label for="inputAddress">Users Name</label>
                                                     </div>
                                                 </div>
@@ -144,7 +144,7 @@
                                                             placeholder="Address" v-model="form.stock_quantity" />
                                                         <small class="text-danger" v-if="errors.stock_quantity">{{
                                                             errors.stock_quantity[0]
-                                                            }}</small>
+                                                        }}</small>
                                                         <label for="inputAddress">Stock Quantity</label>
                                                     </div>
                                                 </div>
@@ -156,7 +156,7 @@
                                                             placeholder="Phone" v-model="form.buying_price" />
                                                         <small class="text-danger" v-if="errors.buying_price">{{
                                                             errors.buying_price[0]
-                                                            }}</small>
+                                                        }}</small>
                                                         <label for="inputAddress">Buying Price</label>
                                                     </div>
                                                 </div>
@@ -166,7 +166,7 @@
                                                             placeholder="Phone" v-model="form.selling_price" />
                                                         <small class="text-danger" v-if="errors.selling_price">{{
                                                             errors.selling_price[0]
-                                                            }}</small>
+                                                        }}</small>
                                                         <label for="inputPhone">Selling Price</label>
                                                     </div>
                                                 </div>
@@ -194,7 +194,7 @@
                                                         </select>
                                                         <small class="text-danger" v-if="errors.product_id">{{
                                                             errors.product_id[0]
-                                                            }}</small>
+                                                        }}</small>
                                                         <label for="inputPhone">Supplier Name</label>
                                                     </div>
                                                 </div>
@@ -206,7 +206,7 @@
                                                             placeholder="Shop Name" v-model="form.stock_date" />
                                                         <small class="text-danger" v-if="errors.stock_date">{{
                                                             errors.stock_date[0]
-                                                            }}</small>
+                                                        }}</small>
                                                         <label for="inputNid">Stock Date</label>
                                                     </div>
                                                 </div>
@@ -222,7 +222,7 @@
                                                         </select>
                                                         <small class="text-danger" v-if="errors.pt_name">{{
                                                             errors.pt_name[0]
-                                                            }}</small>
+                                                        }}</small>
                                                         <label for="inputEmail">Payment Type</label>
                                                     </div>
                                                 </div>
@@ -353,7 +353,6 @@ export default {
         async fetch_stocks() {
             try {
                 const response = await axios.get("/api/stocks");
-                console.log(response)
                 this.Stocks = response.data;
             } catch (error) {
                 console.error('Error fetching stocks:', error);
